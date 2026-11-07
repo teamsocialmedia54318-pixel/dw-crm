@@ -846,6 +846,8 @@ const EN = {
   'اختر المحصول من القائمة': 'Pick a crop from the list', 'أو اكتب اسم المحصول ثم اضغط Enter': 'or type a crop, then press Enter', 'المحاصيل وأشجار الفاكهة': 'Crops & fruit trees', 'كل محصول يُسجَّل وحده. يمكن حذف المحصول غير المستخدم الذي لا توجد له مواعيد زراعة أو حصاد': 'Each crop is recorded on its own. An unused crop with no planting or harvest dates can be removed',
   'اسم المحصول': 'Crop name', 'يرجى إضافة محصول واحد في كل مرة': 'Please add one crop at a time', 'المحصول موجود بالفعل: {c}': 'This crop already exists: {c}', 'حذف محصول: {c}': 'Removed crop: {c}',
   // الأجهزة والأسعار
+  'إرسال بريد تجريبي': 'Send a test email', 'يلزم تحديث خدمة جوجل': 'The Google service must be updated', 'أُرسل البريد التجريبي إلى: {list}': 'Test email sent to: {list}', 'إرسال بريد تجريبي إلى المستلمين': 'Sent a test email to recipients',
+  'البريد التجريبي رسالة قصيرة دون مرفق تصل لكل المستلمين. إذا لم تظهر في الوارد فابحث عنها في الرسائل المزعجة (Spam) واضغط "ليست رسالة مزعجة".': 'The test email is a short message without an attachment sent to every recipient. If it is not in the inbox, look in Spam and press "Not spam".',
   // التحليل حسب قائمة الأسعار والوكلاء
   'موديل X{n} (حتى {ppm})': 'Model X{n} (up to {ppm})', 'الأجهزة حسب قائمة الأسعار': 'Devices by price list', 'المبيعات حسب الموديل': 'Sales by model', 'الموديل يحدد درجة الملوحة التي يعالجها الجهاز': 'The model sets the salinity level the device treats', 'الموديل': 'Model',
   'المبيعات حسب المقاس': 'Sales by size', 'كل الموديلات': 'All models', 'الأجهزة المباعة بالتفصيل': 'Devices sold in detail', 'كل مقاس مع موديله، من الأكثر مبيعًا': 'Each size with its model, best-selling first', 'العملاء والوكلاء': 'Customers & agents',
@@ -1123,7 +1125,7 @@ const CLOUD_KEY_STORE = 'dw_crm_cloud_key';
 const cloudMode = !!window.DW_CLOUD_URL;
 const cloudApi = (action, extra = '') => `${window.DW_CLOUD_URL}?key=${encodeURIComponent(localStorage.getItem(CLOUD_KEY_STORE) || '')}&action=${action}${extra}`;
 // صفحة رابط جوجل تتصل بالخدمة مباشرة عبر google.script.run، والملف يتصل عبر الإنترنت بالرابط نفسه
-const CLOUD_POST = ['save', 'send', 'upload', 'delfile'];
+const CLOUD_POST = ['save', 'send', 'test', 'upload', 'delfile'];
 function cloudCall(action, { base, rev, body, id } = {}) {
   const key = localStorage.getItem(CLOUD_KEY_STORE) || '';
   const call = window.google?.script?.run
@@ -5552,8 +5554,23 @@ function bindMailRecipients(sb) {
 }
 function drawMail(sb) {
   if (cloudMode) {
-    sb.innerHTML = mailRecipientsHtml() + `<div class="card"><h3>${t('الإرسال اليومي من سيرفرات جوجل')}</h3><p class="muted" style="margin-top:0">${t('يُرسل البريد كل يوم الساعة 8 صباحًا من آخر البيانات المحفوظة، حتى لو كانت كل الأجهزة مغلقة.')}</p><div class="chips"><button class="btn primary" id="sn">📧 ${t('إرسال البريد الآن')}</button></div><p class="muted mt" id="st"></p></div>`;
+    sb.innerHTML = mailRecipientsHtml() + `<div class="card"><h3>${t('الإرسال اليومي من سيرفرات جوجل')}</h3><p class="muted" style="margin-top:0">${t('يُرسل البريد كل يوم الساعة 8 صباحًا من آخر البيانات المحفوظة، حتى لو كانت كل الأجهزة مغلقة.')}</p><div class="chips"><button class="btn primary" id="sn">📧 ${t('إرسال البريد الآن')}</button><button class="btn" id="tst">✉ ${t('إرسال بريد تجريبي')}</button></div><p class="muted mt" id="st"></p>
+      <p class="muted">${t('البريد التجريبي رسالة قصيرة دون مرفق تصل لكل المستلمين. إذا لم تظهر في الوارد فابحث عنها في الرسائل المزعجة (Spam) واضغط "ليست رسالة مزعجة".')}</p></div>`;
     bindMailRecipients(sb);
+    $('#tst', sb).onclick = async () => {
+      const b = $('#tst', sb), st = $('#st', sb);
+      b.disabled = true;
+      st.textContent = t('جارٍ الإرسال...');
+      try {
+        await syncNow();
+        const out = await cloudCall('test');
+        if (out.error === 'unknown action') throw new Error(t('يلزم تحديث خدمة جوجل'));
+        if (!out.ok) throw new Error(out.error);
+        st.textContent = t('أُرسل البريد التجريبي إلى: {list}', { list: (out.sent || []).join('، ') || '—' });
+        audit('mail', 'mail', null, 'إرسال بريد تجريبي إلى المستلمين');
+      } catch (err) { st.textContent = t('تعذر الاتصال بالخدمة: {e}', { e: err.message }); }
+      b.disabled = false;
+    };
     $('#sn', sb).onclick = async () => {
       const b = $('#sn', sb), st = $('#st', sb);
       b.disabled = true;
