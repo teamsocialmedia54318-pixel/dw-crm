@@ -846,6 +846,8 @@ const EN = {
   'اختر المحصول من القائمة': 'Pick a crop from the list', 'أو اكتب اسم المحصول ثم اضغط Enter': 'or type a crop, then press Enter', 'المحاصيل وأشجار الفاكهة': 'Crops & fruit trees', 'كل محصول يُسجَّل وحده. يمكن حذف المحصول غير المستخدم الذي لا توجد له مواعيد زراعة أو حصاد': 'Each crop is recorded on its own. An unused crop with no planting or harvest dates can be removed',
   'اسم المحصول': 'Crop name', 'يرجى إضافة محصول واحد في كل مرة': 'Please add one crop at a time', 'المحصول موجود بالفعل: {c}': 'This crop already exists: {c}', 'حذف محصول: {c}': 'Removed crop: {c}',
   // الأجهزة والأسعار
+  'تصنيف العميل المشتري': 'Buyer class', 'تم حفظ التصنيف': 'Class saved', 'بدون تصنيف': 'No class', 'اسم الوكيل': 'Agent name', 'اسم الموزع': 'Distributor name', 'إضافة وكيل جديد': 'Add a new agent', 'إضافة موزع جديد': 'Add a new distributor', 'اكتب الاسم الجديد': 'Type the new name',
+  'يرجى كتابة اسم الوكيل': 'Please type the agent name', 'يرجى كتابة اسم الموزع': 'Please type the distributor name', 'يرجى اختيار الوكيل': 'Please choose the agent', 'يرجى اختيار الموزع': 'Please choose the distributor',
   'إرسال بريد تجريبي': 'Send a test email', 'يلزم تحديث خدمة جوجل': 'The Google service must be updated', 'أُرسل البريد التجريبي إلى: {list}': 'Test email sent to: {list}', 'إرسال بريد تجريبي إلى المستلمين': 'Sent a test email to recipients',
   'البريد التجريبي رسالة قصيرة دون مرفق تصل لكل المستلمين. إذا لم تظهر في الوارد فابحث عنها في الرسائل المزعجة (Spam) واضغط "ليست رسالة مزعجة".': 'The test email is a short message without an attachment sent to every recipient. If it is not in the inbox, look in Spam and press "Not spam".',
   // التحليل حسب قائمة الأسعار والوكلاء
@@ -857,7 +859,7 @@ const EN = {
   'منطقة التغطية': 'Coverage area', 'غير محددة': 'Not set', 'الدول التي يغطيها الوكيل': 'Countries the agent covers', 'ابحث عن دولة': 'Search for a country', 'اضغط على القطاع لاختيار محافظاته كلها، أو اختر محافظات بعينها': 'Tap a sector to select all its governorates, or pick specific governorates',
   'وكيل الدولة': 'Country agent', 'موزع المنطقة': 'Area distributor',
   'لكل وكيل دولة أو أكثر، وعملاء هذه الدول يتبعونه تلقائيًا. يمكن تغيير الوكيل أو إضافة وكيل آخر لنفس الدولة من زر التعديل': "Each agent covers one or more countries, and those countries' customers follow the agent automatically. You can change the agent or add another agent for the same country with the edit button",
-  'لكل موزع محافظات أو قطاع داخل مصر، وعملاء منطقته يتبعونه تلقائيًا، إلى جانب من جاء عن طريقه': 'Each distributor covers governorates or a sector in Egypt. Customers in that area follow the distributor automatically, along with those who came through them',
+  'لكل موزع منطقة عمل داخل مصر للعلم، ولا يتبعه إلا العملاء الذين اختير لهم عند الإدخال أو التعديل': 'Each distributor has a working area in Egypt for reference. Only customers assigned to them when added or edited follow them',
   'نُشر تحديث جديد للنظام، وسيظهر عند فتح الصفحة القادمة': 'A new system update was published and will appear the next time you open the page', 'تصفية': 'Filter',
   'جهاز {size} X{n} (حتى {ppm})': '{size} unit X{n} (up to {ppm})', 'حتى {ppm}': 'up to {ppm}', 'أجهزة أخرى': 'Other devices', 'السعر الحالي': 'Current price', 'السعر': 'Price', 'السوق': 'Market', 'الكل': 'All', 'لا توجد أجهزة متاحة': 'No devices available', 'أسعار داخل مصر (بالجنيه)': 'Prices inside Egypt (EGP)', 'أسعار خارج مصر (بالدولار)': 'Prices outside Egypt (USD)',
   'أسعار داخل مصر بالجنيه، وأسعار خارج مصر بالدولار. يُحفظ السعر فور تعديله، ويظهر في نموذج العميل والطلبات. الأسعار المسجلة في الطلبات السابقة لا تتغير.': 'Egypt prices are in EGP and export prices in USD. A price is saved as soon as you change it and appears in the customer and order forms. Prices on existing orders do not change.',
@@ -1042,7 +1044,7 @@ const EN = {
 <script>
 // طبقة البيانات والمنطق. كل القراءة والكتابة تمر من هنا، وعند ربط الخادم يُستبدل هذا الملف
 const KEY = 'dw_crm_v1';
-const DB_VERSION = 6;
+const DB_VERSION = 7;
 // بيانات الدخول للحسابات التجريبية: للنسخة التجريبية فقط وموثقة في README.md
 const DEMO_PASSWORD = 'Delta@Test2026';
 
@@ -1068,7 +1070,7 @@ const OUTCOMES = ['تم الرد', 'لم يرد', 'مشغول', 'رقم خطأ',
 const curLabel = o => t(o.currency === 'USD' ? 'دولار' : 'ج.م');
 
 const FIELD_LABELS = {
-  name: 'الاسم', category: 'تصنيف العميل', viaDistributorId: 'عن طريق الوكيل أو الموزع', phone1: 'رقم الهاتف 1', phone2: 'رقم الهاتف 2', address: 'العنوان', govCode: 'كود المحافظة', subCode: 'كود المنطقة الفرعية', country: 'الدولة', area: 'المساحة', irrigation: 'نوع الري', crops: 'نوع المحصول', salinity: 'درجة ملوحة المياه', waterSource: 'مصدر المياه', deviceType: 'نوع الجهاز المطلوب', deviceSize: 'مقاس الجهاز المطلوب', source: 'مصدر المعرفة', rating: 'تقييم العميل', contactDate: 'تاريخ الاتصال', followupDate: 'تاريخ المتابعة', ownerId: 'رجل البيع', payType: 'حالة الشراء', deposit: 'قيمة المقدم', payDate: 'تاريخ السداد', domainId: 'المجال', assistantIds: 'الزملاء المساعدون', asNextDate: 'موعد متابعة ما بعد البيع', asLastDate: 'آخر متابعة بعد البيع', purchased: 'عميل مشترٍ', purchaseDate: 'تاريخ الشراء',
+  name: 'الاسم', category: 'تصنيف العميل', buyerClass: 'تصنيف العميل المشتري', viaDistributorId: 'عن طريق الوكيل أو الموزع', phone1: 'رقم الهاتف 1', phone2: 'رقم الهاتف 2', address: 'العنوان', govCode: 'كود المحافظة', subCode: 'كود المنطقة الفرعية', country: 'الدولة', area: 'المساحة', irrigation: 'نوع الري', crops: 'نوع المحصول', salinity: 'درجة ملوحة المياه', waterSource: 'مصدر المياه', deviceType: 'نوع الجهاز المطلوب', deviceSize: 'مقاس الجهاز المطلوب', source: 'مصدر المعرفة', rating: 'تقييم العميل', contactDate: 'تاريخ الاتصال', followupDate: 'تاريخ المتابعة', ownerId: 'رجل البيع', payType: 'حالة الشراء', deposit: 'قيمة المقدم', payDate: 'تاريخ السداد', domainId: 'المجال', assistantIds: 'الزملاء المساعدون', asNextDate: 'موعد متابعة ما بعد البيع', asLastDate: 'آخر متابعة بعد البيع', purchased: 'عميل مشترٍ', purchaseDate: 'تاريخ الشراء',
 };
 
 let DB = null;
@@ -1162,24 +1164,135 @@ async function cloudSync(force) {
   try { localStorage.setItem(CLOUD_AT_KEY, nowStamp()); } catch {}
   return true;
 }
+// ------- العمل المتزامن: عدة أشخاص يحفظون في الوقت نفسه دون إعادة تحميل الصفحة -------
+// baseSnap آخر نسخة متفق عليها مع الخادم. عند وصول حفظ من شخص آخر تُدمج تعديلات هذا الجهاز فوق نسخته
+let baseSnap = null;
+const setBase = obj => { try { baseSnap = typeof obj === 'string' ? obj : JSON.stringify(obj); } catch { baseSnap = null; } };
+const sameVal = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+const recKey = x => x && typeof x === 'object' && !Array.isArray(x) ? x.id ?? x.name : undefined;
+const isRecList = (...arrs) => arrs.some(a => Array.isArray(a) && a.length) && arrs.every(a => !Array.isArray(a) || a.every(x => recKey(x) !== undefined));
+// دمج ثلاثي: ما تغيّر هنا فقط يؤخذ من هنا، وما تغيّر هناك فقط يؤخذ من هناك، وإذا تغيّر الحقل نفسه في الجهتين يُعتمد تعديل هذا الجهاز
+function mergeValue(base, local, remote) {
+  if (sameVal(local, base)) return remote;
+  if (sameVal(remote, base)) return local;
+  if (Array.isArray(local) && Array.isArray(remote)) {
+    if (isRecList(base, local, remote)) return mergeRecords(Array.isArray(base) ? base : [], local, remote);
+    const prim = [local, remote].every(a => a.every(x => x === null || typeof x !== 'object'));
+    if (!prim) return local;
+    const b = Array.isArray(base) ? base : [];
+    return [...new Set([...remote, ...local])].filter(x => !(b.includes(x) && (!local.includes(x) || !remote.includes(x))));
+  }
+  if (local && remote && typeof local === 'object' && typeof remote === 'object' && !Array.isArray(local) && !Array.isArray(remote)) {
+    const out = {};
+    new Set([...Object.keys(remote), ...Object.keys(local)]).forEach(k => {
+      if (!(k in local) && base && k in base) return; // حُذف هنا
+      if (!(k in remote) && base && k in base && sameVal(local[k], base[k])) return; // حُذف هناك
+      const v = mergeValue(base?.[k], local[k], remote[k]);
+      if (v !== undefined) out[k] = v;
+    });
+    return out;
+  }
+  return local;
+}
+function mergeRecords(base, local, remote) {
+  const mb = new Map(base.map(x => [recKey(x), x])), ml = new Map(local.map(x => [recKey(x), x])), mr = new Map(remote.map(x => [recKey(x), x]));
+  const out = [];
+  remote.forEach(r => {
+    const k = recKey(r);
+    if (mb.has(k) && !ml.has(k)) { if (sameVal(mb.get(k), r)) return; out.push(r); return; } // حُذف هنا ولم يُعدَّل هناك
+    const l = ml.get(k);
+    out.push(l === undefined ? r : mergeValue(mb.get(k), l, r));
+  });
+  const added = local.filter(x => !mb.has(recKey(x)) && !mr.has(recKey(x)));
+  // القوائم التي يُضاف فيها الجديد في أولها (العملاء والمتابعات والسجل) تبقى كذلك
+  const front = added.length && local.indexOf(added[0]) < local.length / 2;
+  return front ? [...added, ...out] : [...out, ...added];
+}
+// عميلان جديدان بالكود نفسه من جهازين: يأخذ عميل هذا الجهاز الكود التالي، وكذلك أرقام الطلبات والدعم
+function fixMergedCodes(merged, base, remote) {
+  const c = merged.counters = merged.counters || {};
+  Object.keys({ ...(remote.counters || {}), ...c }).forEach(k => { c[k] = Math.max(+c[k] || 0, +remote.counters?.[k] || 0); });
+  const baseIds = new Set();
+  [...(base.customers || []), ...(base.orders || []), ...(base.tickets || [])].forEach(x => baseIds.add(x.id));
+  const renumber = (list, field, counter) => {
+    const used = new Map();
+    (remote[list.key] || []).forEach(x => used.set(x[field], x.id));
+    list.items.forEach(x => {
+      if (baseIds.has(x.id) || !x[field] || !used.has(x[field]) || used.get(x[field]) === x.id) return;
+      c[counter] = (+c[counter] || 0) + 1;
+      x[field] = String(x[field]).replace(/\d+$/, m => String(c[counter]).padStart(m.length, '0'));
+    });
+  };
+  renumber({ key: 'customers', items: merged.customers || [] }, 'code', 'customer');
+  renumber({ key: 'orders', items: merged.orders || [] }, 'no', 'order');
+  renumber({ key: 'tickets', items: merged.tickets || [] }, 'no', 'ticket');
+}
+async function fetchRemote() {
+  if (cloudMode) {
+    const out = await cloudCall('db');
+    if (out.error === 'suspended') { onSuspended(); return null; }
+    return out.ok && out.db ? { db: out.db, rev: out.rev || 0 } : null;
+  }
+  const res = await fetch('/api/db', { cache: 'no-store' });
+  return res.ok ? { db: await res.json(), rev: +res.headers.get('X-Rev') || 0 } : null;
+}
+// يعتمد أحدث نسخة على الخادم ويضيف إليها ما لم يُحفظ بعد من هذا الجهاز. يعيد true إذا بقي ما يلزم حفظه
+function applyRemote(remote, rev) {
+  if (migrateDB(remote)) {} // نسخة أقدم من جهاز لم يُحدَّث بعد
+  const base = baseSnap ? JSON.parse(baseSnap) : remote;
+  const pending = !sameVal(DB, base);
+  const merged = pending ? mergeValue(base, DB, remote) : remote;
+  if (pending) fixMergedCodes(merged, base, remote);
+  setBase(remote);
+  serverRev = rev;
+  lastRev = Math.max(lastRev, rev);
+  const myId = ME?.id;
+  DB = merged;
+  if (myId) ME = DB.users.find(u => u.id === myId) || ME;
+  if (pending) { lastRev += 1; DB.rev = lastRev; } else DB.rev = rev;
+  try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch {}
+  return pending;
+}
+// تحديث الصفحة المعروضة ببيانات زملائك دون إعادة تحميلها، ولا يحدث أثناء ملء نموذج أو الكتابة
+function softRefresh() {
+  if (!ME || document.querySelector('.modal-back, .drawer') || document.activeElement?.matches('input, textarea, select')) return;
+  const y = scrollY;
+  window.route && route();
+  scrollTo(0, y);
+}
 async function pushDB() {
   if (!serverOn || conflicted) return;
   if (pushing) { pushDirty = true; return; }
   pushing = true;
+  let rounds = 0;
   try {
     do {
       pushDirty = false;
-      const rev = DB.rev;
+      // حماية من تكرار لا ينتهي إذا تعذر الدمج لأي سبب
+      if (++rounds > 8) { onConflict(); return; }
+      const rev = DB.rev, body = JSON.stringify(DB);
+      let conflict = false;
       if (cloudMode) {
-        const out = await cloudCall('save', { base: serverRev, rev, body: JSON.stringify(DB) });
-        if (out.conflict) { onConflict(); return; }
+        const out = await cloudCall('save', { base: serverRev, rev, body });
         if (out.error === 'suspended') { onSuspended(); return; }
-        if (!out.ok) throw new Error(out.error);
+        if (out.conflict) conflict = true;
+        else if (!out.ok) throw new Error(out.error);
       } else {
-        const res = await fetch('/api/db', { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-Base-Rev': String(serverRev), 'X-New-Rev': String(rev) }, body: JSON.stringify(DB) });
-        if (res.status === 409) { onConflict(); return; }
-        if (!res.ok) throw new Error(res.status);
+        const res = await fetch('/api/db', { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-Base-Rev': String(serverRev), 'X-New-Rev': String(rev) }, body });
+        if (res.status === 409) conflict = true;
+        else if (!res.ok) throw new Error(res.status);
       }
+      // حفظ زميل سبقنا: تُدمج تعديلاتنا فوق نسخته ثم يُعاد الحفظ، دون إعادة تحميل الصفحة
+      if (conflict) {
+        const remote = await fetchRemote();
+        if (!remote) { onConflict(); return; }
+        if (applyRemote(remote.db, remote.rev)) pushDirty = true;
+        softRefresh();
+        continue;
+      }
+      // تعديل حدث أثناء الحفظ يُحفظ في الدورة التالية
+      if (DB.rev !== rev) pushDirty = true;
+      setBase(body);
       serverRev = rev;
       pushWarned = false;
       try { localStorage.setItem(SYNC_KEY, String(rev)); } catch {}
@@ -1201,7 +1314,12 @@ async function checkNewerData() {
   try {
     const res = cloudMode ? await cloudCall('rev') : await (await fetch('/api/rev', { cache: 'no-store' })).json();
     if (res.error === 'suspended') { onSuspended(); return; }
-    if (res.rev > serverRev && !pushing) reloadApp();
+    if (!(res.rev > serverRev) || pushing) return;
+    // حفظ زميل جديد: تُجلب البيانات وتُعرض دون إعادة تحميل الصفحة
+    const remote = await fetchRemote();
+    if (!remote || pushing) return;
+    if (applyRemote(remote.db, remote.rev)) pushDB();
+    softRefresh();
   } catch {}
 }
 window.addEventListener('focus', checkNewerData);
@@ -1546,6 +1664,10 @@ const cropOptions = (names, sel, blank) => (blank !== undefined ? `<option value
 
 // ------- تصنيف العميل والوكلاء والموزعون -------
 const CUSTOMER_CATEGORIES = ['مزارع', 'مهندس زراعي', 'وكيل', 'موزع'];
+// أهمية العميل المشتري: VIP الأعلى ثم A إلى D
+const BUYER_CLASSES = ['VIP', 'A', 'B', 'C', 'D'];
+const BUYER_CLASS_PILL = { VIP: 'p-orange', A: 'p-green', B: 'p-blue', C: 'p-after', D: 'p-gray' };
+const buyerClassPill = v => v ? `<span class="pill ${BUYER_CLASS_PILL[v] || 'p-gray'}" dir="ltr">${v === 'VIP' ? '★ ' : ''}${esc(v)}</span>` : '';
 const PARTNER_TYPES = ['وكيل', 'موزع'];
 const isPartner = v => PARTNER_TYPES.includes(v);
 const distName = id => DB.distributors.find(d => d.id === id)?.name || '';
@@ -1572,7 +1694,8 @@ const viaCustomers = id => liveCustomers().filter(c => c.viaDistributorId === id
 // الوكيل يغطي دولة أو أكثر خارج مصر، والموزع يغطي محافظات أو قطاعًا داخل مصر. تعدّلها الإدارة في أي وقت
 const isAgent = d => d?.type === 'وكيل';
 const custGov = c => c.market === 'egypt' ? regionByCode(c.govCode)?.gov || '' : '';
-const covers = (d, c) => d.active !== false && (isAgent(d) ? c.market === 'intl' && (d.countries || []).includes(c.country) : c.market === 'egypt' && (d.govs || []).includes(custGov(c)));
+// الوكيل يتبعه عملاء دولته تلقائيًا. الموزع لا يتبعه إلا من اختير له عند الإدخال أو التعديل، ومنطقته للعلم فقط
+const covers = (d, c) => d.active !== false && isAgent(d) && c.market === 'intl' && (d.countries || []).includes(c.country);
 // الوكلاء أو الموزعون المسؤولون عن منطقة العميل
 const territoryPartners = c => DB.distributors.filter(d => covers(d, c));
 const territoryCustomers = d => liveCustomers().filter(c => covers(d, c));
@@ -1918,6 +2041,7 @@ const BASE_COLUMNS = [
   ['phone1', 'رقم الهاتف 1', c => c.phone1],
   ['phone2', 'رقم الهاتف 2', c => c.phone2],
   ['category', 'تصنيف العميل', c => tv(c.category)],
+  ['buyerClass', 'تصنيف العميل المشتري', c => c.buyerClass || ''],
   ['country', 'الدولة', c => c.market === 'intl' ? countryLabel(c.country) : tv('مصر')],
   ['gov', 'المحافظة', c => c.market === 'egypt' ? custLocation(c) : ''],
   ['regionCode', 'كود المنطقة', c => c.subCode || c.govCode || ''],
@@ -2206,7 +2330,8 @@ function migrateDB(db) {
   const v4 = migrateV4(db);
   const v5 = migrateV5(db);
   const v6 = migrateV6(db);
-  return v2 || v3 || v4 || v5 || v6;
+  const v7 = migrateV7(db);
+  return v2 || v3 || v4 || v5 || v6 || v7;
 }
 // الإصدار 6: الوكلاء حسب الدولة والموزعون حسب المحافظة أو القطاع، وطلبات البيانات التجريبية على موديلات قائمة الأسعار
 function migrateV6(db) {
@@ -2219,6 +2344,28 @@ function migrateV6(db) {
   if (db.settings.demo) remapDemoDevices(db);
   db.version = 6;
   return true;
+}
+// الإصدار 7: أسماء فريق دلتا ووتر الفعلية بدل الأسماء الافتراضية، والاسم لا يحمل المسمى الوظيفي
+const TEAM_NAMES = [
+  ['admin', ['إدارة دلتا ووتر'], 'أ. أحمد إبراهيم'],
+  ['sales.manager', ['مدير المبيعات'], 'د. محمد عيسى'],
+  ['ahmed', ['أحمد سمير (تجريبي)'], 'د. محمد حجازي'],
+  ['mohamed', ['محمد عادل (تجريبي)'], 'د. محمود جمعة'],
+];
+function migrateV7(db) {
+  if ((db.version || 1) >= 7) return false;
+  applyTeamNames(db);
+  db.version = 7;
+  return true;
+}
+function applyTeamNames(db) {
+  // يتغير الاسم فقط إذا كان ما زال الاسم الافتراضي، حتى لا يُكتب فوق اسم عدّلته الإدارة
+  TEAM_NAMES.forEach(([username, defaults, name]) => { const u = db.users.find(x => x.username === username); if (u && defaults.includes(u.name)) u.name = name; });
+  // المدير الرئيسي الثاني: حساب بلا كلمة مرور، وتحدد له الإدارة كلمة مرور مؤقتة من صفحة المستخدمين
+  if (!db.users.some(u => u.username === 'sherif')) {
+    const owner = db.users.find(u => u.role === 'owner');
+    db.users.splice(owner ? db.users.indexOf(owner) + 1 : 0, 0, { id: uid(), name: 'م. شريف إبراهيم', username: 'sherif', email: '', role: 'owner', passHash: '', mustChangePw: true, active: true, createdAt: nowStamp(), overrides: {}, scope: { market: 'all', govCodes: [] }, assists: [], mailDaily: true });
+  }
 }
 // وكلاء الدول الحاليون بأسماء مؤقتة، وتعدّل الإدارة الاسم والهاتف
 function seedAgents(db) {
@@ -2543,6 +2690,7 @@ async function loadDB() {
     serverRev = out.rev || 0;
     lastRev = serverRev;
     if (out.db) {
+      setBase(out.db);
       DB = out.db;
       lastRev = Math.max(DB.rev || 0, serverRev);
       if (migrateDB(DB)) saveDB();
@@ -2554,7 +2702,7 @@ async function loadDB() {
     if (res.headers.get('X-CRM-API')) {
       serverOn = true;
       serverRev = +res.headers.get('X-Rev') || 0;
-      if (res.status === 200) remote = await res.json();
+      if (res.status === 200) { remote = await res.json(); setBase(remote); }
       else serverEmpty = true;
     }
   } catch {}
@@ -2575,6 +2723,7 @@ async function resetDB(withDemo) {
   if (withDemo) seedDemo(DB);
   else { DB.settings.demo = false; DB.users = DB.users.filter(u => ['owner', 'manager'].includes(u.role)); }
   seedAgents(DB);
+  applyTeamNames(DB);
   saveDB();
 }
 
@@ -2929,13 +3078,20 @@ function bindCategory(root, d) {
   });
 }
 // مصدر المعرفة "وكيل" أو "موزع": يُختار اسمه من قائمة الموزعين، أو يُضاف اسم جديد
-const viaField = d => {
-  const list = DB.distributors.filter(x => x.active !== false || x.id === d.viaDistributorId).map(x => [x.id, `${x.name}${x.type ? ` (${tv(x.type)})` : ''}`]).sort((a, b) => a[1].localeCompare(b[1], 'ar'));
-  return `<div class="field" id="viaWrap" ${isPartner(d.source) ? '' : 'hidden'}><label>${t('اسم الوكيل أو الموزع')} <span class="req">*</span></label><select class="inp" id="via">${opts(list, d.viaDistributorId || '', t('اختر'))}<option value="__new">+ ${esc(t('إضافة اسم جديد'))}</option></select><input class="inp mt" id="viaNew" hidden placeholder="${t('اسم الوكيل أو الموزع الجديد')}"></div>`;
+// "وكيل" تعرض الوكلاء فقط، و"موزع" تعرض الموزعين فقط
+const viaOptions = (source, sel) => {
+  const agent = source === 'وكيل';
+  const list = DB.distributors.filter(x => isAgent(x) === agent && (x.active !== false || x.id === sel)).map(x => [x.id, agent ? `${x.name}${(x.countries || []).length ? ` (${coverageLabel(x)})` : ''}` : `${x.name}${x.type && x.type !== 'موزع' ? ` (${tv(x.type)})` : ''}`]).sort((a, b) => a[1].localeCompare(b[1], 'ar'));
+  return `${opts(list, sel || '', t('اختر'))}<option value="__new">+ ${esc(t(agent ? 'إضافة وكيل جديد' : 'إضافة موزع جديد'))}</option>`;
 };
+const viaLabel = source => t(source === 'وكيل' ? 'اسم الوكيل' : 'اسم الموزع');
+const viaField = d => `<div class="field" id="viaWrap" ${isPartner(d.source) ? '' : 'hidden'}><label><span id="viaLab">${viaLabel(d.source)}</span> <span class="req">*</span></label><select class="inp" id="via">${viaOptions(d.source, d.viaDistributorId)}</select><input class="inp mt" id="viaNew" hidden placeholder="${t('اكتب الاسم الجديد')}"></div>`;
 function bindVia(root) {
   const src = $('[data-f="source"]', root), wrap = $('#viaWrap', root), sel = $('#via', root), nw = $('#viaNew', root);
-  src.addEventListener('change', () => { wrap.hidden = !isPartner(src.value); });
+  src.addEventListener('change', () => {
+    wrap.hidden = !isPartner(src.value);
+    if (isPartner(src.value)) { sel.innerHTML = viaOptions(src.value, ''); $('#viaLab', root).textContent = viaLabel(src.value); nw.hidden = true; }
+  });
   sel.onchange = () => { nw.hidden = sel.value !== '__new'; if (!nw.hidden) nw.focus(); };
 }
 // يعيد رقم الموزع المختار، أو الاسم الجديد ليُضاف عند الحفظ
@@ -2944,9 +3100,9 @@ function readVia(root, source) {
   const sel = $('#via', root);
   if (sel.value === '__new') {
     const name = $('#viaNew', root).value.trim();
-    return name ? { id: '', newName: name } : { error: t('يرجى كتابة اسم الوكيل أو الموزع') };
+    return name ? { id: '', newName: name } : { error: t(source === 'وكيل' ? 'يرجى كتابة اسم الوكيل' : 'يرجى كتابة اسم الموزع') };
   }
-  return sel.value ? { id: sel.value, newName: '' } : { error: t('يرجى اختيار الوكيل أو الموزع') };
+  return sel.value ? { id: sel.value, newName: '' } : { error: t(source === 'وكيل' ? 'يرجى اختيار الوكيل' : 'يرجى اختيار الموزع') };
 }
 const viaId = (via, source) => via.newName ? findOrCreateDistributor(via.newName, source) : via.id || '';
 // الأجهزة حسب سوق العميل: داخل مصر بالجنيه وخارجها بالدولار، مع السعر الحالي من قائمة الأسعار
@@ -3258,7 +3414,7 @@ function openCustomer(id, tab = 'journey') {
       const assistants = DB.users.filter(u => (u.assists || []).includes(c.ownerId) && !(c.assistantIds || []).includes(u.id)).map(u => u.id);
       const shared = sharesOf(c).filter(s => sharedWith(c, s.userId)).map(s => `${esc(userName(s.userId))} <span class="muted">(${t('عيّنه {u} في {d}', { u: esc(userName(s.by)), d: fmtDate(s.at) })})</span>`).join('<br>');
       body.innerHTML = `<div class="card"><div class="kv">
-        ${kv(t('تصنيف العميل'), c.category ? `${categoryPill(c.category)}${c.partnerId ? ` <span class="muted">${t('مسجل في قائمة الموزعين')}</span>` : ''}` : '')}${kv(t('عن طريق الوكيل أو الموزع'), esc(distName(c.viaDistributorId)))}${kv(t(c.market === 'intl' ? 'وكيل الدولة' : 'موزع المنطقة'), esc(territoryPartners(c).map(d => d.name).join('، ')))}
+        ${c.buyerClass ? kv(t('تصنيف العميل المشتري'), buyerClassPill(c.buyerClass)) : ''}${kv(t('تصنيف العميل'), c.category ?`${categoryPill(c.category)}${c.partnerId ? ` <span class="muted">${t('مسجل في قائمة الموزعين')}</span>` : ''}` : '')}${kv(t('عن طريق الوكيل أو الموزع'), esc(distName(c.viaDistributorId)))}${c.market === 'intl' ? kv(t('وكيل الدولة'), esc(territoryPartners(c).map(d => d.name).join('، '))) : ''}
         ${kv(t('رقم الهاتف 1'), phoneLink(c.phone1))}${kv(t('رقم الهاتف 2'), phoneLink(c.phone2))}
         ${kv(t('العنوان'), esc(custAddress(c)))}${kv(t('كود المنطقة'), c.subCode || c.govCode ? `<span class="code-tag">${esc(c.subCode || c.govCode)}</span>` : '')}
         ${activeDomains().length > 1 ? kv(t('المجال'), esc(label(DB.domains.find(x => x.id === c.domainId)))) : ''}${kv(t('المرحلة'), stagePill(c))}
@@ -3297,9 +3453,12 @@ function openCustomer(id, tab = 'journey') {
       $$('[data-o]', body).forEach(tr => tr.onclick = () => openOrder(tr.dataset.o, draw));
     } else if (tab === 'after') {
       body.innerHTML = `${can('aftersales.work') ? `<div class="filters"><button class="btn sm" id="addAs">+ ${t('جدولة متابعة')}</button></div>` : ''}${after.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>${t('المتابعة')}</th><th>${t('الموعد')}</th><th>${t('الحالة')}</th><th>${t('الرضا')}</th><th>${t('الملاحظات')}</th><th></th></tr></thead><tbody>${after.map(a => `<tr><td>${esc(tv(a.name))}</td><td>${a.status === 'done' ? fmtDate(a.due) : followPill(a.due)}</td><td>${a.status === 'done' ? `<span class="pill p-green">${t('تمت')}</span>` : `<span class="pill p-gray">${t('قادمة')}</span>`}</td><td>${stars(a.satisfaction)}</td><td class="wrap">${esc(a.feedback)}</td><td>${a.status !== 'done' && can('aftersales.work') ? `<button class="btn sm" data-as="${a.id}">${t('تسجيل')}</button>` : ''}${can('aftersales.work') ? ` <button class="btn sm" data-ase="${a.id}" aria-label="${t('تعديل')}">✎</button>` : ''}</td></tr>`).join('')}</tbody></table></div>` : ''}
-        <div class="card mt"><div class="row-card"><div class="grow"><b style="color:var(--navy)">${t('متابعة العميل المشتري')}</b><div class="muted">${t('المتابعة القادمة')}: ${c.asNextDate ? followPill(c.asNextDate) : '—'}</div></div>${can('followups.add') ? `<button class="btn sm primary" id="asFu">🎙 ${t('تسجيل متابعة بعد البيع')}</button>` : ''}</div></div>`;
+        <div class="card mt"><div class="row-card"><div class="grow"><b style="color:var(--navy)">${t('متابعة العميل المشتري')}</b><div class="muted">${t('المتابعة القادمة')}: ${c.asNextDate ? followPill(c.asNextDate) : '—'}</div>
+          <div class="muted mt">${t('تصنيف العميل المشتري')}: ${can('customers.edit') ? `<select class="inp" style="width:auto;min-height:0;padding:2px 6px" id="bcls">${opts(BUYER_CLASSES, c.buyerClass || '', '—')}</select>` : buyerClassPill(c.buyerClass) || '—'}</div></div>${can('followups.add') ? `<button class="btn sm primary" id="asFu">🎙 ${t('تسجيل متابعة بعد البيع')}</button>` : ''}</div></div>`;
       $$('[data-as]', body).forEach(b => b.onclick = () => openAfterSaleForm(b.dataset.as, draw));
       $$('[data-ase]', body).forEach(b => b.onclick = () => openAfterSaleEdit(b.dataset.ase, draw));
+      const bcls = $('#bcls', body);
+      if (bcls) bcls.onchange = () => { updateCustomer(c.id, { buyerClass: bcls.value }); toast(t('تم حفظ التصنيف'), 'ok'); };
       const asFu = $('#asFu', body);
       if (asFu) asFu.onclick = () => openFollowup(c.id, { phase: 'after', onDone: draw });
       const addAs = $('#addAs', body);
@@ -4170,7 +4329,7 @@ function viewNotifications(root) {
 }
 
 // ------- العملاء المشترون -------
-const buyersState = { q: '', rep: '', gov: '', follow: '', from: '', to: '', page: 1, selected: new Set() };
+const buyersState = { q: '', rep: '', gov: '', follow: '', cls: '', from: '', to: '', page: 1, selected: new Set() };
 function lastOrderOf(c) {
   return DB.orders.filter(o => o.customerId === c.id && countsAsSale(o)).sort((a, b) => b.date.localeCompare(a.date))[0];
 }
@@ -4179,6 +4338,7 @@ function buyersList() {
   return visibleCustomers().filter(c => ids.has(c.id)).filter(c => {
     if (st.rep && !followedBy(c, st.rep)) return false;
     if (st.gov && (c.market !== 'egypt' || regionByCode(c.govCode)?.gov !== st.gov)) return false;
+    if (st.cls && (st.cls === 'none' ? c.buyerClass : c.buyerClass !== st.cls)) return false;
     if (!inDateRange(purchaseDateOf(c), st)) return false;
     const due = afterDueOf(c);
     if (st.follow === 'today' && due !== td) return false;
@@ -4210,9 +4370,10 @@ function viewBuyers(root) {
     <div class="kpi ${all.some(c => afterDueOf(c) && afterDueOf(c) < td) ? 'alert' : 'ok'}"><div class="l">${t('متابعات متأخرة')}</div><div class="v">${all.filter(c => afterDueOf(c) && afterDueOf(c) < td).length}</div></div>
     <div class="kpi"><div class="l">${t('بلا موعد متابعة')}</div><div class="v">${all.filter(c => !afterDueOf(c)).length}</div></div>
   </div>
+  <div class="chips" style="margin-bottom:10px">${BUYER_CLASSES.map(k => `<button class="chip ${st.cls === k ? 'on' : ''}" data-cls="${k}" dir="ltr">${k}: ${all.filter(c => c.buyerClass === k).length}</button>`).join('')}<button class="chip ${st.cls === 'none' ? 'on' : ''}" data-cls="none">${t('بدون تصنيف')}: ${all.filter(c => !c.buyerClass).length}</button></div>
   <div class="filters"><input class="inp search" id="q" placeholder="${t('ابحث بالاسم أو الرقم أو الكود')}" value="${esc(st.q)}"><select class="inp" id="gov" aria-label="${t('المحافظة')}">${govOptions(st.gov)}</select>${can('customers.view_all') ? `<select class="inp" id="rep" aria-label="${t('رجل البيع')}">${repOptions(st.rep)}</select>` : ''}<select class="inp" id="follow" aria-label="${t('المتابعة')}">${optsT([['today', 'متابعات اليوم'], ['late', 'متأخرة'], ['none', 'بلا موعد متابعة']], st.follow, t('جميع المتابعات'))}</select>${dateRangeHtml(st, t('تاريخ الشراء من'))}</div>
   ${assign ? `<div class="bulk-bar" id="bulk" ${st.selected.size ? '' : 'hidden'}><b id="selN"></b><select class="inp" id="toRep" aria-label="${t('رجل البيع')}">${repOptions('', t('اختر رجل البيع'))}</select><button class="btn primary" id="doMove">${t('تحويل المحدد')}</button><button class="btn" id="clr">${t('إلغاء التحديد')}</button></div>` : ''}
-  ${rows.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr>${assign ? `<th><input type="checkbox" id="all" aria-label="${t('تحديد الكل')}"></th>` : ''}<th class="sticky-col">${t('الاسم')}</th><th>${t('الهاتف')}</th><th>${t('الموقع')}</th><th>${t('الجهاز')}</th><th>${t('تاريخ الشراء')}</th><th>${t('الموزع')}</th><th>${t('رجل البيع')}</th><th>${t('آخر متابعة بعد البيع')}</th><th>${t('المتابعة القادمة')}</th><th></th></tr></thead><tbody>${rows.map(r => `<tr class="click" data-id="${r.c.id}">${assign ? `<td><input type="checkbox" data-sel="${r.c.id}" ${st.selected.has(r.c.id) ? 'checked' : ''} aria-label="${t('تحديد')}"></td>` : ''}<td class="sticky-col">${esc(r.c.name)} ${r.c.rating === 'مميز' ? ratingPill(r.c.rating) : ''}</td><td>${phoneLink(r.c.phone1)}</td><td>${esc(custLocation(r.c))}</td><td class="wrap">${esc(r.device)}</td><td>${fmtDate(r.date)}</td><td>${esc(r.dist)}</td><td>${esc(userName(r.c.ownerId))}</td><td class="wrap">${esc(r.last.slice(0, 70))}</td><td>${followPill(r.due)}</td><td>${can('followups.add') ? `<button class="btn sm primary" data-fu="${r.c.id}">${t('متابعة')}</button>` : ''}${assign ? ` <button class="btn sm" data-mv="${r.c.id}">${t('تحويل')}</button>` : ''}</td></tr>`).join('')}</tbody></table>
+  ${rows.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr>${assign ? `<th><input type="checkbox" id="all" aria-label="${t('تحديد الكل')}"></th>` : ''}<th class="sticky-col">${t('الاسم')}</th><th>${t('تصنيف العميل المشتري')}</th><th>${t('الهاتف')}</th><th>${t('الموقع')}</th><th>${t('الجهاز')}</th><th>${t('تاريخ الشراء')}</th><th>${t('الموزع')}</th><th>${t('رجل البيع')}</th><th>${t('آخر متابعة بعد البيع')}</th><th>${t('المتابعة القادمة')}</th><th></th></tr></thead><tbody>${rows.map(r => `<tr class="click" data-id="${r.c.id}">${assign ? `<td><input type="checkbox" data-sel="${r.c.id}" ${st.selected.has(r.c.id) ? 'checked' : ''} aria-label="${t('تحديد')}"></td>` : ''}<td class="sticky-col">${esc(r.c.name)} ${r.c.rating === 'مميز' ? ratingPill(r.c.rating) : ''}</td><td>${can('customers.edit') ? `<select class="inp" style="width:auto;min-height:0;padding:2px 6px" data-bcls="${r.c.id}" aria-label="${t('تصنيف العميل المشتري')}">${opts(BUYER_CLASSES, r.c.buyerClass || '', '—')}</select>` : buyerClassPill(r.c.buyerClass)}</td><td>${phoneLink(r.c.phone1)}</td><td>${esc(custLocation(r.c))}</td><td class="wrap">${esc(r.device)}</td><td>${fmtDate(r.date)}</td><td>${esc(r.dist)}</td><td>${esc(userName(r.c.ownerId))}</td><td class="wrap">${esc(r.last.slice(0, 70))}</td><td>${followPill(r.due)}</td><td>${can('followups.add') ? `<button class="btn sm primary" data-fu="${r.c.id}">${t('متابعة')}</button>` : ''}${assign ? ` <button class="btn sm" data-mv="${r.c.id}">${t('تحويل')}</button>` : ''}</td></tr>`).join('')}</tbody></table>
     <div class="pager"><button class="btn sm" id="prev" ${st.page <= 1 ? 'disabled' : ''}>${t('السابق')}</button><span>${t('صفحة {a} من {b}', { a: st.page, b: pages })} · ${t('العملاء: {n}', { n: all.length })}</span><button class="btn sm" id="next" ${st.page >= pages ? 'disabled' : ''}>${t('التالي')}</button></div></div>` : `<div class="card empty">${t('لا يوجد عملاء مطابقون.')}</div>`}`;
   const redraw = () => viewBuyers(root);
   const on = (sel, fn) => { const el = $(sel, root); if (el) el.onclick = fn; };
@@ -4222,8 +4383,13 @@ function viewBuyers(root) {
   on('#prev', () => { st.page--; redraw(); });
   on('#next', () => { st.page++; redraw(); });
   on('#imp', () => openBuyersImport(redraw));
-  on('#exp', () => exportSheet(t('العملاء المشترون'), [[t('كود العميل'), t('الاسم'), t('رقم الهاتف 1'), t('رقم الهاتف 2'), t('الموقع'), t('الجهاز'), t('تاريخ الشراء'), t('الموزع'), t('رجل البيع'), t('آخر متابعة بعد البيع'), t('المتابعة القادمة')], ...all.map(buyerRow).map(r => [r.c.code, r.c.name, r.c.phone1, r.c.phone2, custLocation(r.c), r.device.replace(/[⁦-⁩]/g, ''), fmtDate(r.date), r.dist, userName(r.c.ownerId), r.last, fmtDate(r.due)])]));
-  $$('tr.click', root).forEach(tr => tr.onclick = e => { if (e.target.closest('input,button,a')) return; openCustomer(tr.dataset.id, 'after'); });
+  $$('[data-cls]', root).forEach(b => b.onclick = () => { st.cls = st.cls === b.dataset.cls ? '' : b.dataset.cls; st.page = 1; redraw(); });
+  $$('[data-bcls]', root).forEach(s => {
+    s.onclick = e => e.stopPropagation();
+    s.onchange = () => { updateCustomer(s.dataset.bcls, { buyerClass: s.value }); toast(t('تم حفظ التصنيف'), 'ok'); };
+  });
+  on('#exp', () => exportSheet(t('العملاء المشترون'), [[t('كود العميل'), t('الاسم'), t('تصنيف العميل المشتري'), t('رقم الهاتف 1'), t('رقم الهاتف 2'), t('الموقع'), t('الجهاز'), t('تاريخ الشراء'), t('الموزع'), t('رجل البيع'), t('آخر متابعة بعد البيع'), t('المتابعة القادمة')], ...all.map(buyerRow).map(r => [r.c.code, r.c.name, r.c.buyerClass || '', r.c.phone1, r.c.phone2, custLocation(r.c), r.device.replace(/[⁦-⁩]/g, ''), fmtDate(r.date), r.dist, userName(r.c.ownerId), r.last, fmtDate(r.due)])]));
+  $$('tr.click', root).forEach(tr => tr.onclick = e => { if (e.target.closest('input,button,a,select')) return; openCustomer(tr.dataset.id, 'after'); });
   $$('[data-fu]', root).forEach(b => b.onclick = e => { e.stopPropagation(); openFollowup(b.dataset.fu, { phase: 'after', onDone: redraw }); });
   $$('[data-mv]', root).forEach(b => b.onclick = e => { e.stopPropagation(); openTransfer([b.dataset.mv], redraw); });
   const syncBulk = () => { const bar = $('#bulk', root); if (!bar) return; bar.hidden = !st.selected.size; $('#selN', root).textContent = t('المحدد: {n}', { n: st.selected.size }); };
@@ -4508,7 +4674,7 @@ function viewPartners(root, agents) {
   const title = t(agents ? 'الوكلاء' : 'الموزعون');
   // دول بها عملاء وليس لها وكيل نشط
   const uncovered = agents ? Object.entries(liveCustomers().filter(c => c.market === 'intl' && c.country && !territoryPartners(c).some(isAgent)).reduce((m, c) => { m[c.country] = (m[c.country] || 0) + 1; return m; }, {})).sort((a, b) => b[1] - a[1]) : [];
-  root.innerHTML = `<div class="page-head"><h1>${title}</h1><span class="spacer"></span>${manage && !agents ? `<button class="btn" id="imp">⬆ ${t('رفع ملف إكسيل')}</button>` : ''}${canExport() ? `<button class="btn" id="exp">⬇ ${t('تصدير')}</button>` : ''}${manage ? `<button class="btn primary" id="add">+ ${t(agents ? 'وكيل جديد' : 'موزع جديد')}</button>` : ''}<div class="hint">${t(agents ? 'لكل وكيل دولة أو أكثر، وعملاء هذه الدول يتبعونه تلقائيًا. يمكن تغيير الوكيل أو إضافة وكيل آخر لنفس الدولة من زر التعديل' : 'لكل موزع محافظات أو قطاع داخل مصر، وعملاء منطقته يتبعونه تلقائيًا، إلى جانب من جاء عن طريقه')}</div></div>
+  root.innerHTML = `<div class="page-head"><h1>${title}</h1><span class="spacer"></span>${manage && !agents ? `<button class="btn" id="imp">⬆ ${t('رفع ملف إكسيل')}</button>` : ''}${canExport() ? `<button class="btn" id="exp">⬇ ${t('تصدير')}</button>` : ''}${manage ? `<button class="btn primary" id="add">+ ${t(agents ? 'وكيل جديد' : 'موزع جديد')}</button>` : ''}<div class="hint">${t(agents ? 'لكل وكيل دولة أو أكثر، وعملاء هذه الدول يتبعونه تلقائيًا. يمكن تغيير الوكيل أو إضافة وكيل آخر لنفس الدولة من زر التعديل' : 'لكل موزع منطقة عمل داخل مصر للعلم، ولا يتبعه إلا العملاء الذين اختير لهم عند الإدخال أو التعديل')}</div></div>
   <div class="kpis"><div class="kpi"><div class="l">${title}</div><div class="v">${rows.filter(r => r.d.active !== false).length}</div></div><div class="kpi"><div class="l">${t('الأجهزة المباعة عن طريقهم')}</div><div class="v">${totals.units}</div></div><div class="kpi"><div class="l">${t('قيمة المبيعات')}</div><div class="v">${money(totals.value)} <small>${t('ج.م')}</small></div></div></div>
   ${uncovered.length ? `<div class="card"><b>${t('دول بها عملاء دون وكيل')}</b><div class="chips mt">${uncovered.map(([c, n]) => `<span class="pill p-gray">${esc(countryLabel(c))}: ${n}</span>`).join('')}</div></div>` : ''}
   <div class="filters"><input class="inp search" id="q" placeholder="${t(agents ? 'ابحث بالاسم أو الدولة أو الرقم' : 'ابحث بالاسم أو المنطقة أو الرقم')}" value="${esc(st.q)}">${agents ? '' : `<select class="inp" id="type" aria-label="${t('التصنيف')}">${optsT(DB.lists.distributorType.filter(x => x !== 'وكيل'), st.type, t('جميع التصنيفات'))}</select>`}${dateRangeHtml(st, t('المبيعات من'))}</div>
@@ -5729,7 +5895,8 @@ function renderLogin(msg) {
   // أزرار التنقل بين الأدوار تبقى ما دامت البيانات تجريبية، وتختفي عند بدء البيانات الفعلية
   const demo = DB.settings.demo;
   const demoUsers = DB.users.filter(u => u.active && !/^tst\./.test(u.username));
-  const shown = [...new Map(demoUsers.map(u => [u.role, u])).values()];
+  // أول حساب لكل دور له كلمة مرور، فالحساب الذي لم تُحدد كلمة مروره بعد لا يظهر هنا
+  const shown = demoUsers.filter(u => u.passHash).filter((u, i, a) => a.findIndex(x => x.role === u.role) === i);
   $('#app').innerHTML = `<main class="login-page"><div class="login-card">
     <div class="login-top"><span class="spacer"></span>${langButton()}</div>
     ${loginLogo()}<div class="sub">${t('نظام إدارة العملاء والمبيعات')}</div>
