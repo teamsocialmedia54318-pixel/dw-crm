@@ -446,6 +446,13 @@ html { -webkit-text-size-adjust: 100%; }
   .tbl:has(td[data-label]) td.card-wide { grid-column: 1 / -1; }
   .tbl:has(td[data-label]) td .btn.call { width: 100%; min-height: 40px; }
 }
+/* موقع المزرعة */
+.map-field { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.map-field .inp { flex: 1 1 220px; min-width: 0; }
+.map-field .btn[hidden] { display: none; }
+.inp.bad-inp { border-color: var(--red, #c62828); }
+.map-chip { display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; padding: 3px 10px; border-radius: 999px; background: rgba(255,255,255,.16); color: #fff; font-size: 12.5px; text-decoration: none; }
+.map-chip:hover { background: rgba(255,255,255,.26); }
 </style>
 </head>
 <body>
@@ -882,6 +889,10 @@ const EN = {
   'لكل شخص اسم مستخدم وكلمة مرور خاصة به، ويختار كلمة مروره بنفسه عند أول دخول. تسجيل المستخدمين الجدد تفتحه إدارة الشركة لمن تحدده': 'Everyone has their own username and password, and chooses their password at first sign-in. Company management decides who can register new users',
   'لم يختر كلمة مروره بعد': 'Has not set a password yet', 'رقم الهاتف': 'Phone number', 'كلمة مرور مؤقتة': 'Temporary password', 'كلمة مرور مؤقتة جديدة': 'New temporary password', 'حفظ وتحديد الصلاحيات': 'Save and set permissions',
   'يُطلب من صاحب الحساب اختيار كلمة مرور خاصة به عند أول دخول': 'The account holder will be asked to choose their own password at first sign-in', 'تم إنشاء الحساب. أرسل لـ{u} اسم المستخدم وكلمة المرور المؤقتة': 'Account created. Send {u} the username and temporary password',
+  'موقع المزرعة': 'Farm location', 'موقع المزرعة على خرائط جوجل': 'Farm location on Google Maps', 'الصق لينك الموقع أو الإحداثيات': 'Paste the location link or coordinates', 'موقعي الحالي': 'My current location',
+  'من خرائط جوجل: اضغط على مكان المزرعة ثم "مشاركة" ثم "نسخ الرابط" والصقه هنا': 'In Google Maps: tap the farm, then "Share", then "Copy link" and paste it here', 'المتصفح لا يدعم تحديد الموقع': 'This browser does not support location',
+  'جارٍ تحديد الموقع...': 'Getting location...', 'تم أخذ الموقع بدقة {m} متر تقريبًا': 'Location captured, accurate to about {m} m', 'يلزم السماح للمتصفح بالوصول إلى الموقع': 'Allow the browser to access your location', 'تعذر تحديد الموقع، حاول مرة أخرى': 'Could not get the location, try again',
+  'لينك موقع المزرعة غير صحيح. الصق لينك من خرائط جوجل أو إحداثيات مثل 30.0444, 31.2357': 'The farm location link is not valid. Paste a Google Maps link or coordinates such as 30.0444, 31.2357', 'فتح موقع المزرعة على خرائط جوجل': 'Open farm location in Google Maps',
 };
 
 </script>
@@ -1074,7 +1085,7 @@ const OUTCOMES = ['تم الرد', 'لم يرد', 'مشغول', 'رقم خطأ',
 const curLabel = o => t(o.currency === 'USD' ? 'دولار' : 'ج.م');
 
 const FIELD_LABELS = {
-  name: 'الاسم', category: 'تصنيف العميل', buyerClass: 'تصنيف العميل المشتري', viaDistributorId: 'عن طريق الوكيل أو الموزع', phone1: 'رقم الهاتف 1', phone2: 'رقم الهاتف 2', address: 'العنوان', govCode: 'كود المحافظة', subCode: 'كود المنطقة الفرعية', country: 'الدولة', area: 'المساحة', irrigation: 'نوع الري', crops: 'نوع المحصول', salinity: 'درجة ملوحة المياه', waterSource: 'مصدر المياه', deviceType: 'نوع الجهاز المطلوب', deviceSize: 'مقاس الجهاز المطلوب', source: 'مصدر المعرفة', rating: 'تقييم العميل', contactDate: 'تاريخ الاتصال', followupDate: 'تاريخ المتابعة', ownerId: 'رجل البيع', payType: 'حالة الشراء', deposit: 'قيمة المقدم', payDate: 'تاريخ السداد', domainId: 'المجال', assistantIds: 'الزملاء المساعدون', asNextDate: 'موعد متابعة ما بعد البيع', asLastDate: 'آخر متابعة بعد البيع', purchased: 'عميل مشترٍ', purchaseDate: 'تاريخ الشراء',
+  name: 'الاسم', mapLink: 'موقع المزرعة', category: 'تصنيف العميل',buyerClass: 'تصنيف العميل المشتري', viaDistributorId: 'عن طريق الوكيل أو الموزع', phone1: 'رقم الهاتف 1', phone2: 'رقم الهاتف 2', address: 'العنوان', govCode: 'كود المحافظة', subCode: 'كود المنطقة الفرعية', country: 'الدولة', area: 'المساحة', irrigation: 'نوع الري', crops: 'نوع المحصول', salinity: 'درجة ملوحة المياه', waterSource: 'مصدر المياه', deviceType: 'نوع الجهاز المطلوب', deviceSize: 'مقاس الجهاز المطلوب', source: 'مصدر المعرفة', rating: 'تقييم العميل', contactDate: 'تاريخ الاتصال', followupDate: 'تاريخ المتابعة', ownerId: 'رجل البيع', payType: 'حالة الشراء', deposit: 'قيمة المقدم', payDate: 'تاريخ السداد', domainId: 'المجال', assistantIds: 'الزملاء المساعدون', asNextDate: 'موعد متابعة ما بعد البيع', asLastDate: 'آخر متابعة بعد البيع', purchased: 'عميل مشترٍ', purchaseDate: 'تاريخ الشراء',
 };
 
 let DB = null;
@@ -1560,7 +1571,38 @@ const custLocation = c => {
   return r ? govLabel(r.gov) : t('غير محدد');
 };
 const custSubName = c => regionByCode(c.govCode)?.items.find(i => i.code === c.subCode)?.name || '';
-const custAddress = c => [custLocation(c), custSubName(c), c.address].filter(Boolean).join(' - ');
+// ------- موقع المزرعة على خرائط جوجل -------
+// يُقبل لينك من خرائط جوجل (بما فيه المختصر maps.app.goo.gl) أو إحداثيات مثل 30.0444, 31.2357.
+// الإحداثيات تفتح على النقطة نفسها بالضبط، واللينك يفتح كما نسخه رجل البيع
+const MAP_HOSTS = /^(?:[\w-]+\.)*(?:google\.(?:com|[a-z]{2}|com?\.[a-z]{2})|goo\.gl|g\.co)$/i;
+function mapCoords(text) {
+  const s = String(text || '').trim();
+  const m = s.match(/^(-?\d{1,2}(?:\.\d+)?)\s*[,،]\s*(-?\d{1,3}(?:\.\d+)?)$/)
+    || s.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/) || s.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/)
+    || s.match(/[?&](?:q|query|ll|destination)=(-?\d+\.\d+)(?:,|%2C)\s*(-?\d+\.\d+)/i);
+  if (!m) return null;
+  const lat = +m[1], lng = +m[2];
+  return Math.abs(lat) <= 90 && Math.abs(lng) <= 180 ? { lat, lng } : null;
+}
+function mapUrl(text) {
+  const s = String(text || '').trim();
+  if (!s) return '';
+  if (/^-?\d/.test(s)) {
+    const p = mapCoords(s);
+    return p ? `https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lng}` : '';
+  }
+  try {
+    const u = new URL(s);
+    if (!/^https?:$/.test(u.protocol) || !MAP_HOSTS.test(u.hostname)) return '';
+    u.protocol = 'https:';
+    return u.href;
+  } catch { return ''; }
+}
+const mapLinkHtml = (text, cls = '') => {
+  const u = mapUrl(text);
+  return u ? `<a class="${cls}" href="${esc(u)}" target="_blank" rel="noopener noreferrer">🗺 ${t('فتح موقع المزرعة على خرائط جوجل')}</a>` : '';
+};
+const custAddress = c =>[custLocation(c), custSubName(c), c.address].filter(Boolean).join(' - ');
 const showPhone = p => can('customers.view_phones') ? p : (p ? '•••••••' + String(p).slice(-2) : '');
 
 const nextCustomerCode = () => {
@@ -1569,7 +1611,7 @@ const nextCustomerCode = () => {
 };
 function createCustomer(data, opts = {}) {
   const c = {
-    id: uid(), code: nextCustomerCode(), market: 'egypt', country: '', govCode: '', subCode: '', name: '', category: '', viaDistributorId: '', files: [], phone1: '', phone2: '', address: '', area: '', irrigation: '', crops: [], salinity: '', waterSource: '', deviceType: '', deviceSize: '', source: '', rating: 'جيد', contactDate: today(), followupDate: '', payType: '', deposit: '', payDate: '', ownerId: ME?.id, createdAt: nowStamp(), archived: false, domainId: DB.domains[0]?.id, custom: {}, assistantIds: [], shares: [], stageId: '', stageHistory: [], ...data,
+    id: uid(), code: nextCustomerCode(), market: 'egypt', country: '', govCode: '', subCode: '', name: '', category: '', viaDistributorId: '', files: [], phone1: '', phone2: '', address: '', mapLink: '', area: '', irrigation: '', crops: [], salinity: '', waterSource: '', deviceType: '', deviceSize: '', source: '', rating: 'جيد', contactDate: today(), followupDate: '', payType: '', deposit: '', payDate: '', ownerId: ME?.id, createdAt: nowStamp(), archived: false, domainId: DB.domains[0]?.id, custom: {}, assistantIds: [], shares: [], stageId: '', stageHistory: [], ...data,
   };
   if (!c.stageId) c.stageId = stagesFor(c)[0]?.id || '';
   c.stageHistory = [{ stageId: c.stageId, at: nowStamp(), userId: ME?.id || c.ownerId, note: '' }];
@@ -3182,6 +3224,36 @@ const readCustomFields = (root, base = {}) => {
   $$('[data-cf]', root).forEach(el => { out[el.dataset.cf] = el.value.trim(); });
   return out;
 };
+// حقل موقع المزرعة: لصق لينك خرائط جوجل أو الإحداثيات، أو أخذ موقع الموبايل الحالي وأنت في المزرعة
+const mapField = d => `<div class="field"><label>${t('موقع المزرعة على خرائط جوجل')}</label>
+  <div class="map-field"><input class="inp" dir="ltr" data-f="mapLink" id="mapin" value="${esc(d.mapLink || '')}" placeholder="${t('الصق لينك الموقع أو الإحداثيات')}">
+  <button type="button" class="btn sm" id="mapgps">📍 ${t('موقعي الحالي')}</button><a class="btn sm" id="mapgo" target="_blank" rel="noopener noreferrer">🗺 ${t('فتح')}</a></div>
+  <small class="muted" id="mapmsg">${t('من خرائط جوجل: اضغط على مكان المزرعة ثم "مشاركة" ثم "نسخ الرابط" والصقه هنا')}</small></div>`;
+function bindMap(root) {
+  const inp = $('#mapin', root), go = $('#mapgo', root), msg = $('#mapmsg', root);
+  if (!inp) return;
+  const sync = () => {
+    const u = mapUrl(inp.value);
+    go.hidden = !u;
+    if (u) go.href = u; else go.removeAttribute('href');
+    inp.classList.toggle('bad-inp', !!inp.value.trim() && !u);
+  };
+  inp.oninput = sync;
+  $('#mapgps', root).onclick = () => {
+    if (!navigator.geolocation) { toast(t('المتصفح لا يدعم تحديد الموقع'), 'err'); return; }
+    msg.textContent = t('جارٍ تحديد الموقع...');
+    navigator.geolocation.getCurrentPosition(p => {
+      inp.value = `${p.coords.latitude.toFixed(6)}, ${p.coords.longitude.toFixed(6)}`;
+      msg.textContent = t('تم أخذ الموقع بدقة {m} متر تقريبًا', { m: Math.round(p.coords.accuracy) });
+      sync();
+    }, e => {
+      msg.textContent = '';
+      toast(e.code === 1 ? t('يلزم السماح للمتصفح بالوصول إلى الموقع') : t('تعذر تحديد الموقع، حاول مرة أخرى'), 'err');
+    }, { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 });
+  };
+  sync();
+}
+const mapError = v => v && !mapUrl(v) ? t('لينك موقع المزرعة غير صحيح. الصق لينك من خرائط جوجل أو إحداثيات مثل 30.0444, 31.2357') : '';
 const missingRequired = (root, domainId, values) => activeFields(domainId).filter(f => f.required && $(`[data-cf="${f.id}"]`, root) && !String(values[f.id] ?? '').trim());
 
 function openWizard(market = 'egypt', preset = {}) {
@@ -3209,6 +3281,7 @@ function openWizard(market = 'egypt', preset = {}) {
     if (step === 1) {
       if (d.market === 'egypt' && !d.govCode) return t('يرجى اختيار المحافظة');
       if (d.market === 'intl' && !d.country) return t('يرجى اختيار الدولة');
+      if (mapError(d.mapLink)) return mapError(d.mapLink);
     }
     if (step === 2 && !d.crops.length) return t('يرجى اختيار محصول واحد على الأقل، فهو ما يربط العميل بموسمه');
     if (step === 3 && !d.rating) return t('يرجى اختيار تقييم العميل');
@@ -3234,8 +3307,8 @@ function openWizard(market = 'egypt', preset = {}) {
         ${categoryChips(d)}
         <div class="grid2">${customFieldInputs('basic', d)}</div>`,
       () => d.market === 'egypt'
-        ? `${locationFields('x', d)}<div class="field"><label>${t('العنوان بالتفصيل')}</label><input class="inp" data-f="address" value="${esc(d.address)}" placeholder="${t('القرية، الجمعية، علامة مميزة')}"></div>`
-        : `<div class="field"><label>${t('الدولة')} <span class="req">*</span></label><select class="inp" data-f="country">${countryOptions(d.country)}</select></div><div class="field"><label>${t('العنوان')}</label><input class="inp" data-f="address" value="${esc(d.address)}"></div>`,
+        ? `${locationFields('x', d)}<div class="field"><label>${t('العنوان بالتفصيل')}</label><input class="inp" data-f="address" value="${esc(d.address)}" placeholder="${t('القرية، الجمعية، علامة مميزة')}"></div>${mapField(d)}`
+        : `<div class="field"><label>${t('الدولة')} <span class="req">*</span></label><select class="inp" data-f="country">${countryOptions(d.country)}</select></div><div class="field"><label>${t('العنوان')}</label><input class="inp" data-f="address" value="${esc(d.address)}"></div>${mapField(d)}`,
       () => `<div class="grid3"><div class="field"><label>${t('المساحة (فدان)')}</label><input class="inp" type="number" min="0" data-f="area" value="${esc(d.area)}"></div>
         <div class="field"><label>${t('نوع الري')}</label><select class="inp" data-f="irrigation">${optsT(DB.lists.irrigation, d.irrigation, t('اختر'))}</select></div>
         <div class="field"><label>${t('مصدر المياه')}</label><select class="inp" data-f="waterSource">${optsT(DB.lists.waterSource, d.waterSource, t('اختر'))}</select></div></div>
@@ -3265,6 +3338,7 @@ function openWizard(market = 'egypt', preset = {}) {
       bindCategory(box, d);
     }
     if (step === 1 && d.market === 'egypt') bindLocation(box, 'x', d);
+    if (step === 1) bindMap(box);
     if (step === 2) {
       bindCropPicker(box, d);
       const drawFiles = () => {
@@ -3385,7 +3459,7 @@ function openCustomer(id, tab = 'journey') {
     if (can('aftersales.view')) tabs.push(['after', t('ما بعد البيع ({n})', { n: after.length })]);
     if (showSupport) tabs.push(['support', t('الدعم الفني ({n})', { n: tickets.length })]);
     tabs.push(['log', t('سجل التعديلات ({n})', { n: history.length })]);
-    dr.innerHTML = `<div class="drawer-h"><div style="display:flex;gap:8px;align-items:flex-start"><div style="flex:1"><h2>${esc(c.name)}</h2><div class="meta">${esc(c.code)} · ${esc(custLocation(c))} · ${esc(userName(c.ownerId))}</div></div><button class="modal-x" style="color:#fff" id="dx" aria-label="${t('إغلاق')}">×</button></div>
+    dr.innerHTML = `<div class="drawer-h"><div style="display:flex;gap:8px;align-items:flex-start"><div style="flex:1"><h2>${esc(c.name)}</h2><div class="meta">${esc(c.code)} · ${esc(custLocation(c))} · ${esc(userName(c.ownerId))}</div>${mapUrl(c.mapLink) ? `<a class="map-chip" href="${esc(mapUrl(c.mapLink))}" target="_blank" rel="noopener noreferrer">📍 ${t('موقع المزرعة')}</a>` : ''}</div><button class="modal-x" style="color:#fff" id="dx" aria-label="${t('إغلاق')}">×</button></div>
       <div class="chips mt">${can('followups.add') && can('customers.view_phones') ? `<button class="btn sm call" id="dcall">📞 ${t('اتصال وتسجيل متابعة')}</button>` : ''}${can('followups.add') ? `<button class="btn sm" id="dfu">🎙 ${t('متابعة صوتية')}</button>` : ''}${can('stages.move') ? `<button class="btn sm" id="dst">➜ ${t('تغيير المرحلة')}</button>` : ''}${can('orders.create') ? `<button class="btn sm" id="dord">+ ${t('طلب')}</button>` : ''}${showSupport && can('support.create') ? `<button class="btn sm" id="dtk">🛠 ${t('طلب دعم')}</button>` : ''}${can('customers.share') && (can('customers.view_all') || c.ownerId === ME.id) ? `<button class="btn sm" id="dsh">🔗 ${t('تعيين لزميل')}</button>` : ''}${can('customers.edit') ? `<button class="btn sm" id="ded">${t('تعديل')}</button>` : ''}${can('customers.archive') ? `<button class="btn sm danger" id="darc">${t('أرشفة')}</button>` : ''}</div></div>
       <div class="drawer-b">
       ${season.length ? `<div class="demo-banner"><b>${t('موسم الشهر:')}</b> ${season.map(s => `${t(s.kind === 'plant' ? 'زراعة' : 'حصاد')} ${esc(tv(s.crop))}${s.start ? ` (${t('بداية الموسم')})` : ''}`).join(' · ')}</div>` : ''}
@@ -3420,7 +3494,7 @@ function openCustomer(id, tab = 'journey') {
       body.innerHTML = `<div class="card"><div class="kv">
         ${c.buyerClass ? kv(t('تصنيف العميل المشتري'), buyerClassPill(c.buyerClass)) : ''}${kv(t('تصنيف العميل'), c.category ?`${categoryPill(c.category)}${c.partnerId ? ` <span class="muted">${t('مسجل في قائمة الموزعين')}</span>` : ''}` : '')}${kv(t('عن طريق الوكيل أو الموزع'), esc(distName(c.viaDistributorId)))}${c.market === 'intl' ? kv(t('وكيل الدولة'), esc(territoryPartners(c).map(d => d.name).join('، '))) : ''}
         ${kv(t('رقم الهاتف 1'), phoneLink(c.phone1))}${kv(t('رقم الهاتف 2'), phoneLink(c.phone2))}
-        ${kv(t('العنوان'), esc(custAddress(c)))}${kv(t('كود المنطقة'), c.subCode || c.govCode ? `<span class="code-tag">${esc(c.subCode || c.govCode)}</span>` : '')}
+        ${kv(t('العنوان'), esc(custAddress(c)))}${kv(t('موقع المزرعة'), mapLinkHtml(c.mapLink))}${kv(t('كود المنطقة'), c.subCode || c.govCode ? `<span class="code-tag">${esc(c.subCode || c.govCode)}</span>` : '')}
         ${activeDomains().length > 1 ? kv(t('المجال'), esc(label(DB.domains.find(x => x.id === c.domainId)))) : ''}${kv(t('المرحلة'), stagePill(c))}
         ${kv(t('المساحة'), c.area === '' ? '' : `${esc(c.area)} ${t('فدان')}`)}${kv(t('نوع الري'), esc(tv(c.irrigation)))}
         ${kv(t('نوع المحصول'), esc(c.crops.map(tv).join(LANG === 'en' ? ', ' : '، ')))}${kv(t('درجة ملوحة المياه'), esc(c.salinity))}
@@ -3488,6 +3562,7 @@ function openEditCustomer(id, onDone) {
       ${categoryChips(d)}
       ${c.market === 'egypt' ? locationFields('e', d) : `<div class="field"><label>${t('الدولة')}</label><select class="inp" data-f="country">${countryOptions(c.country)}</select></div>`}
       <div class="field"><label>${t('العنوان')}</label><input class="inp" data-f="address" value="${esc(c.address)}"></div>
+      ${mapField(c)}
       <div class="grid3"><div class="field"><label>${t('المساحة (فدان)')}</label><input class="inp" type="number" data-f="area" value="${esc(c.area)}"></div><div class="field"><label>${t('نوع الري')}</label><select class="inp" data-f="irrigation">${optsT(DB.lists.irrigation, c.irrigation, t('اختر'))}</select></div><div class="field"><label>${t('مصدر المياه')}</label><select class="inp" data-f="waterSource">${optsT(DB.lists.waterSource, c.waterSource, t('اختر'))}</select></div></div>
       <div class="field"><label>${t('درجة ملوحة المياه')}</label><input class="inp" dir="ltr" data-f="salinity" value="${esc(c.salinity)}"></div>
       <div class="field"><label>${t('نوع المحصول')}</label>${cropPicker()}</div>
@@ -3501,6 +3576,7 @@ function openEditCustomer(id, onDone) {
   });
   if (c.market === 'egypt') bindLocation(m.el, 'e', d);
   bindCropPicker(m.el, d);
+  bindMap(m.el);
   bindDevice(m.el, c);
   bindCategory(m.el, d);
   bindVia(m.el);
@@ -3514,6 +3590,7 @@ function openEditCustomer(id, onDone) {
     Object.assign(patch, readDevice(m.el));
     const shareTo = $('#asst', m.el) ? $$('#asst .chip.on', m.el).map(b => b.dataset.u) : null;
     if (!patch.name || !patch.phone1) { toast(t('الاسم ورقم الهاتف 1 مطلوبان'), 'err'); return; }
+    if (mapError(patch.mapLink)) { toast(mapError(patch.mapLink), 'err'); return; }
     const miss = missingRequired(m.el, c.domainId, patch.custom);
     if (miss.length) { toast(t('يرجى إدخال: {f}', { f: label(miss[0]) }), 'err'); return; }
     const dup = findDuplicate([patch.phone1, patch.phone2], c.id);
