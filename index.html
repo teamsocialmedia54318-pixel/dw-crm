@@ -317,8 +317,9 @@ html { -webkit-text-size-adjust: 100%; }
   .btn.sm { min-height: 34px; }
   .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8px; }
   .kpi .v { font-size: 20px; }
-  .modal-back { padding: 0; align-items: stretch; }
-  .modal, .modal.wide { max-width: none; min-height: 100%; border-radius: 0; display: flex; flex-direction: column; }
+  /* النافذة تطول مع محتواها فتبقى الخلفية البيضاء خلف كل الحقول عند التمرير */
+  .modal-back { padding: 0; display: block; background: #fff; overscroll-behavior: contain; }
+  .modal, .modal.wide { max-width: none; min-height: 100%; height: auto; border-radius: 0; display: flex; flex-direction: column; box-shadow: none; }
   .modal-h { position: sticky; top: 0; background: #fff; z-index: 2; }
   .modal-b { flex: 1; }
   .modal-f { position: sticky; bottom: 0; background: #fff; z-index: 2; padding-bottom: calc(11px + env(safe-area-inset-bottom)); }
