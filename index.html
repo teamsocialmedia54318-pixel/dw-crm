@@ -458,6 +458,12 @@ html { -webkit-text-size-adjust: 100%; }
 button.kpi { font: inherit; text-align: start; width: 100%; cursor: pointer; color: inherit; }
 button.kpi:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
 .jump-target { scroll-margin-top: 76px; }
+/* ميكروفون صغير بجانب حقل نص (ملاحظة أول مكالمة) */
+.mic-box.mic-inline { display: flex; align-items: center; gap: 10px; text-align: start; padding: 0 0 8px; }
+.mic-inline .mic { width: 46px; height: 46px; font-size: 20px; flex: none; }
+.mic-inline .mic-status { margin-top: 0; }
+/* الرقم المختار حاليًا كفلتر */
+.kpi.kpi-on { border-color: var(--teal); box-shadow: 0 0 0 2px var(--teal) inset, var(--shadow); }
 </style>
 </head>
 <body>
@@ -726,7 +732,7 @@ const countryOptions = sel => opts(COUNTRIES.map(c => [c.name, countryLabel(c.na
 const DV = {
   'يناير': 'January', 'فبراير': 'February', 'مارس': 'March', 'إبريل': 'April', 'مايو': 'May', 'يونيو': 'June', 'يوليو': 'July', 'أغسطس': 'August', 'سبتمبر': 'September', 'أكتوبر': 'October', 'نوفمبر': 'November', 'ديسمبر': 'December',
   'مميز': 'Premium', 'جيد جدًا': 'Very good', 'جيد': 'Good', 'ضعيف': 'Weak',
-  'تم الرد': 'Answered', 'لم يرد': 'No answer', 'مشغول': 'Busy', 'رقم خطأ': 'Wrong number', 'تم البيع': 'Sold', 'غير مهتم': 'Not interested',
+  'تم الرد': 'Answered', 'لم يرد': 'No answer', 'مشغول': 'Busy', 'غير متاح / مغلق': 'Unavailable / switched off', 'خارج الخدمة': 'Out of service', 'رقم خطأ': 'Wrong number', 'تم البيع': 'Sold', 'غير مهتم': 'Not interested',
   'مصر': 'Egypt', 'الأسكندرية': 'Alexandria', 'البحيرة (الصحراوي)': 'Beheira (Desert Road)', 'المنوفية': 'Monufia', 'الجيزة': 'Giza', 'القاهرة': 'Cairo', 'مطروح': 'Matrouh', 'البحيرة': 'Beheira', 'الشرقية': 'Sharqia', 'كفر الشيخ': 'Kafr El Sheikh', 'الإسماعيلية': 'Ismailia', 'دمياط': 'Damietta', 'القليوبية': 'Qalyubia', 'الغربية': 'Gharbia', 'الدقهلية': 'Dakahlia', 'الفيوم': 'Fayoum', 'بني سويف': 'Beni Suef', 'المنيا': 'Minya', 'أسيوط': 'Assiut', 'سوهاج': 'Sohag', 'قنا': 'Qena', 'الأقصر': 'Luxor', 'أسوان': 'Aswan', 'البحر الأحمر': 'Red Sea', 'سيناء': 'Sinai', 'بورسعيد': 'Port Said', 'السويس': 'Suez', 'سيوة': 'Siwa', 'الوادي الجديد': 'New Valley',
   'تنقيط': 'Drip', 'رش': 'Sprinkler', 'محوري': 'Center pivot', 'غمر': 'Flood', 'تسطير': 'Furrow', 'مختلط': 'Mixed',
   'بئر': 'Well', 'ترعة / نيل': 'Canal / Nile', 'صرف معالج': 'Treated drainage', 'خلط': 'Blended', 'تحلية': 'Desalinated',
@@ -902,6 +908,8 @@ const EN = {
   'تصدير أعمال اليوم': "Export today's work", 'الموظف': 'Employee', 'النتيجة': 'Outcome', 'ما كُتب في المتابعة': 'Follow-up notes', 'بدون': 'None', 'لم تُسجَّل أعمال اليوم بعد': 'No work recorded today yet',
   'أعمال اليوم': "Today's work", 'نتيجة المتابعة': 'Follow-up outcome', 'المرحلة الحالية': 'Current stage',
   'متابعات سُجّلت اليوم': 'Follow-ups logged today', 'عملاء أُضيفوا اليوم': 'Customers added today',
+  'اختياري: اكتب أو سجّل صوتيًا': 'Optional: type or record by voice',
+  'قيد التنفيذ (مُسند أو جارٍ)': 'In progress (assigned or ongoing)', 'تم حلها (محلول أو مغلق)': 'Solved (resolved or closed)', 'العاجلة فقط': 'Urgent only',
 };
 
 </script>
@@ -1090,7 +1098,7 @@ const PAY_TYPES = { cash: 'نقدًا', installment: 'تقسيط', deposit: 'م�
 const ORDER_STATUS = { active: 'سارية', postponed: 'مؤجلة', cancelled: 'ملغاة', delivered: 'تم التسليم' };
 const TICKET_STATUS = { new: 'جديد', assigned: 'مُسند', in_progress: 'قيد التنفيذ', resolved: 'تم الحل', closed: 'مغلق' };
 const TICKET_PRIORITY = { high: 'عاجل', normal: 'عادي', low: 'منخفض' };
-const OUTCOMES = ['تم الرد', 'لم يرد', 'مشغول', 'رقم خطأ', 'تم البيع', 'غير مهتم'];
+const OUTCOMES = ['تم الرد', 'لم يرد', 'مشغول', 'غير متاح / مغلق', 'خارج الخدمة', 'رقم خطأ', 'تم البيع', 'غير مهتم'];
 const curLabel = o => t(o.currency === 'USD' ? 'دولار' : 'ج.م');
 
 const FIELD_LABELS = {
@@ -2931,6 +2939,14 @@ function bindMic(root, { mic, status, input, onVoice }) {
   return stop;
 }
 
+// رقم في أعلى الصفحة يعمل كاختصار: الضغط عليه يطبّق فلتر قائمته وينزل إليها، والضغط مرة أخرى يلغيه
+const kpiBtn = (key, label, value, cls = '', active = false) => `<button type="button" class="kpi link ${cls} ${active ? 'kpi-on' : ''}" data-kf="${key}" aria-pressed="${active}"><div class="l">${label}</div><div class="v">${value}</div></button>`;
+function bindKpis(root, apply) {
+  $$('[data-kf]', root).forEach(b => b.onclick = () => {
+    apply(b.dataset.kf, b.classList.contains('kpi-on'));
+    requestAnimationFrame(() => $('#kpi-list', root)?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  });
+}
 </script>
 <script>
 // سجل العملاء (مصر والخارج)، إدخال عميل جديد، ملف العميل ومساره، الرفع من إكسيل
@@ -3274,7 +3290,10 @@ function openWizard(market = 'egypt', preset = {}) {
   const pending = [];
   const m = openModal({ title: t('عميل جديد'), wide: true, body: '<div id="w"></div>', footer: `<button class="btn primary" id="nx">${t('التالي')}</button><button class="btn" id="bk">${t('السابق')}</button><span class="spacer"></span><span class="muted" id="st"></span>` });
   const box = $('#w', m.el);
+  // ميكروفون ملاحظة أول مكالمة: يتوقف عند الانتقال بين الخطوات أو الحفظ
+  let stopNoteMic = () => {};
   const collect = () => {
+    stopNoteMic();
     $$('[data-f]', box).forEach(el => { d[el.dataset.f] = el.value.trim ? el.value.trim() : el.value; });
     if ($('#xgov', box)) { d.govCode = $('#xgov', box).value; d.subCode = $('#xsub', box).value; }
     if ($('#device', box)) Object.assign(d, readDevice(box));
@@ -3329,7 +3348,9 @@ function openWizard(market = 'egypt', preset = {}) {
         <div class="field"><label>${t('تقييم العميل')} <span class="req">*</span></label><div class="chips" id="rate">${RATINGS.map(r => `<button type="button" class="chip ${d.rating === r ? 'on' : ''}" data-r="${r}">${tv(r)}</button>`).join('')}</div></div>
         <div class="grid2">${customFieldInputs('request', d)}</div>`,
       () => `<div class="grid2"><div class="field"><label>${t('تاريخ الاتصال')}</label><input class="inp" type="date" data-f="contactDate" value="${d.contactDate}"></div><div class="field"><label>${t('تاريخ المتابعة التالية')} <span class="req">*</span></label><input class="inp" type="date" data-f="followupDate" min="${today()}" value="${d.followupDate}"></div></div>
-        <div class="field"><label>${t('ملاحظة أول مكالمة')}</label><textarea class="inp" data-f="firstNote" placeholder="${t('اختياري')}">${esc(d.firstNote)}</textarea></div>`,
+        <div class="field"><label>${t('ملاحظة أول مكالمة')}</label>
+        <div class="mic-box mic-inline"><button type="button" class="mic" id="fmic" aria-label="${t('تسجيل صوتي')}">🎙</button><div class="mic-status" id="fms"></div></div>
+        <textarea class="inp" data-f="firstNote" id="fnote1" rows="4" placeholder="${t('اختياري: اكتب أو سجّل صوتيًا')}">${esc(d.firstNote)}</textarea></div>`,
     ];
     box.innerHTML = pre + steps[step]();
     $('#st', m.el).textContent = t('الخطوة {a} من {b}', { a: step + 1, b: STEPS.length });
@@ -3348,6 +3369,7 @@ function openWizard(market = 'egypt', preset = {}) {
     }
     if (step === 1 && d.market === 'egypt') bindLocation(box, 'x', d);
     if (step === 1) bindMap(box);
+    if (step === 4) stopNoteMic = bindMic(box, { mic: '#fmic', status: '#fms', input: '#fnote1' });
     if (step === 2) {
       bindCropPicker(box, d);
       const drawFiles = () => {
@@ -3709,7 +3731,7 @@ function openFollowup(customerId, { locked, onDone, phase } = {}) {
   $$('#oc .chip', m.el).forEach(b => b.onclick = () => {
     outcome = b.dataset.o;
     $$('#oc .chip', m.el).forEach(x => x.classList.toggle('on', x === b));
-    if (['لم يرد', 'مشغول'].includes(outcome)) next.value = addDays(today(), 1);
+    if (['لم يرد', 'مشغول', 'غير متاح / مغلق', 'خارج الخدمة'].includes(outcome)) next.value = addDays(today(), 1);
     if (['رقم خطأ', 'غير مهتم'].includes(outcome)) next.value = '';
   });
   $$('#quick .chip', m.el).forEach(b => b.onclick = () => { next.value = b.dataset.n ? addDays(today(), +b.dataset.n) : ''; });
@@ -4259,16 +4281,17 @@ function viewAfterSales(root) {
   const buyers = new Set(visibleOrders().filter(countsAsSale).map(o => o.customerId));
   root.innerHTML = `<div class="page-head"><h1>${t('متابعات ما بعد البيع')}</h1><div class="hint">${t('تُنشأ المتابعات تلقائيًا عند تسليم الطلب وفق الخطة المحددة في الإعدادات')}</div></div>
   <div class="kpis">
-    <div class="kpi"><div class="l">${t('العملاء المشترون')}</div><div class="v">${buyers.size}</div></div>
-    <div class="kpi ${due.length ? 'alert' : 'ok'}"><div class="l">${t('متابعات مستحقة')}</div><div class="v">${due.length}</div></div>
-    <div class="kpi"><div class="l">${t('متابعات قادمة')}</div><div class="v">${coming.length}</div></div>
-    <div class="kpi ok"><div class="l">${t('متابعات منجزة')}</div><div class="v">${done.length}</div></div>
-    <div class="kpi"><div class="l">${t('متوسط رضا العملاء')}</div><div class="v">${avg ? avg.toFixed(1) : '—'} <small>/ 5</small></div></div>
+    ${kpiBtn('buyers', t('العملاء المشترون'), buyers.size, '', st.tab === 'buyers')}
+    ${kpiBtn('due', t('متابعات مستحقة'), due.length, due.length ? 'alert' : 'ok', st.tab === 'due')}
+    ${kpiBtn('coming', t('متابعات قادمة'), coming.length, '', st.tab === 'coming')}
+    ${kpiBtn('done', t('متابعات منجزة'), done.length, 'ok', st.tab === 'done')}
+    ${kpiBtn('done', t('متوسط رضا العملاء'), `${avg ? avg.toFixed(1) : '—'} <small>/ 5</small>`, '', false)}
   </div>
-  <div class="tabs">${[['due', 'مستحقة', due.length], ['coming', 'قادمة', coming.length], ['done', 'منجزة', done.length], ['buyers', 'العملاء المشترون', buyers.size]].map(([k, l, n]) => `<button class="tab ${st.tab === k ? 'on' : ''}" data-t="${k}">${t(l)} <span class="c">(${n})</span></button>`).join('')}</div>
+  <div class="tabs jump-target" id="kpi-list">${[['due', 'مستحقة', due.length], ['coming', 'قادمة', coming.length], ['done', 'منجزة', done.length], ['buyers', 'العملاء المشترون', buyers.size]].map(([k, l, n]) => `<button class="tab ${st.tab === k ? 'on' : ''}" data-t="${k}">${t(l)} <span class="c">(${n})</span></button>`).join('')}</div>
   <div class="filters"><input class="inp search" id="q" placeholder="${t('ابحث باسم العميل')}" value="${esc(st.q)}">${can('customers.view_all') ? `<select class="inp" id="rep" aria-label="${t('رجل البيع')}">${repOptions(st.rep)}</select>` : ''}${dateRangeHtml(st, t('الموعد من'))}<span class="spacer"></span>${canExport() ? `<button class="btn" id="exp">⬇ ${t('تصدير')}</button>` : ''}</div><div id="al"></div>`;
   let shown = [];
   $$('.tab', root).forEach(b => b.onclick = () => { st.tab = b.dataset.t; viewAfterSales(root); });
+  bindKpis(root, k => { st.tab = k; viewAfterSales(root); });
   const draw = () => {
     const el = $('#al', root);
     const q = st.q.trim();
@@ -4346,23 +4369,25 @@ function openScheduleAfterSale(customerId, onDone) {
 }
 
 // ------- الدعم الفني -------
-const supState = { status: 'open', q: '', assigned: '', from: '', to: '' };
+const supState = { status: 'open', prio: '', q: '', assigned: '', from: '', to: '' };
+// حالات مجمّعة للاختصارات: "قيد التنفيذ" تشمل المُسند والجاري، و"تم حلها" تشمل المحلول والمغلق
+const supStatusOk = (x, s) => s === 'all' || (s === 'open' ? ticketOpen(x) : s === 'prog' ? ['assigned', 'in_progress'].includes(x.status) : s === 'done' ? !ticketOpen(x) : x.status === s);
 function viewSupport(root) {
   const st = supState;
   const all = visibleTickets();
   const open = all.filter(ticketOpen);
   root.innerHTML = `<div class="page-head"><h1>${t('الدعم الفني')}</h1><span class="spacer"></span>${can('support.create') ? `<button class="btn primary" id="add">+ ${t('طلب دعم جديد')}</button>` : ''}<div class="hint">${t('خدمة إضافية لعملاء مصر فقط')}</div></div>
   <div class="kpis">
-    <div class="kpi ${all.some(x => x.status === 'new') ? 'alert' : 'ok'}"><div class="l">${t('طلبات جديدة')}</div><div class="v">${all.filter(x => x.status === 'new').length}</div></div>
-    <div class="kpi warn"><div class="l">${t('قيد التنفيذ')}</div><div class="v">${all.filter(x => ['assigned', 'in_progress'].includes(x.status)).length}</div></div>
-    <div class="kpi ${open.some(x => x.priority === 'high') ? 'alert' : ''}"><div class="l">${t('طلبات عاجلة مفتوحة')}</div><div class="v">${open.filter(x => x.priority === 'high').length}</div></div>
-    <div class="kpi ok"><div class="l">${t('تم حلها')}</div><div class="v">${all.filter(x => !ticketOpen(x)).length}</div></div>
+    ${kpiBtn('new', t('طلبات جديدة'), all.filter(x => x.status === 'new').length, all.some(x => x.status === 'new') ? 'alert' : 'ok', st.status === 'new' && !st.prio)}
+    ${kpiBtn('prog', t('قيد التنفيذ'), all.filter(x => ['assigned', 'in_progress'].includes(x.status)).length, 'warn', st.status === 'prog' && !st.prio)}
+    ${kpiBtn('urgent', t('طلبات عاجلة مفتوحة'), open.filter(x => x.priority === 'high').length, open.some(x => x.priority === 'high') ? 'alert' : '', st.prio === 'high')}
+    ${kpiBtn('done', t('تم حلها'), all.filter(x => !ticketOpen(x)).length, 'ok', st.status === 'done' && !st.prio)}
   </div>
-  <div class="filters"><input class="inp search" id="q" placeholder="${t('ابحث برقم الطلب أو اسم العميل')}" value="${esc(st.q)}"><select class="inp" id="s" aria-label="${t('الحالة')}">${opts([['open', t('المفتوحة')], ['all', t('الكل')], ...Object.entries(TICKET_STATUS).map(([k, v]) => [k, t(v)])], st.status)}</select>${can('support.manage') ? `<select class="inp" id="as" aria-label="${t('مُسند إلى')}">${opts(DB.users.filter(u => u.active && userCan(u, 'support.manage')).map(u => [u.id, u.name]), st.assigned, t('الجميع'))}</select>` : ''}${dateRangeHtml(st)}<span class="spacer"></span>${canExport() ? `<button class="btn" id="exp">⬇ ${t('تصدير')}</button>` : ''}</div><div id="tl"></div>`;
+  <div class="filters jump-target" id="kpi-list"><input class="inp search" id="q" placeholder="${t('ابحث برقم الطلب أو اسم العميل')}" value="${esc(st.q)}"><select class="inp" id="s" aria-label="${t('الحالة')}">${opts([['open', t('المفتوحة')], ['all', t('الكل')], ['prog', t('قيد التنفيذ (مُسند أو جارٍ)')], ['done', t('تم حلها (محلول أو مغلق)')], ...Object.entries(TICKET_STATUS).map(([k, v]) => [k, t(v)])], st.status)}</select>${st.prio ? `<button class="chip on" id="prioX">⚠ ${t('العاجلة فقط')} ×</button>` : ''}${can('support.manage') ? `<select class="inp" id="as" aria-label="${t('مُسند إلى')}">${opts(DB.users.filter(u => u.active && userCan(u, 'support.manage')).map(u => [u.id, u.name]), st.assigned, t('الجميع'))}</select>` : ''}${dateRangeHtml(st)}<span class="spacer"></span>${canExport() ? `<button class="btn" id="exp">⬇ ${t('تصدير')}</button>` : ''}</div><div id="tl"></div>`;
   let shown = [];
   const draw = () => {
     const q = st.q.trim();
-    const list = all.filter(x => (st.status === 'all' || (st.status === 'open' ? ticketOpen(x) : x.status === st.status)) && (!st.assigned || x.assignedTo === st.assigned) && inDateRange(x.createdAt, st) && (!q || x.no.includes(q) || custById(x.customerId)?.name.includes(q)))
+    const list = all.filter(x => supStatusOk(x, st.status) && (!st.prio || x.priority === st.prio) && (!st.assigned || x.assignedTo === st.assigned) && inDateRange(x.createdAt, st) && (!q || x.no.includes(q) || custById(x.customerId)?.name.includes(q)))
       .sort((a, b) => (a.priority === 'high' ? 0 : 1) - (b.priority === 'high' ? 0 : 1) || b.createdAt.localeCompare(a.createdAt));
     const el = $('#tl', root);
     el.innerHTML = list.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>${t('رقم الطلب')}</th><th>${t('العميل')}</th><th>${t('الموقع')}</th><th>${t('النوع')}</th><th>${t('الأولوية')}</th><th>${t('الحالة')}</th><th>${t('مُسند إلى')}</th><th>${t('موعد الزيارة')}</th><th>${t('تاريخ الطلب')}</th></tr></thead><tbody>${list.map(x => {
@@ -4378,7 +4403,15 @@ function viewSupport(root) {
   const add = $('#add', root);
   if (add) add.onclick = () => openTicketForm(null, () => viewSupport(root));
   $('#q', root).oninput = e => { st.q = e.target.value; draw(); };
-  $('#s', root).onchange = e => { st.status = e.target.value; draw(); };
+  $('#s', root).onchange = e => { st.status = e.target.value; viewSupport(root); };
+  const prioX = $('#prioX', root);
+  if (prioX) prioX.onclick = () => { st.prio = ''; viewSupport(root); };
+  bindKpis(root, (k, on) => {
+    if (on) { st.status = 'open'; st.prio = ''; }
+    else if (k === 'urgent') { st.status = 'open'; st.prio = 'high'; }
+    else { st.status = k; st.prio = ''; }
+    viewSupport(root);
+  });
   const as = $('#as', root);
   if (as) as.onchange = () => { st.assigned = as.value; draw(); };
   draw();
@@ -4499,6 +4532,10 @@ const buyerRow = c => {
 function viewBuyers(root) {
   const st = buyersState;
   const all = buyersList(), td = today();
+  // أرقام الأعلى تُحسب دون فلتر المتابعة، حتى تبقى ثابتة عند الضغط عليها
+  const follow = st.follow; st.follow = '';
+  const base = follow ? buyersList() : all;
+  st.follow = follow;
   const pages = Math.max(1, Math.ceil(all.length / PAGE_SIZE));
   st.page = Math.min(st.page, pages);
   const rows = all.slice((st.page - 1) * PAGE_SIZE, st.page * PAGE_SIZE).map(buyerRow);
@@ -4507,13 +4544,13 @@ function viewBuyers(root) {
     ${can('customers.import') ? `<button class="btn" id="imp">⬆ ${t('رفع ملف إكسيل')}</button>` : ''}${canExport() ? `<button class="btn" id="exp">⬇ ${t('تصدير')}</button>` : ''}
     <div class="hint">${t('متابعة مستقلة لمن اشترى بالفعل، بموعد منفصل عن متابعة البيع')}</div></div>
   <div class="kpis">
-    <div class="kpi"><div class="l">${t('العملاء المشترون')}</div><div class="v">${all.length}</div></div>
-    <div class="kpi warn"><div class="l">${t('متابعات اليوم')}</div><div class="v">${all.filter(c => afterDueOf(c) === td).length}</div></div>
-    <div class="kpi ${all.some(c => afterDueOf(c) && afterDueOf(c) < td) ? 'alert' : 'ok'}"><div class="l">${t('متابعات متأخرة')}</div><div class="v">${all.filter(c => afterDueOf(c) && afterDueOf(c) < td).length}</div></div>
-    <div class="kpi"><div class="l">${t('بلا موعد متابعة')}</div><div class="v">${all.filter(c => !afterDueOf(c)).length}</div></div>
+    ${kpiBtn('all', t('العملاء المشترون'), base.length, '', !st.follow)}
+    ${kpiBtn('today', t('متابعات اليوم'), base.filter(c => afterDueOf(c) === td).length, 'warn', st.follow === 'today')}
+    ${kpiBtn('late', t('متابعات متأخرة'), base.filter(c => afterDueOf(c) && afterDueOf(c) < td).length, base.some(c => afterDueOf(c) && afterDueOf(c) < td) ? 'alert' : 'ok', st.follow === 'late')}
+    ${kpiBtn('none', t('بلا موعد متابعة'), base.filter(c => !afterDueOf(c)).length, '', st.follow === 'none')}
   </div>
   <div class="chips" style="margin-bottom:10px">${BUYER_CLASSES.map(k => `<button class="chip ${st.cls === k ? 'on' : ''}" data-cls="${k}" dir="ltr">${k}: ${all.filter(c => c.buyerClass === k).length}</button>`).join('')}<button class="chip ${st.cls === 'none' ? 'on' : ''}" data-cls="none">${t('بدون تصنيف')}: ${all.filter(c => !c.buyerClass).length}</button></div>
-  <div class="filters"><input class="inp search" id="q" placeholder="${t('ابحث بالاسم أو الرقم أو الكود')}" value="${esc(st.q)}"><select class="inp" id="gov" aria-label="${t('المحافظة')}">${govOptions(st.gov)}</select>${can('customers.view_all') ? `<select class="inp" id="rep" aria-label="${t('رجل البيع')}">${repOptions(st.rep)}</select>` : ''}<select class="inp" id="follow" aria-label="${t('المتابعة')}">${optsT([['today', 'متابعات اليوم'], ['late', 'متأخرة'], ['none', 'بلا موعد متابعة']], st.follow, t('جميع المتابعات'))}</select>${dateRangeHtml(st, t('تاريخ الشراء من'))}</div>
+  <div class="filters jump-target" id="kpi-list"><input class="inp search" id="q" placeholder="${t('ابحث بالاسم أو الرقم أو الكود')}" value="${esc(st.q)}"><select class="inp" id="gov" aria-label="${t('المحافظة')}">${govOptions(st.gov)}</select>${can('customers.view_all') ? `<select class="inp" id="rep" aria-label="${t('رجل البيع')}">${repOptions(st.rep)}</select>` : ''}<select class="inp" id="follow" aria-label="${t('المتابعة')}">${optsT([['today', 'متابعات اليوم'], ['late', 'متأخرة'], ['none', 'بلا موعد متابعة']], st.follow, t('جميع المتابعات'))}</select>${dateRangeHtml(st, t('تاريخ الشراء من'))}</div>
   ${assign ? `<div class="bulk-bar" id="bulk" ${st.selected.size ? '' : 'hidden'}><b id="selN"></b><select class="inp" id="toRep" aria-label="${t('رجل البيع')}">${repOptions('', t('اختر رجل البيع'))}</select><button class="btn primary" id="doMove">${t('تحويل المحدد')}</button><button class="btn" id="clr">${t('إلغاء التحديد')}</button></div>` : ''}
   ${rows.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr>${assign ? `<th><input type="checkbox" id="all" aria-label="${t('تحديد الكل')}"></th>` : ''}<th class="sticky-col">${t('الاسم')}</th><th>${t('تصنيف العميل المشتري')}</th><th>${t('الهاتف')}</th><th>${t('الموقع')}</th><th>${t('الجهاز')}</th><th>${t('تاريخ الشراء')}</th><th>${t('الموزع')}</th><th>${t('رجل البيع')}</th><th>${t('آخر متابعة بعد البيع')}</th><th>${t('المتابعة القادمة')}</th><th></th></tr></thead><tbody>${rows.map(r => `<tr class="click" data-id="${r.c.id}">${assign ? `<td><input type="checkbox" data-sel="${r.c.id}" ${st.selected.has(r.c.id) ? 'checked' : ''} aria-label="${t('تحديد')}"></td>` : ''}<td class="sticky-col">${esc(r.c.name)} ${r.c.rating === 'مميز' ? ratingPill(r.c.rating) : ''}</td><td>${can('customers.edit') ? `<select class="inp" style="width:auto;min-height:0;padding:2px 6px" data-bcls="${r.c.id}" aria-label="${t('تصنيف العميل المشتري')}">${opts(BUYER_CLASSES, r.c.buyerClass || '', '—')}</select>` : buyerClassPill(r.c.buyerClass)}</td><td>${phoneLink(r.c.phone1)}</td><td>${esc(custLocation(r.c))}</td><td class="wrap">${esc(r.device)}</td><td>${fmtDate(r.date)}</td><td>${esc(r.dist)}</td><td>${esc(userName(r.c.ownerId))}</td><td class="wrap">${esc(r.last.slice(0, 70))}</td><td>${followPill(r.due)}</td><td>${can('followups.add') ? `<button class="btn sm primary" data-fu="${r.c.id}">${t('متابعة')}</button>` : ''}${assign ? ` <button class="btn sm" data-mv="${r.c.id}">${t('تحويل')}</button>` : ''}</td></tr>`).join('')}</tbody></table>
     <div class="pager"><button class="btn sm" id="prev" ${st.page <= 1 ? 'disabled' : ''}>${t('السابق')}</button><span>${t('صفحة {a} من {b}', { a: st.page, b: pages })} · ${t('العملاء: {n}', { n: all.length })}</span><button class="btn sm" id="next" ${st.page >= pages ? 'disabled' : ''}>${t('التالي')}</button></div></div>` : `<div class="card empty">${t('لا يوجد عملاء مطابقون.')}</div>`}`;
@@ -4525,6 +4562,7 @@ function viewBuyers(root) {
   on('#prev', () => { st.page--; redraw(); });
   on('#next', () => { st.page++; redraw(); });
   on('#imp', () => openBuyersImport(redraw));
+  bindKpis(root, (k, on) => { st.follow = on || k === 'all' ? '' : k; st.page = 1; redraw(); });
   $$('[data-cls]', root).forEach(b => b.onclick = () => { st.cls = st.cls === b.dataset.cls ? '' : b.dataset.cls; st.page = 1; redraw(); });
   $$('[data-bcls]', root).forEach(s => {
     s.onclick = e => e.stopPropagation();
@@ -4586,11 +4624,14 @@ const sharedState = { q: '', rep: '', mine: '', from: '', to: '', page: 1 };
 const lastShareOf = c => sharesOf(c).slice().sort((a, b) => b.at.localeCompare(a.at))[0];
 function sharedList() {
   const st = sharedState, q = st.q.trim().toLowerCase(), nq = normPhone(q);
+  const bought = st.mine === 'bought' ? buyerIds() : null;
   return visibleCustomers().filter(c => (c.assistantIds || []).length).filter(c => {
     if (st.rep && !involvedIn(c, st.rep)) return false;
     if (st.mine === 'to' && !sharedWith(c, ME.id)) return false;
     if (st.mine === 'by' && !sharesOf(c).some(s => s.by === ME.id)) return false;
     if (st.mine === 'own' && c.ownerId !== ME.id) return false;
+    if (st.mine === 'due' && !(c.followupDate && c.followupDate <= today())) return false;
+    if (st.mine === 'bought' && !bought.has(c.id)) return false;
     if ((st.from || st.to) && !sharesOf(c).some(s => inDateRange(s.at, st))) return false;
     if (q && !(c.name.toLowerCase().includes(q) || c.code.toLowerCase().includes(q) || (nq && (normPhone(c.phone1).includes(nq) || normPhone(c.phone2).includes(nq))))) return false;
     return true;
@@ -4598,23 +4639,27 @@ function sharedList() {
 }
 function viewShared(root) {
   const st = sharedState, all = sharedList(), td = today(), bIds = buyerIds();
+  // أرقام الأعلى تُحسب دون فلتر "العرض"، حتى تبقى ثابتة عند الضغط عليها
+  const mine = st.mine; st.mine = '';
+  const base = mine ? sharedList() : all;
+  st.mine = mine;
   const pages = Math.max(1, Math.ceil(all.length / PAGE_SIZE));
   st.page = Math.min(st.page, pages);
   const rows = all.slice((st.page - 1) * PAGE_SIZE, st.page * PAGE_SIZE);
-  const due = all.filter(c => c.followupDate && c.followupDate <= td).length;
+  const due = base.filter(c => c.followupDate && c.followupDate <= td).length;
   const lastFu = c => followupsOf(c.id)[0];
   const sharePills = c => sharesOf(c).filter(s => sharedWith(c, s.userId)).map(s => `<span class="pill p-after" title="${t('عيّنه: {u}', { u: esc(userName(s.by)) })} · ${fmtDate(s.at)}">${esc(userName(s.userId))}${canUnshare(c, s.userId) ? ` <button type="button" class="x-btn" data-un="${c.id}|${s.userId}" aria-label="${t('إلغاء التعيين')}">×</button>` : ''}</span>`).join(' ');
   root.innerHTML = `<div class="page-head"><h1>${t('العملاء المشتركون')}</h1><span class="spacer"></span>
     ${canExport() ? `<button class="btn" id="exp">⬇ ${t('تصدير')}</button>` : ''}${can('customers.share') ? `<button class="btn primary" id="assign">+ ${t('تعيين عملاء لزميل')}</button>` : ''}
     <div class="hint">${t('عملاء يتابعهم أكثر من شخص. يرى من عيّن العميل ومن عُيّن له كل متابعة يسجلها الآخر، وإذا اشترى العميل يُحتسب البيع لهم جميعًا')}</div></div>
   <div class="kpis">
-    <div class="kpi"><div class="l">${t('العملاء المشتركون')}</div><div class="v">${all.length}</div></div>
-    <div class="kpi"><div class="l">${t('معيّنون لي')}</div><div class="v">${all.filter(c => sharedWith(c, ME.id)).length}</div></div>
-    <div class="kpi"><div class="l">${t('عيّنتهم لزملائي')}</div><div class="v">${all.filter(c => sharesOf(c).some(s => s.by === ME.id)).length}</div></div>
-    <div class="kpi ${due ? 'warn' : 'ok'}"><div class="l">${t('متابعات اليوم والمتأخرة')}</div><div class="v">${due}</div></div>
-    <div class="kpi ok"><div class="l">${t('اشتروا')}</div><div class="v">${all.filter(c => bIds.has(c.id)).length}</div></div>
+    ${kpiBtn('', t('العملاء المشتركون'), base.length, '', !st.mine)}
+    ${kpiBtn('to', t('معيّنون لي'), base.filter(c => sharedWith(c, ME.id)).length, '', st.mine === 'to')}
+    ${kpiBtn('by', t('عيّنتهم لزملائي'), base.filter(c => sharesOf(c).some(s => s.by === ME.id)).length, '', st.mine === 'by')}
+    ${kpiBtn('due', t('متابعات اليوم والمتأخرة'), due, due ? 'warn' : 'ok', st.mine === 'due')}
+    ${kpiBtn('bought', t('اشتروا'), base.filter(c => bIds.has(c.id)).length, 'ok', st.mine === 'bought')}
   </div>
-  <div class="filters"><input class="inp search" id="q" placeholder="${t('ابحث بالاسم أو الرقم أو الكود')}" value="${esc(st.q)}"><select class="inp" id="mine" aria-label="${t('العرض')}">${optsT([['to', 'معيّنون لي'], ['by', 'عيّنتهم لزملائي'], ['own', 'عملائي الذين يتابعهم زميل']], st.mine, t('كل العملاء المشتركين'))}</select>${can('customers.view_all') ? `<select class="inp" id="rep" aria-label="${t('رجل البيع')}">${repOptions(st.rep)}</select>` : ''}${dateRangeHtml(st, t('تاريخ التعيين من'))}</div>
+  <div class="filters jump-target" id="kpi-list"><input class="inp search" id="q" placeholder="${t('ابحث بالاسم أو الرقم أو الكود')}" value="${esc(st.q)}"><select class="inp" id="mine" aria-label="${t('العرض')}">${optsT([['to', 'معيّنون لي'], ['by', 'عيّنتهم لزملائي'], ['own', 'عملائي الذين يتابعهم زميل'], ['due', 'متابعات اليوم والمتأخرة'], ['bought', 'اشتروا']], st.mine, t('كل العملاء المشتركين'))}</select>${can('customers.view_all') ? `<select class="inp" id="rep" aria-label="${t('رجل البيع')}">${repOptions(st.rep)}</select>` : ''}${dateRangeHtml(st, t('تاريخ التعيين من'))}</div>
   ${rows.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="sticky-col">${t('الاسم')}</th><th>${t('الهاتف')}</th><th>${t('الموقع')}</th><th>${t('المسؤول')}</th><th>${t('يتابعه أيضًا')}</th><th>${t('عيّنه')}</th><th>${t('المرحلة')}</th><th>${t('آخر متابعة')}</th><th>${t('المتابعة القادمة')}</th><th></th></tr></thead><tbody>${rows.map(c => {
     const f = lastFu(c), s = lastShareOf(c);
     return `<tr class="click" data-id="${c.id}"><td class="sticky-col">${esc(c.name)} ${bIds.has(c.id) ? `<span class="pill p-green">${t('اشترى')}</span>` : ''}</td><td>${phoneLink(c.phone1)}</td><td>${esc(custLocation(c))}</td><td>${esc(userName(c.ownerId))}</td><td class="wrap">${sharePills(c)}</td><td>${s ? `${esc(userName(s.by))}<div class="muted">${fmtDate(s.at)}</div>` : ''}</td><td>${stagePill(c)}</td><td class="wrap">${f ? `<b>${esc(userName(f.userId))}</b> · ${fmtDate(f.at)}<div class="muted">${esc((f.text || f.outcome || '').slice(0, 60))}</div>` : '<span class="muted">—</span>'}</td><td>${followPill(c.followupDate)}</td><td>${can('followups.add') ? `<button class="btn sm primary" data-fu="${c.id}">${t('متابعة')}</button>` : ''}</td></tr>`;
@@ -4628,6 +4673,7 @@ function viewShared(root) {
   on('#prev', () => { st.page--; redraw(); });
   on('#next', () => { st.page++; redraw(); });
   on('#assign', () => openShareAssign(null, redraw));
+  bindKpis(root, (k, on) => { st.mine = on ? '' : k; st.page = 1; redraw(); });
   on('#exp', () => exportSheet(t('العملاء المشتركون'), [[t('كود العميل'), t('الاسم'), t('رقم الهاتف 1'), t('الموقع'), t('المسؤول'), t('يتابعه أيضًا'), t('عيّنه'), t('تاريخ التعيين'), t('المرحلة'), t('آخر متابعة'), t('بواسطة'), t('المتابعة القادمة'), t('اشترى')], ...all.map(c => { const f = lastFu(c), s = lastShareOf(c); return [c.code, c.name, c.phone1, custLocation(c), userName(c.ownerId), (c.assistantIds || []).map(userName).join('، '), s ? userName(s.by) : '', s ? fmtDate(s.at) : '', label(stageById(c.stageId)), f?.text || '', f ? userName(f.userId) : '', fmtDate(c.followupDate), bIds.has(c.id) ? t('نعم') : '']; })]));
   $$('tr.click', root).forEach(tr => tr.onclick = e => { if (e.target.closest('input,button,a')) return; openCustomer(tr.dataset.id); });
   $$('[data-fu]', root).forEach(b => b.onclick = e => { e.stopPropagation(); openFollowup(b.dataset.fu, { onDone: redraw }); });
@@ -6085,7 +6131,7 @@ function renderShell(path) {
     <main class="main">${cloudMode ? `<div class="demo-banner">${t('نسخة تجريبية للبيانات الوهمية فقط، ويمكن فتحها من أي جهاز.')}</div>` : !serverOn ? `<div class="demo-banner">${t('النظام مفتوح دون start.bat، فالبيانات محفوظة في هذا المتصفح فقط.')}</div>` : DB.settings.demo ? `<div class="demo-banner">${t('نسخة تجريبية ببيانات وهمية، والبيانات محفوظة في ملف على هذا الجهاز.')}</div>` : ''}<div id="view"></div></main></div>`;
   bindLang();
   // إعادة التحميل تمسح عوامل تصفية المستخدم السابق من الذاكرة
-  $('#out').onclick = () => { logout(); history.replaceState(null, '', location.pathname); reloadSynced(); };
+  $('#out').onclick = signOut;
   $('#chg').onclick = openChangePassword;
   const getApp = $('#getApp');
   if (getApp) getApp.onclick = () => downloadCallerApp(getApp);
@@ -6161,7 +6207,7 @@ function renderSetPassword(msg) {
       <button class="btn primary mt" style="width:100%" type="submit">${t('حفظ والدخول')}</button>
     </form><button class="btn sm mt" id="pwOut">${t('خروج')}</button>
   </div></main>`;
-  $('#pwOut').onclick = () => { logout(); reloadSynced(); };
+  $('#pwOut').onclick = signOut;
   $('#pwForm').onsubmit = async e => {
     e.preventDefault();
     const a = $('#np1').value, b = $('#np2').value;
@@ -6205,6 +6251,17 @@ function softReload() {
   $('#modal-root').innerHTML = '';
   [custState.egypt, custState.intl, orderState, dashState, calState, pipeState].forEach(s => { s.rep = ''; });
   boot();
+}
+// تسجيل الخروج يعرض صفحة الدخول فورًا، ويُحفظ في الخلفية دون انتظار رفع البيانات أو إعادة تحميل الصفحة
+function signOut() {
+  logout();
+  history.replaceState(null, '', location.pathname);
+  $('#modal-root').innerHTML = '';
+  document.body.classList.remove('no-scroll');
+  [custState.egypt, custState.intl, orderState, dashState, calState, pipeState].forEach(s => { s.rep = ''; });
+  renderLogin();
+  window.scrollTo(0, 0);
+  syncNow().catch(() => {});
 }
 function reloadApp() {
   if (framed) softReload();
