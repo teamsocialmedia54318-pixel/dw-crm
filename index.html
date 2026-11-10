@@ -454,6 +454,10 @@ html { -webkit-text-size-adjust: 100%; }
 .inp.bad-inp { border-color: var(--red, #c62828); }
 .map-chip { display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; padding: 3px 10px; border-radius: 999px; background: rgba(255,255,255,.16); color: #fff; font-size: 12.5px; text-decoration: none; }
 .map-chip:hover { background: rgba(255,255,255,.26); }
+/* أرقام لوحة اليوم: الضغط عليها ينزل لقائمتها */
+button.kpi { font: inherit; text-align: start; width: 100%; cursor: pointer; color: inherit; }
+button.kpi:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+.jump-target { scroll-margin-top: 76px; }
 </style>
 </head>
 <body>
@@ -894,6 +898,10 @@ const EN = {
   'من خرائط جوجل: اضغط على مكان المزرعة ثم "مشاركة" ثم "نسخ الرابط" والصقه هنا': 'In Google Maps: tap the farm, then "Share", then "Copy link" and paste it here', 'المتصفح لا يدعم تحديد الموقع': 'This browser does not support location',
   'جارٍ تحديد الموقع...': 'Getting location...', 'تم أخذ الموقع بدقة {m} متر تقريبًا': 'Location captured, accurate to about {m} m', 'يلزم السماح للمتصفح بالوصول إلى الموقع': 'Allow the browser to access your location', 'تعذر تحديد الموقع، حاول مرة أخرى': 'Could not get the location, try again',
   'لينك موقع المزرعة غير صحيح. الصق لينك من خرائط جوجل أو إحداثيات مثل 30.0444, 31.2357': 'The farm location link is not valid. Paste a Google Maps link or coordinates such as 30.0444, 31.2357', 'فتح موقع المزرعة على خرائط جوجل': 'Open farm location in Google Maps',
+  'أعمال': 'Work of', 'أعمالي': 'My work', 'كل الفريق': 'Whole team', 'إنجاز اليوم ({n})': "Today's work ({n})", 'عملاء جدد: {n}': 'New customers: {n}', 'متابعات: {n}': 'Follow-ups: {n}', 'طلبات: {n}': 'Orders: {n}',
+  'تصدير أعمال اليوم': "Export today's work", 'الموظف': 'Employee', 'النتيجة': 'Outcome', 'ما كُتب في المتابعة': 'Follow-up notes', 'بدون': 'None', 'لم تُسجَّل أعمال اليوم بعد': 'No work recorded today yet',
+  'أعمال اليوم': "Today's work", 'نتيجة المتابعة': 'Follow-up outcome', 'المرحلة الحالية': 'Current stage',
+  'متابعات سُجّلت اليوم': 'Follow-ups logged today', 'عملاء أُضيفوا اليوم': 'Customers added today',
 };
 
 </script>
@@ -3728,13 +3736,57 @@ function bindCallRows(el) {
 }
 const ratingSort = (a, b) => RATINGS.indexOf(a.rating) - RATINGS.indexOf(b.rating);
 
+// ------- إنجاز اليوم: ما سجّله الموظف اليوم من عملاء ومتابعات وطلبات -------
+// التواريخ محفوظة بتوقيت جرينتش، فيُقارن اليوم بالتوقيت المحلي حتى لا تضيع أعمال ما بعد منتصف الليل
+const localDay = s => { const d = new Date(s); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
+const timeOf = s => { const d = new Date(s); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+// من تُعرض أعماله: كل شخص يرى أعماله، ومن يرى كل العملاء يختار موظفًا أو الكل
+let todayWho = '', todayWhoFor = '';
+function todayWork(day, who) {
+  const mine = id => who === 'all' || id === who;
+  const items = [];
+  DB.audit.forEach(a => {
+    if (!mine(a.userId) || localDay(a.at) !== day) return;
+    if (a.action === 'create' && a.entity === 'customer') items.push({ at: a.at, kind: 'new', userId: a.userId, c: custById(a.entityId) });
+    else if (a.action === 'create' && a.entity === 'order') {
+      const o = DB.orders.find(x => x.id === a.entityId);
+      if (o) items.push({ at: a.at, kind: 'order', userId: a.userId, c: custById(o.customerId), text: `${o.no} · ${money(o.total)} ${curLabel(o)}` });
+    }
+  });
+  DB.followups.forEach(f => {
+    if (!mine(f.userId) || localDay(f.at) !== day) return;
+    items.push({ at: f.at, kind: 'fu', userId: f.userId, c: custById(f.customerId), outcome: f.outcome, text: f.text, next: f.nextDate, voice: f.viaVoice });
+  });
+  return items.filter(i => i.c).sort((a, b) => String(b.at).localeCompare(String(a.at)));
+}
+const WORK_KINDS = { new: 'عميل جديد', fu: 'متابعة', order: 'طلب جديد' };
+function workSection(items, td) {
+  const all = todayWho === 'all';
+  const cnt = k => items.filter(i => i.kind === k).length;
+  const who = can('customers.view_all') ? `<select class="inp" id="who" style="width:auto" aria-label="${t('أعمال')}"><option value="${ME.id}" ${todayWho === ME.id ? 'selected' : ''}>${t('أعمالي')}</option><option value="all" ${all ? 'selected' : ''}>${t('كل الفريق')}</option>${DB.users.filter(u => u.active && u.id !== ME.id).map(u => `<option value="${u.id}" ${todayWho === u.id ? 'selected' : ''}>${esc(u.name)}</option>`).join('')}</select>` : '';
+  return `<div class="section-bar jump-target" id="sec-work">${t('إنجاز اليوم ({n})', { n: items.length })}</div>
+  <div class="filters">${who}<span class="chips"><span class="chip">${t('عملاء جدد: {n}', { n: cnt('new') })}</span><span class="chip">${t('متابعات: {n}', { n: cnt('fu') })}</span>${cnt('order') ? `<span class="chip">${t('طلبات: {n}', { n: cnt('order') })}</span>` : ''}</span><span class="spacer"></span>${canExport() && items.length ? `<button class="btn" id="expWork">⬇ ${t('تصدير أعمال اليوم')}</button>` : ''}</div>
+  ${items.length ? `<div class="tbl-wrap" style="margin-bottom:14px"><table class="tbl"><thead><tr><th class="sticky-col">${t('العميل')}</th><th>${t('الوقت')}</th><th>${t('النوع')}</th>${all ? `<th>${t('الموظف')}</th>` : ''}<th>${t('النتيجة')}</th><th>${t('ما كُتب في المتابعة')}</th><th>${t('المتابعة التالية')}</th></tr></thead><tbody>${items.map(i => `<tr class="click" data-id="${i.c.id}"><td class="sticky-col card-title" data-label="">${esc(i.c.name)} <span class="muted">${esc(i.c.code)}</span></td><td data-label="${t('الوقت')}">${timeOf(i.at)}</td><td data-label="${t('النوع')}"><span class="pill ${i.kind === 'new' ? 'p-green' : i.kind === 'order' ? 'p-orange' : 'p-blue'}">${t(WORK_KINDS[i.kind])}</span></td>${all ? `<td data-label="${t('الموظف')}">${esc(userName(i.userId))}</td>` : ''}<td data-label="${t('النتيجة')}">${i.outcome ? esc(tv(i.outcome)) : '—'}</td><td class="wrap card-wide" data-label="${t('ما كُتب في المتابعة')}">${i.voice ? '🎙 ' : ''}${esc(i.text || '')}</td><td data-label="${t('المتابعة التالية')}">${i.kind === 'fu' ? (i.next ? fmtDate(i.next) : t('بدون')) : '—'}</td></tr>`).join('')}</tbody></table></div>` : `<div class="card empty" style="margin-bottom:14px">${t('لم تُسجَّل أعمال اليوم بعد')}</div>`}`;
+}
+function exportWork(items, td) {
+  const all = todayWho === 'all';
+  const who = all ? t('كل الفريق') : userName(todayWho);
+  exportSheet(`${t('أعمال اليوم')} - ${who}`, [
+    [t('الوقت'), t('الموظف'), t('النوع'), t('كود العميل'), t('الاسم'), t('الهاتف'), t('الموقع'), t('المحصول'), t('نتيجة المتابعة'), t('ما كُتب في المتابعة'), t('المتابعة التالية'), t('المرحلة الحالية'), t('التقييم')],
+    ...items.slice().reverse().map(i => [`${fmtDate(td)} ${timeOf(i.at)}`, userName(i.userId), t(WORK_KINDS[i.kind]), i.c.code, i.c.name, showPhone(i.c.phone1), custLocation(i.c), i.c.crops.map(tv).join('، '), i.outcome ? tv(i.outcome) : '', i.text || '', i.kind === 'fu' ? (i.next ? fmtDate(i.next) : t('بدون')) : '', label(stageById(i.c.stageId)), tv(i.c.rating)]),
+  ]);
+}
+
 function viewToday(root) {
   const td = today();
   const due = dueOn(td).sort(ratingSort), late = overdue().sort((a, b) => a.followupDate.localeCompare(b.followupDate));
   const inst = installmentAlerts(), posts = postponedDue();
   const m = new Date().getMonth();
   const seasonList = visibleCustomers().filter(c => customerSeason(c, m).some(s => s.start));
-  const doneToday = DB.followups.filter(f => f.at.slice(0, 10) === td && (can('customers.view_all') || f.userId === ME.id)).length;
+  // الاختيار يخص المستخدم الحالي فقط، ويعود لأعماله عند تغيير الحساب
+  if (!todayWho || todayWhoFor !== ME.id || !can('customers.view_all')) { todayWho = ME.id; todayWhoFor = ME.id; }
+  const work = todayWork(td, todayWho);
+  const doneToday = work.filter(i => i.kind === 'fu').length, newToday = work.filter(i => i.kind === 'new').length;
   const asDue = can('aftersales.view') ? afterSalesDue() : [];
   const openTickets = visibleTickets().filter(ticketOpen);
   const notes = myNotifications();
@@ -3744,19 +3796,21 @@ function viewToday(root) {
   ${notes.length ? `<a class="notice-bar" href="#/notifications">🔔 ${t('لديك تنبيهات جديدة على عملائك: {n}', { n: notes.length })}</a>` : ''}
   ${buyersDue.length ? `<a class="notice-bar after" href="#/buyers">🤝 ${t('متابعات العملاء المشترين المستحقة: {n}', { n: buyersDue.length })}</a>` : ''}
   <div class="kpis">
-    <div class="kpi warn"><div class="l">${t('متابعات اليوم')}</div><div class="v">${due.length}</div></div>
-    <div class="kpi ${late.length ? 'alert' : 'ok'}"><div class="l">${t('متابعات متأخرة')}</div><div class="v">${late.length}</div></div>
-    <div class="kpi ok"><div class="l">${t('سُجّلت اليوم')}</div><div class="v">${doneToday}</div></div>
-    <div class="kpi ${inst.some(i => i.late) ? 'alert' : ''}"><div class="l">${t('أقساط مستحقة أو قريبة')}</div><div class="v">${inst.length}</div></div>
+    <button type="button" class="kpi link warn" data-jump="sec-due"><div class="l">${t('متابعات اليوم')}</div><div class="v">${due.length}</div></button>
+    <button type="button" class="kpi link ${late.length ? 'alert' : 'ok'}" data-jump="${late.length ? 'sec-late' : 'sec-due'}"><div class="l">${t('متابعات متأخرة')}</div><div class="v">${late.length}</div></button>
+    <button type="button" class="kpi link ok" data-jump="sec-work"><div class="l">${t('متابعات سُجّلت اليوم')}</div><div class="v">${doneToday}</div></button>
+    <button type="button" class="kpi link ok" data-jump="sec-work"><div class="l">${t('عملاء أُضيفوا اليوم')}</div><div class="v">${newToday}</div></button>
+    <button type="button" class="kpi link ${inst.some(i => i.late) ? 'alert' : ''}" data-jump="sec-inst"><div class="l">${t('أقساط مستحقة أو قريبة')}</div><div class="v">${inst.length}</div></button>
     ${can('aftersales.view') ? `<a class="kpi link ${asDue.length ? 'warn' : ''}" href="#/aftersales"><div class="l">${t('متابعات ما بعد البيع المستحقة')}</div><div class="v">${asDue.length}</div></a>` : ''}
     ${can('support.view') ? `<a class="kpi link ${openTickets.length ? 'warn' : ''}" href="#/support"><div class="l">${t('طلبات دعم فني مفتوحة')}</div><div class="v">${openTickets.length}</div></a>` : ''}
     <a class="kpi link" href="#/season"><div class="l">${t('عملاء بداية موسم الشهر')}</div><div class="v">${seasonList.length}</div></a>
   </div>
-  ${late.length ? `<div class="section-bar">${t('متابعات متأخرة تحتاج إلى إغلاق ({n})', { n: late.length })}</div><div class="tbl-wrap" style="margin-bottom:14px"><table class="tbl">${callHead()}<tbody>${late.slice(0, 15).map(callRow).join('')}</tbody></table>${late.length > 15 ? `<div class="pager">${t('و{n} آخرون في', { n: late.length - 15 })} <a href="#/calendar">${t('التقويم')}</a></div>` : ''}</div>` : ''}
-  <div class="section-bar">${t('متابعات اليوم ({n})', { n: due.length })}</div>
-  ${due.length ? `<div class="tbl-wrap" style="margin-bottom:14px"><table class="tbl">${callHead()}<tbody>${due.map(callRow).join('')}</tbody></table></div>` : `<div class="card empty">${t('لا توجد متابعات اليوم')}</div>`}
+  ${late.length ? `<div class="section-bar jump-target" id="sec-late">${t('متابعات متأخرة تحتاج إلى إغلاق ({n})', { n: late.length })}</div><div class="tbl-wrap" style="margin-bottom:14px"><table class="tbl">${callHead()}<tbody>${late.slice(0, 15).map(callRow).join('')}</tbody></table>${late.length > 15 ? `<div class="pager">${t('و{n} آخرون في', { n: late.length - 15 })} <a href="#/calendar">${t('التقويم')}</a></div>` : ''}</div>` : ''}
+  <div class="section-bar jump-target" id="sec-due">${t('متابعات اليوم ({n})', { n: due.length })}</div>
+  ${due.length ? `<div class="tbl-wrap" style="margin-bottom:14px"><table class="tbl">${callHead()}<tbody>${due.map(callRow).join('')}</tbody></table></div>` : `<div class="card empty" style="margin-bottom:14px">${t('لا توجد متابعات اليوم')}</div>`}
+  ${workSection(work, td)}
   <div class="cols2">
-    <div class="card"><h3>${t('تنبيهات الأقساط')}</h3>${inst.length ? `<table class="tbl"><thead><tr><th>${t('العميل')}</th><th>${t('الاستحقاق')}</th><th>${t('المبلغ')}</th><th></th></tr></thead><tbody>${inst.slice(0, 8).map(a => `<tr><td>${esc(custById(a.order.customerId)?.name)}</td><td>${a.late ? `<span class="pill p-red">⚠ ${fmtDate(a.inst.due)}</span>` : a.today ? `<span class="pill p-orange">${t('اليوم')}</span>` : fmtDate(a.inst.due)}</td><td>${money(a.inst.amount)} ${curLabel(a.order)}</td><td><button class="btn sm" data-ord="${a.order.id}">${t('فتح')}</button></td></tr>`).join('')}</tbody></table>${inst.length > 8 ? `<div class="pager"><a href="#/orders/installments">${t('جميع الأقساط')}</a></div>` : ''}` : `<div class="empty">${t('لا توجد أقساط قريبة')}</div>`}</div>
+    <div class="card jump-target" id="sec-inst"><h3>${t('تنبيهات الأقساط')}</h3>${inst.length ? `<table class="tbl"><thead><tr><th>${t('العميل')}</th><th>${t('الاستحقاق')}</th><th>${t('المبلغ')}</th><th></th></tr></thead><tbody>${inst.slice(0, 8).map(a => `<tr><td>${esc(custById(a.order.customerId)?.name)}</td><td>${a.late ? `<span class="pill p-red">⚠ ${fmtDate(a.inst.due)}</span>` : a.today ? `<span class="pill p-orange">${t('اليوم')}</span>` : fmtDate(a.inst.due)}</td><td>${money(a.inst.amount)} ${curLabel(a.order)}</td><td><button class="btn sm" data-ord="${a.order.id}">${t('فتح')}</button></td></tr>`).join('')}</tbody></table>${inst.length > 8 ? `<div class="pager"><a href="#/orders/installments">${t('جميع الأقساط')}</a></div>` : ''}` : `<div class="empty">${t('لا توجد أقساط قريبة')}</div>`}</div>
     <div class="card"><h3>${t('بداية موسم {m}', { m: monthName(m) })}</h3>${seasonList.length ? hbars(topSeason(m).slice(0, 8), { fmt: v => `${v}`, h1: t('المحصول'), h2: t('العملاء') }) + `<div class="mt"><a class="btn sm" href="#/season">${t('عرض العملاء')}</a></div>` : `<div class="empty">${t('لا يوجد عملاء تبدأ مواسمهم هذا الشهر')}</div>`}</div>
   </div>
   ${posts.length ? `<div class="card"><h3>${t('طلبات مؤجلة حان موعدها ({n})', { n: posts.length })}</h3><div class="chips">${posts.map(o => `<button class="chip" data-ord="${o.id}">${o.no} · ${esc(custById(o.customerId)?.name)}</button>`).join('')}</div></div>` : ''}`;
@@ -3764,6 +3818,12 @@ function viewToday(root) {
   if (add) add.onclick = () => openWizard();
   const exl = $('#expLate', root);
   if (exl) exl.onclick = () => exportSheet(t('المتأخرات ومتابعات اليوم'), [[t('الحالة'), t('كود العميل'), t('الاسم'), t('الهاتف'), t('الموقع'), t('المحصول'), t('التقييم'), t('المرحلة'), t('تاريخ المتابعة'), t('رجل البيع'), t('آخر متابعة')], ...[...late.map(c => [t('متأخرة'), c]), ...due.map(c => [t('اليوم'), c])].map(([s, c]) => [s, c.code, c.name, showPhone(c.phone1), custLocation(c), c.crops.map(tv).join('، '), tv(c.rating), label(stageById(c.stageId)), fmtDate(c.followupDate), userName(c.ownerId), followupsOf(c.id)[0]?.text || ''])]);
+  const exw = $('#expWork', root);
+  if (exw) exw.onclick = () => exportWork(work, td);
+  const who = $('#who', root);
+  if (who) who.onchange = () => { todayWho = who.value; viewToday(root); $('#sec-work', root)?.scrollIntoView({ block: 'start' }); };
+  // الضغط على أي رقم في الأعلى ينزل مباشرة لقائمته
+  $$('[data-jump]', root).forEach(b => b.onclick = () => $(`#${b.dataset.jump}`, root)?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   bindCallRows(root);
   $$('[data-ord]', root).forEach(b => b.onclick = () => openOrder(b.dataset.ord, route));
 }
