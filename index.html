@@ -1076,7 +1076,7 @@ const EN = {
 <script>
 // طبقة البيانات والمنطق. كل القراءة والكتابة تمر من هنا، وعند ربط الخادم يُستبدل هذا الملف
 const KEY = 'dw_crm_v1';
-const DB_VERSION = 8;
+const DB_VERSION = 9;
 // بيانات الدخول للحسابات التجريبية: للنسخة التجريبية فقط وموثقة في README.md
 const DEMO_PASSWORD = 'Delta@Test2026';
 
@@ -2416,7 +2416,8 @@ function migrateDB(db) {
   const v6 = migrateV6(db);
   const v7 = migrateV7(db);
   const v8 = migrateV8(db);
-  return v2 || v3 || v4 || v5 || v6 || v7 || v8;
+  const v9 = migrateV9(db);
+  return v2 || v3 || v4 || v5 || v6 || v7 || v8 || v9;
 }
 // الإصدار 6: الوكلاء حسب الدولة والموزعون حسب المحافظة أو القطاع، وطلبات البيانات التجريبية على موديلات قائمة الأسعار
 function migrateV6(db) {
@@ -2493,6 +2494,70 @@ function migrateV8(db) {
   db.tickets = db.tickets.filter(x => !goneTickets.has(x.id));
   db.audit = db.audit.filter(a => !gone.has(a.entityId) && !goneOrders.has(a.entityId) && !goneTickets.has(a.entityId));
   db.audit.unshift({ id: uid(), at: nowStamp(), userId: null, action: 'cleanup', entity: 'db', entityId: null, key: 'تخفيف البيانات التجريبية: حُذف {n} عميل تجريبي وبقي {k}', params: { n: gone.size, k: keep.size }, label: `تخفيف البيانات التجريبية: حُذف ${gone.size} عميل تجريبي وبقي ${keep.size}`, changes: [] });
+  return true;
+}
+// الإصدار 9: تبقى فقط 10 عملاء تجريبيين داخل مصر و10 خارجها، بأكمل البيانات، وتُحذف كل العملاء الآخرين
+// ومنهم ما أضافه الفريق أثناء التجربة، مع متابعاتهم وطلباتهم وأقساطهم وطلبات الدعم والموزعين المسجلين منهم
+const KEEP_EGYPT = 10, KEEP_INTL = 10;
+function migrateV9(db) {
+  if ((db.version || 1) >= 9) return false;
+  db.version = 9;
+  if (!db.settings?.demo) return true;
+  const audited = new Set(db.audit.filter(a => a.action === 'create' && a.entity === 'customer').map(a => a.entityId));
+  const demo = db.customers.filter(c => !c.archived && DEMO_STAMP.test(c.createdAt || '') && !audited.has(c.id));
+  const ordersOf = id => db.orders.filter(o => o.customerId === id);
+  // ثراء بيانات العميل: متابعات وطلبات وأقساط وما بعد البيع ودعم فني ومتابعة مشتركة
+  const score = c => {
+    const os = ordersOf(c.id);
+    return db.followups.filter(f => f.customerId === c.id).length + os.length * 3 + os.filter(o => (o.installments || []).length).length * 2
+      + db.afterSales.filter(a => a.customerId === c.id).length + db.tickets.filter(x => x.customerId === c.id).length * 3
+      + ((c.assistantIds || []).length ? 3 : 0) + ['phone2', 'address', 'salinity', 'waterSource', 'irrigation', 'source', 'deviceType'].filter(k => c[k]).length * 0.2;
+  };
+  const pickFrom = (list, n, needs) => {
+    const ranked = list.slice().sort((a, b) => score(b) - score(a) || a.code.localeCompare(b.code));
+    const keep = [];
+    // أولًا عميل واحد على الأقل لكل قسم، ثم الأغنى بيانات حتى يكتمل العدد
+    needs.forEach(need => {
+      if (keep.length >= n || keep.some(need)) return;
+      const c = ranked.find(x => !keep.includes(x) && need(x));
+      if (c) keep.push(c);
+    });
+    ranked.forEach(c => { if (keep.length < n && !keep.includes(c)) keep.push(c); });
+    return keep;
+  };
+  const needs = [
+    c => db.tickets.some(x => x.customerId === c.id),
+    c => ordersOf(c.id).some(o => (o.installments || []).some(i => !i.paid)),
+    c => db.afterSales.some(a => a.customerId === c.id && a.status === 'pending'),
+    c => db.afterSales.some(a => a.customerId === c.id && a.status === 'done'),
+    c => ordersOf(c.id).some(o => o.status === 'delivered'),
+    c => ordersOf(c.id).some(o => o.status === 'active'),
+    c => ordersOf(c.id).some(o => o.status === 'postponed' || o.status === 'cancelled'),
+    c => (c.assistantIds || []).length > 0,
+    c => !ordersOf(c.id).length && db.followups.some(f => f.customerId === c.id),
+    c => !ordersOf(c.id).length && c.followupDate && c.followupDate < today(),
+  ];
+  const keep = new Set([...pickFrom(demo.filter(c => c.market === 'egypt'), KEEP_EGYPT, needs), ...pickFrom(demo.filter(c => c.market === 'intl'), KEEP_INTL, needs)].map(c => c.id));
+  if (!keep.size) return true;
+  // لا تُستبدل نسخة الإصدار 8 إذا أُخذت للتو في التحميل نفسه، فتبقى النسخة الأكمل
+  try {
+    const prev = JSON.parse(localStorage.getItem(SNAPSHOT_KEY) || 'null');
+    if (!(prev && Date.now() - new Date(prev.at).getTime() < 60000)) localStorage.setItem(SNAPSHOT_KEY, JSON.stringify({ at: nowStamp(), reason: 'قبل تخفيف البيانات التجريبية', data: db }));
+  } catch {}
+  const gone = new Set(db.customers.filter(c => !keep.has(c.id)).map(c => c.id));
+  const goneOrders = new Set(db.orders.filter(o => gone.has(o.customerId)).map(o => o.id));
+  const goneTickets = new Set(db.tickets.filter(x => gone.has(x.customerId)).map(x => x.id));
+  const goneDist = new Set(db.distributors.filter(d => d.customerId && gone.has(d.customerId)).map(d => d.id));
+  db.customers = db.customers.filter(c => keep.has(c.id));
+  db.customers.forEach(c => { if (goneDist.has(c.viaDistributorId)) c.viaDistributorId = ''; });
+  db.followups = db.followups.filter(f => !gone.has(f.customerId));
+  db.orders = db.orders.filter(o => !goneOrders.has(o.id));
+  db.orders.forEach(o => { if (goneDist.has(o.distributorId)) o.distributorId = ''; });
+  db.afterSales = db.afterSales.filter(a => !gone.has(a.customerId));
+  db.tickets = db.tickets.filter(x => !goneTickets.has(x.id));
+  db.distributors = db.distributors.filter(d => !goneDist.has(d.id));
+  db.audit = db.audit.filter(a => !gone.has(a.entityId) && !goneOrders.has(a.entityId) && !goneTickets.has(a.entityId) && !goneDist.has(a.entityId));
+  db.audit.unshift({ id: uid(), at: nowStamp(), userId: null, action: 'cleanup', entity: 'db', entityId: null, key: 'تخفيف البيانات التجريبية: حُذف {n} عميل وبقي {k}', params: { n: gone.size, k: keep.size }, label: `تخفيف البيانات التجريبية: حُذف ${gone.size} عميل وبقي ${keep.size}`, changes: [] });
   return true;
 }
 function applyTeamNames(db) {
