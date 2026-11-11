@@ -1076,7 +1076,7 @@ const EN = {
 <script>
 // طبقة البيانات والمنطق. كل القراءة والكتابة تمر من هنا، وعند ربط الخادم يُستبدل هذا الملف
 const KEY = 'dw_crm_v1';
-const DB_VERSION = 7;
+const DB_VERSION = 8;
 // بيانات الدخول للحسابات التجريبية: للنسخة التجريبية فقط وموثقة في README.md
 const DEMO_PASSWORD = 'Delta@Test2026';
 
@@ -1279,6 +1279,7 @@ function applyRemote(remote, rev) {
   serverRev = rev;
   lastRev = Math.max(lastRev, rev);
   const myId = ME?.id;
+  if (!viewDirty && viewKey(DB) !== viewKey(merged)) viewDirty = true;
   DB = merged;
   if (myId) ME = DB.users.find(u => u.id === myId) || ME;
   if (pending) { lastRev += 1; DB.rev = lastRev; } else DB.rev = rev;
@@ -1286,8 +1287,21 @@ function applyRemote(remote, rev) {
   return pending;
 }
 // تحديث الصفحة المعروضة ببيانات زملائك دون إعادة تحميلها، ولا يحدث أثناء ملء نموذج أو الكتابة
+// - لا يُعاد رسم الصفحة إلا إذا تغيّر شيء ظاهر فيها (سجل النشاط والجلسات لا تُحسب إلا في صفحة نشاط الفريق)
+// - ولا أثناء نافذة مفتوحة أو كتابة أو خلال ثوانٍ من آخر لمس أو تمرير؛ يُؤجَّل حتى يهدأ المستخدم
+// viewDirty: وصلت من زميل بيانات تغيّر ما يظهر في الصفحة، ويُصفَّر كلما رُسمت الصفحة
+let viewDirty = false, lastTouch = 0, refreshTimer = null;
+['pointerdown', 'keydown', 'wheel', 'touchmove', 'scroll'].forEach(ev => window.addEventListener(ev, () => { lastTouch = Date.now(); }, { passive: true, capture: true }));
+const viewKey = db => {
+  if (!db) return '';
+  const { audit: a, sessions: s, rev, ...rest } = db;
+  return (location.hash.startsWith('#/activity') ? JSON.stringify([a?.length, a?.[0]?.id, s?.[0]?.lastSeen]) : '') + JSON.stringify(rest);
+};
 function softRefresh() {
-  if (!ME || document.querySelector('.modal-back, .drawer') || document.activeElement?.matches('input, textarea, select')) return;
+  clearTimeout(refreshTimer);
+  if (!ME || !viewDirty) return;
+  const busy = document.querySelector('.modal-back, .drawer') || document.activeElement?.matches('input, textarea, select') || Date.now() - lastTouch < 4000;
+  if (busy) { refreshTimer = setTimeout(softRefresh, 3000); return; }
   const y = scrollY;
   window.route && route();
   scrollTo(0, y);
@@ -1300,8 +1314,8 @@ async function pushDB() {
   try {
     do {
       pushDirty = false;
-      // حماية من تكرار لا ينتهي إذا تعذر الدمج لأي سبب
-      if (++rounds > 8) { onConflict(); return; }
+      // زحام حفظ من عدة أشخاص في اللحظة نفسها: يُعاد المحاولة بعد ثوانٍ عشوائية بدل إعادة تحميل الصفحة
+      if (++rounds > 8) { retryPushLater(2000 + Math.random() * 4000); return; }
       const rev = DB.rev, body = JSON.stringify(DB);
       let conflict = false;
       if (cloudMode) {
@@ -1317,7 +1331,7 @@ async function pushDB() {
       // حفظ زميل سبقنا: تُدمج تعديلاتنا فوق نسخته ثم يُعاد الحفظ، دون إعادة تحميل الصفحة
       if (conflict) {
         const remote = await fetchRemote();
-        if (!remote) { onConflict(); return; }
+        if (!remote) throw new Error('fetch');
         if (applyRemote(remote.db, remote.rev)) pushDirty = true;
         softRefresh();
         continue;
@@ -1331,7 +1345,14 @@ async function pushDB() {
     } while (pushDirty);
   } catch {
     if (!pushWarned) { pushWarned = true; window.toast && toast(t(cloudMode ? 'تعذر الحفظ. تأكد من الاتصال بالإنترنت' : 'تعذر الحفظ في ملف البيانات. تأكد من تشغيل النظام من start.bat'), 'err'); }
+    // التعديلات محفوظة على هذا الجهاز، وتُرفع تلقائيًا عند عودة الاتصال دون أن يفعل المستخدم شيئًا
+    retryPushLater(10000);
   } finally { pushing = false; }
+}
+let retryTimer = null;
+function retryPushLater(ms) {
+  clearTimeout(retryTimer);
+  retryTimer = setTimeout(() => { if (DB && serverRev !== DB.rev) pushDB(); }, ms);
 }
 async function syncNow() {
   clearTimeout(pushTimer);
@@ -2394,7 +2415,8 @@ function migrateDB(db) {
   const v5 = migrateV5(db);
   const v6 = migrateV6(db);
   const v7 = migrateV7(db);
-  return v2 || v3 || v4 || v5 || v6 || v7;
+  const v8 = migrateV8(db);
+  return v2 || v3 || v4 || v5 || v6 || v7 || v8;
 }
 // الإصدار 6: الوكلاء حسب الدولة والموزعون حسب المحافظة أو القطاع، وطلبات البيانات التجريبية على موديلات قائمة الأسعار
 function migrateV6(db) {
@@ -2419,6 +2441,58 @@ function migrateV7(db) {
   if ((db.version || 1) >= 7) return false;
   applyTeamNames(db);
   db.version = 7;
+  return true;
+}
+// الإصدار 8: تخفيف البيانات التجريبية إلى نحو 10 عملاء في كل قسم، وحذف الباقي مع متابعاتهم وطلباتهم.
+// يعمل فقط والبيانات ما زالت تجريبية، ولا يمس أي عميل أضافه الفريق بنفسه أو رفعه من ملف
+// (العميل التجريبي يُعرف بوقت إنشاء مولَّد على رأس الساعة تمامًا، أما ما يضيفه المستخدم فيحمل وقت الإضافة الفعلي)
+const DEMO_STAMP = /T\d\d:00:00\.000Z$/;
+const DEMO_KEEP = 10;
+function migrateV8(db) {
+  if ((db.version || 1) >= 8) return false;
+  db.version = 8;
+  if (!db.settings?.demo) return true;
+  const audited = new Set(db.audit.filter(a => a.action === 'create' && a.entity === 'customer').map(a => a.entityId));
+  const isDemo = c => DEMO_STAMP.test(c.createdAt || '') && !audited.has(c.id);
+  const demo = db.customers.filter(isDemo);
+  if (demo.length <= DEMO_KEEP * 3) return true;
+  // نسخة كاملة قبل الحذف في هذا المتصفح، يمكن استرجاعها من الإعدادات ← النسخ الاحتياطي
+  try { localStorage.setItem(SNAPSHOT_KEY, JSON.stringify({ at: nowStamp(), reason: 'قبل تخفيف البيانات التجريبية', data: db })); } catch {}
+  // آخر نشاط على العميل، فيبقى أولًا من جرّب عليه الفريق متابعة أو تعديلًا
+  const lastAct = new Map();
+  const touch = (id, at) => { if (id && at && (lastAct.get(id) || '') < at) lastAct.set(id, at); };
+  db.followups.forEach(f => touch(f.customerId, f.at));
+  db.audit.forEach(a => a.entity === 'customer' && touch(a.entityId, a.at));
+  const ordersOf = id => db.orders.filter(o => o.customerId === id);
+  const sections = [
+    c => db.tickets.some(x => x.customerId === c.id),
+    c => ordersOf(c.id).some(o => (o.installments || []).some(i => !i.paid)),
+    c => db.afterSales.some(a => a.customerId === c.id && a.status === 'pending'),
+    c => ordersOf(c.id).some(countsAsSale),
+    c => ordersOf(c.id).some(o => o.status === 'postponed' || o.status === 'cancelled'),
+    c => (c.assistantIds || []).length > 0,
+    c => c.market === 'intl',
+    c => c.market === 'egypt' && !ordersOf(c.id).length,
+  ];
+  const ranked = demo.slice().sort((a, b) => (lastAct.get(b.id) || '').localeCompare(lastAct.get(a.id) || '') || a.code.localeCompare(b.code));
+  const keep = new Set();
+  sections.forEach(inSection => {
+    let have = ranked.filter(c => keep.has(c.id) && inSection(c)).length;
+    for (const c of ranked) {
+      if (have >= DEMO_KEEP) break;
+      if (!keep.has(c.id) && inSection(c)) { keep.add(c.id); have++; }
+    }
+  });
+  const gone = new Set(demo.filter(c => !keep.has(c.id)).map(c => c.id));
+  const goneOrders = new Set(db.orders.filter(o => gone.has(o.customerId)).map(o => o.id));
+  const goneTickets = new Set(db.tickets.filter(x => gone.has(x.customerId)).map(x => x.id));
+  db.customers = db.customers.filter(c => !gone.has(c.id));
+  db.followups = db.followups.filter(f => !gone.has(f.customerId));
+  db.orders = db.orders.filter(o => !goneOrders.has(o.id));
+  db.afterSales = db.afterSales.filter(a => !gone.has(a.customerId));
+  db.tickets = db.tickets.filter(x => !goneTickets.has(x.id));
+  db.audit = db.audit.filter(a => !gone.has(a.entityId) && !goneOrders.has(a.entityId) && !goneTickets.has(a.entityId));
+  db.audit.unshift({ id: uid(), at: nowStamp(), userId: null, action: 'cleanup', entity: 'db', entityId: null, key: 'تخفيف البيانات التجريبية: حُذف {n} عميل تجريبي وبقي {k}', params: { n: gone.size, k: keep.size }, label: `تخفيف البيانات التجريبية: حُذف ${gone.size} عميل تجريبي وبقي ${keep.size}`, changes: [] });
   return true;
 }
 function applyTeamNames(db) {
@@ -6144,6 +6218,7 @@ function renderShell(path) {
 }
 
 function route() {
+  viewDirty = false;
   $('#modal-root').querySelectorAll('.drawer, .drawer-back').forEach(x => x.remove());
   if (!ME) { renderLogin(); return; }
   if (ME.mustChangePw) { renderSetPassword(); return; }
@@ -6287,13 +6362,20 @@ boot();
 // عامل الخدمة يعمل فقط على الرابط المنشور، لا على الملف المحلي ولا داخل صفحة جوجل
 if ('serviceWorker' in navigator && location.protocol === 'https:' && window.top === window) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
-  // تُفتح الصفحة فورًا من النسخة المحفوظة، وإذا نُشر تحديث يُعاد التحميل مرة واحدة ما لم تكن نافذة مفتوحة
-  navigator.serviceWorker.addEventListener('message', e => {
-    if (e.data !== 'dw-updated') return;
-    const busy = document.querySelector('.modal-back, .drawer') || document.activeElement?.matches('input, textarea, select');
-    if (!busy) location.reload();
-    else if (window.toast) toast(t('نُشر تحديث جديد للنظام، وسيظهر عند فتح الصفحة القادمة'), 'ok');
-  });
+  // إذا نُشر تحديث للنظام لا تُعاد تحميل الصفحة في وجه المستخدم:
+  // يُطبَّق بهدوء عند الانتقال لصفحة أخرى أو عند ترك التطبيق، بشرط عدم وجود نافذة مفتوحة، وبعد رفع أي تعديل لم يُحفظ
+  // الأفضل عند ترك التطبيق، ولا يُطبَّق عند الانتقال بين الصفحات إلا إذا ظل التحديث منتظرًا 20 دقيقة
+  let updateReady = 0;
+  const idle = () => !document.querySelector('.modal-back, .drawer') && !document.activeElement?.matches('input, textarea, select');
+  const applyUpdate = async onNav => {
+    if (!updateReady || !idle() || (onNav === true && Date.now() - updateReady < 20 * 60000)) return;
+    updateReady = 0;
+    try { if (window.syncNow) await syncNow(); } catch {}
+    location.reload();
+  };
+  navigator.serviceWorker.addEventListener('message', e => { if (e.data === 'dw-updated' && !updateReady) updateReady = Date.now(); });
+  window.addEventListener('hashchange', () => applyUpdate(true));
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') applyUpdate(); });
 }
 </script>
 </body>
