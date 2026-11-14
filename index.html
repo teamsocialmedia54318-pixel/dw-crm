@@ -910,7 +910,8 @@ const EN = {
   'متابعات سُجّلت اليوم': 'Follow-ups logged today', 'عملاء أُضيفوا اليوم': 'Customers added today',
   'اختياري: اكتب أو سجّل صوتيًا': 'Optional: type or record by voice',
   'قيد التنفيذ (مُسند أو جارٍ)': 'In progress (assigned or ongoing)', 'تم حلها (محلول أو مغلق)': 'Solved (resolved or closed)', 'العاجلة فقط': 'Urgent only',
-};
+  'عملاء اشتروا: {n}': 'Customers who bought: {n}', 'ملاحظات تُحفظ كأول متابعة: {n}': 'Notes saved as first follow-up: {n}', 'مرتبطون بموزع: {n}': 'Linked to a distributor: {n}', 'مرحلة العملاء': 'Customer stage',
+  'جارٍ الإضافة...': 'Adding...', 'رقم الهاتف غير صحيح': 'Invalid phone number', 'تنزيل كل الصفوف المستبعدة ({n})': 'Download all excluded rows ({n})', 'الصفوف المستبعدة': 'Excluded rows', 'مشترٍ': 'Buyer', 'بدل': 'instead of',};
 
 </script>
 <script>
@@ -1655,7 +1656,7 @@ function createCustomer(data, opts = {}) {
   c.stageHistory = [{ stageId: c.stageId, at: nowStamp(), userId: ME?.id || c.ownerId, note: '' }];
   DB.customers.unshift(c);
   if (!opts.silent) audit('create', 'customer', c.id, 'إضافة عميل: {name}', { name: c.name });
-  else saveDB();
+  else if (!opts.noSave) saveDB();
   return c;
 }
 const fieldStr = (f, v) => {
@@ -2203,26 +2204,69 @@ const IMPORT_HEADERS = {
   name: ['الاسم', 'اسم العميل', 'العميل', 'name', 'customer'],
   phone1: ['رقم الهاتف 1', 'رقم التليفون 1', 'رقم التليفون1', 'رقم التليفون', 'رقم الهاتف', 'التليفون', 'الهاتف', 'تليفون 1', 'موبايل', 'الموبايل', 'رقم الموبايل', 'phone', 'phone 1', 'mobile'],
   phone2: ['رقم الهاتف 2', 'رقم التليفون 2', 'رقم التليفون2', 'تليفون 2', 'موبايل 2', 'phone 2'],
-  address: ['العنوان', 'address'],
+  address: ['العنوان', 'عنوان المزرعة', 'address'],
   category: ['تصنيف العميل', 'تصنيف', 'category'],
   country: ['الدولة', 'البلد', 'country'],
   gov: ['المحافظة', 'governorate'],
-  regionCode: ['كود المنطقة', 'الكود', 'كود المحافظة', 'code', 'area code'],
-  area: ['المساحة', 'المساحه', 'area'],
+  regionCode: ['كود المنطقة', 'الكود', 'كود المحافظة', 'كود المنطقة / البلد', 'كود المنطقة/البلد', 'code', 'area code'],
+  subCode: ['كود المنطقة الفرعي', 'كود المنطقة الفرعية', 'الكود الفرعي', 'sub code'],
+  area: ['المساحة', 'المساحه', 'مساحة المزرعة', 'area'],
   irrigation: ['نوع الري', 'irrigation'],
-  crops: ['نوع المحصول', 'المحصول', 'المحاصيل', 'crop', 'crops'],
-  salinity: ['درجة ملوحة المياه', 'الملوحة', 'ملوحة المياه', 'salinity'],
+  crops: ['نوع المحصول', 'المحصول', 'المحاصيل', 'نوع الزراعات', 'الزراعات', 'نوع الزراعة', 'crop', 'crops'],
+  salinity: ['درجة ملوحة المياه', 'الملوحة', 'ملوحة المياه', 'درجة الملوحة', 'salinity'],
   waterSource: ['مصدر المياه', 'water source'],
-  deviceType: ['نوع الجهاز المطلوب', 'نوع الجهاز', 'الجهاز', 'device', 'device type'],
-  deviceSize: ['مقاس الجهاز المطلوب', 'مقاس الجهاز', 'المقاس', 'size', 'device size'],
-  source: ['مصدر المعرفة', 'source'],
+  deviceType: ['نوع الجهاز المطلوب', 'نوع الجهاز', 'الجهاز', 'القطر والموديل', 'الموديل', 'device', 'device type'],
+  deviceSize: ['مقاس الجهاز المطلوب', 'مقاس الجهاز', 'المقاس', 'القطر', 'size', 'device size'],
+  source: ['مصدر المعرفة', 'مصدر الإتصال', 'مصدر الاتصال', 'source'],
   rating: ['تقييم العميل', 'التقييم', 'rating'],
-  contactDate: ['تاريخ الاتصال', 'contact date'],
-  followupDate: ['تاريخ المتابعة', 'تاريخ المتابعه', 'follow-up date'],
+  contactDate: ['تاريخ الاتصال', 'تاريخ الإدخال', 'تاريخ الادخال', 'contact date'],
+  followupDate: ['تاريخ المتابعة', 'تاريخ المتابعه', 'تاريخ المتابعة القادمة', 'المتابعة القادمة', 'follow-up date'],
   payType: ['حالة الشراء', 'حاله الشراء', 'payment'],
   deposit: ['قيمة المقدم', 'مقدم كام', 'المقدم', 'مقدم', 'deposit'],
   payDate: ['تاريخ السداد', 'payment date'],
+  owner: ['إسم المسئول', 'اسم المسئول', 'اسم المسؤول', 'المسؤول', 'المسئول', 'رجل البيع', 'owner'],
+  distributor: ['اسم الموزع', 'الموزع', 'distributor'],
+  note: ['موقف المتابعة', 'ملاحظات', 'آخر متابعة', 'الملاحظات', 'notes'],
+  reportType: ['نوع التقرير', 'report type'],
+  expected: ['قيمة المبيعات المتوقعة', 'المبيعات المتوقعة', 'expected sales'],
 };
+// ------- قراءة ملفات الفريق بشكلها الحالي دون تعديل -------
+// قيم تعني "لا توجد بيانات"
+const NO_VALUE = /^(لم تحدد|لم يحدد|لم تحدد بعد|غير محدد|غير معروف|لا يوجد|لا|-+|\.+|0)$/;
+const cleanCell = v => { const s = String(v ?? '').trim(); return NO_VALUE.test(s) ? '' : s; };
+// "A27 - محافظة الإسماعيلية" أو "6/A20 - إطفيح" ← الكود وما بعده
+function parseCodeCell(v) {
+  const s = String(v ?? '').trim();
+  const m = s.match(/^((?:\d+\s*\/\s*)?A\d+)\s*(?:[-–—:]\s*(.*))?$/i);
+  return m ? { code: m[1].replace(/\s/g, '').toUpperCase(), rest: (m[2] || '').trim() } : { code: '', rest: s };
+}
+// "جهاز 4 بوصة - X2 - 4000" ← الموديل X2 والمقاس 4 بوصة
+function parseDeviceCell(v) {
+  const s = String(v ?? '');
+  const size = s.match(/(\d+)\s*بوص/), model = s.match(/X+\s*(\d)/i);
+  return { deviceType: model ? DEVICE_MODELS[+model[1] - 1] || '' : '', deviceSize: size ? `${size[1]} بوصة` : '' };
+}
+// "A - ممتاز" ← مميز، B جيد جدًا، C جيد، D ضعيف
+const RATING_LETTERS = { A: 'مميز', B: 'جيد جدًا', C: 'جيد', D: 'ضعيف' };
+function parseRating(v) {
+  const s = String(v ?? '').trim();
+  const l = s.match(/^([ABCD])(?![a-z])/i);
+  if (l) return RATING_LETTERS[l[1].toUpperCase()];
+  if (/ممتاز|مميز/.test(s)) return 'مميز';
+  if (/مقبول|ضعيف/.test(s)) return 'ضعيف';
+  const r = s.replace('جدا', 'جدًا');
+  return RATINGS.find(x => r.includes(x) || normHeader(r) === normHeader(EN[x])) || 'جيد';
+}
+// حالة الشراء المكتوبة كموقف العميل ← مرحلة في النظام، و"تم الشراء" يجعله عميلًا مشتريًا
+const STATUS_STAGES = [[/تم الشراء|اشترى|تم البيع/, 'buyer'], [/تحليل/, 'st_water'], [/عرض.?السعر|عرض سعر/, 'st_quote'], [/اقناع|إقناع|أقناع|تفاوض|تجهيز/, 'st_nego'], [/لم يتم|رفض|غير مهتم|ملغ/, 'st_lost']];
+const stageFromStatus = v => { const s = String(v ?? ''); return (STATUS_STAGES.find(([rx]) => rx.test(s)) || [])[1] || ''; };
+// "د محمد عيسي" ← حساب "د. محمد عيسى"
+const personKey = s => normHeader(String(s ?? '').replace(/[.\/]/g, ' ').replace(/ى/g, 'ي')).replace(/^(د|م|ا|أ|الحاج|المهندس|الدكتور|استاذ|أستاذ)\s+/, '').replace(/\s+/g, ' ').trim();
+function matchUser(v) {
+  const k = personKey(v);
+  if (!k) return null;
+  return DB.users.find(u => u.active && personKey(u.name) === k) || (k.length >= 6 && DB.users.find(u => u.active && personKey(u.name).length >= 6 && (personKey(u.name).includes(k) || k.includes(personKey(u.name))))) || null;
+}
 const IMPORT_TEMPLATE = () => [...['الاسم', 'رقم الهاتف 1', 'رقم الهاتف 2', 'تصنيف العميل', 'الدولة', 'المحافظة', 'كود المنطقة', 'العنوان', 'المساحة', 'نوع الري', 'نوع المحصول', 'درجة ملوحة المياه', 'مصدر المياه', 'نوع الجهاز المطلوب', 'مقاس الجهاز المطلوب', 'مصدر المعرفة', 'تقييم العميل', 'تاريخ الاتصال', 'تاريخ المتابعة', 'حالة الشراء', 'قيمة المقدم', 'تاريخ السداد'].map(x => t(x)), ...activeFields().map(f => label(f))];
 const normHeader = s => String(s ?? '').trim().toLowerCase().replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/\s+/g, ' ');
 function parseDateCell(v) {
@@ -2270,7 +2314,8 @@ function analyzeImport(rows, ownerId) {
     const i = headers.findIndex(h => h === normHeader(f.name) || (f.en && h === normHeader(f.en)));
     if (i >= 0) fieldIdx[f.id] = i;
   });
-  const res = { items: [], duplicates: [], errors: [], egypt: {}, intl: {}, unknownGov: 0, unknownCountry: 0 };
+  const res = { items: [], duplicates: [], errors: [], egypt: {}, intl: {}, unknownGov: 0, unknownCountry: 0, owners: {}, stages: {}, buyers: 0, notes: 0, dists: 0 };
+  const ownerCache = new Map();
   const seen = new Set();
   rows.slice(headerIdx + 1).forEach((r, n) => {
     if (!r.some(x => String(x ?? '').trim())) return;
@@ -2278,7 +2323,9 @@ function analyzeImport(rows, ownerId) {
     const line = headerIdx + n + 2;
     const name = String(raw.name || '').trim(), p1 = String(raw.phone1 || '').trim(), p2 = String(raw.phone2 || '').trim();
     if (!name || !(p1 || p2)) { res.errors.push({ line, name, why: !name ? 'الاسم فارغ' : 'لا يوجد رقم هاتف' }); return; }
-    const np = [normPhone(p1), normPhone(p2)].filter(Boolean);
+    // أرقام مثل 000 أو 11 ليست أرقام هاتف، فلا يُضاف العميل حتى يُصحَّح رقمه
+    if (![p1, p2].some(p => normPhone(p).length >= 8)) { res.errors.push({ line, name, why: 'رقم الهاتف غير صحيح' }); return; }
+    const np = [normPhone(p1), normPhone(p2)].filter(x => x.length >= 8);
     const dup = findDuplicate([p1, p2]);
     if (dup || np.some(x => seen.has(x))) {
       const d = { line, name, phone: p1, owner: dup ? userName(dup.ownerId) : t('مكرر داخل الملف'), id: dup?.id };
@@ -2288,8 +2335,15 @@ function analyzeImport(rows, ownerId) {
       return;
     }
     np.forEach(x => seen.add(x));
+    // كود المنطقة مكتوب مع اسمها: كود مصري يحدد المحافظة، وكود غير مصري مثل "A46 - السعودية" يحدد الدولة
+    const rc = parseCodeCell(raw.regionCode), sc = parseCodeCell(raw.subCode);
+    let codeCountry = '';
+    if (rc.code && !regionByCode(rc.code.replace(/^\d+\//, '')) && rc.rest) codeCountry = rc.rest.replace(/^(دولة|سلطنة|مملكة|المملكة)\s+/, '');
+    else if (!rc.code && rc.rest && !regionByCode(rc.rest) && findCountry(rc.rest) && findCountry(rc.rest).name !== 'مصر') codeCountry = rc.rest;
+    raw.regionCode = (sc.code.includes('/') ? sc.code : '') || rc.code || '';
+    if (!raw.gov && rc.code && rc.rest) raw.gov = rc.rest;
     let market = 'egypt', country = '';
-    const ctext = String(raw.country || '').trim();
+    const ctext = String(raw.country || '').trim() || codeCountry;
     if (ctext && !/^(مصر|egypt)$/i.test(ctext)) { market = 'intl'; country = findCountry(ctext)?.name || ctext; }
     else if (!ctext) {
       const fromP = countryFromPhone(p1) || countryFromPhone(p2);
@@ -2298,18 +2352,42 @@ function analyzeImport(rows, ownerId) {
     const loc = market === 'egypt' ? detectGov(raw) : { govCode: '', subCode: '' };
     const ptext = String(raw.payType || '');
     const payType = /كاش|نقد|cash/i.test(ptext) ? 'cash' : /قسط|تقسيط|install/i.test(ptext) ? 'installment' : /مقدم|deposit/i.test(ptext) ? 'deposit' : '';
-    const rtext = String(raw.rating || '').replace('جدا', 'جدًا');
-    const rating = RATINGS.find(x => rtext.includes(x) || normHeader(rtext) === normHeader(EN[x])) || 'جيد';
-    const crops = splitCrops(String(raw.crops || ''));
+    const rating = parseRating(raw.rating);
+    const crops = splitCrops(cleanCell(raw.crops)).filter(x => !NO_VALUE.test(x));
+    // الجهاز في خانة واحدة مثل "جهاز 4 بوصة - X2 - 4000" يُقسم إلى الموديل والمقاس
+    const dev = String(raw.deviceType || '');
+    const parsedDev = /بوص|X\d/i.test(dev) && !raw.deviceSize ? parseDeviceCell(dev) : { deviceType: cleanCell(dev), deviceSize: cleanCell(raw.deviceSize) };
+    // المسؤول من الملف إن وُجد حسابه، وإلا رجل البيع المختار في نافذة الرفع
+    const otext = String(raw.owner || '').trim();
+    if (otext && !ownerCache.has(otext)) ownerCache.set(otext, matchUser(otext));
+    const ownerUser = otext ? ownerCache.get(otext) : null;
+    const rowOwner = ownerUser?.id || ownerId;
+    const status = payType ? '' : stageFromStatus(ptext);
+    const buyer = status === 'buyer';
+    const note = cleanCell(raw.note).replace(/^[-–•]\s*/, '');
+    const dist = cleanCell(raw.distributor);
     const ctg = String(raw.category || '').trim();
     const category = CUSTOMER_CATEGORIES.find(x => cropKey(x) === cropKey(ctg) || normHeader(EN[x] || DV[x]) === normHeader(ctg)) || ctg;
     const custom = {};
     Object.entries(fieldIdx).forEach(([id, i]) => { custom[id] = r[i] ?? ''; });
+    const contactDate = parseDateCell(raw.contactDate) || today();
     const item = {
-      ownerId, name, category, phone1: p1, phone2: p2, market, country, ...loc, address: String(raw.address || '').trim(), area: raw.area === '' || raw.area === undefined ? '' : (parseFloat(raw.area) || ''), irrigation: String(raw.irrigation || ''), crops, salinity: String(raw.salinity || ''), waterSource: String(raw.waterSource || ''), deviceType: String(raw.deviceType || ''), deviceSize: String(raw.deviceSize || ''), source: String(raw.source || ''), rating, contactDate: parseDateCell(raw.contactDate) || today(), followupDate: parseDateCell(raw.followupDate), payType, deposit: raw.deposit ? (parseFloat(raw.deposit) || '') : '', payDate: parseDateCell(raw.payDate), custom,
+      ownerId: rowOwner, name, category, phone1: p1, phone2: p2, market, country, ...loc, address: cleanCell(raw.address), area: raw.area === '' || raw.area === undefined ? '' : (parseFloat(raw.area) || ''), irrigation: cleanCell(raw.irrigation), crops, salinity: cleanCell(raw.salinity), waterSource: cleanCell(raw.waterSource), ...parsedDev, source: cleanCell(raw.source), rating, contactDate, followupDate: parseDateCell(raw.followupDate), payType, deposit: raw.deposit ? (parseFloat(raw.deposit) || '') : '', payDate: parseDateCell(raw.payDate), custom,
     };
+    if (buyer) Object.assign(item, { purchased: true, purchaseDate: contactDate, stageId: stageById('st_after') ? 'st_after' : '' });
+    else if (status && stageById(status)) item.stageId = status;
+    else if (note) item.stageId = stageById('st_needs') ? 'st_needs' : '';
+    // بيانات تُسجَّل بعد إنشاء العميل: أول متابعة، والموزع، ونوع التقرير، والمبيعات المتوقعة
     Object.defineProperty(item, '_raw', { value: r, enumerable: false });
+    Object.defineProperty(item, '_more', { value: { note, dist, reportType: cleanCell(raw.reportType), expected: cleanCell(raw.expected) }, enumerable: false });
     res.items.push(item);
+    const oLab = userName(rowOwner) + (otext && !ownerUser ? ` (${t('بدل')} "${otext}")` : '');
+    res.owners[oLab] = (res.owners[oLab] || 0) + 1;
+    const sLab = buyer ? t('مشترٍ') : label(stageById(item.stageId) || stagesAll(item.domainId)[0]) || t('أول اتصال');
+    res.stages[sLab] = (res.stages[sLab] || 0) + 1;
+    if (buyer) res.buyers++;
+    if (note) res.notes++;
+    if (dist) res.dists++;
     if (market === 'egypt') {
       const lab = regionByCode(loc.govCode) ? govLabel(regionByCode(loc.govCode).gov) : t('غير محدد');
       if (!loc.govCode) res.unknownGov++;
@@ -3803,26 +3881,51 @@ function openImport() {
     try {
       const sheets = await readSpreadsheet(file);
       const owner = can('customers.assign') ? $('#impRep', m.el).value : ME.id;
-      const sheet = sheets.find(s => analyzeImport(s.rows, owner).items?.length) || sheets[0];
-      result = analyzeImport(sheet.rows, owner);
+      // تُحلَّل كل ورقة مرة واحدة فقط (الملفات الكبيرة تأخذ ثوانٍ)
+      result = null;
+      for (const s of sheets) { const r = analyzeImport(s.rows, owner); if (r.items?.length) { result = r; break; } result = result || r; }
       if (result.error) { box.innerHTML = `<div class="err-msg">${esc(t(result.error))}</div>`; return; }
       const ul = obj => Object.entries(obj).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<span class="pill p-gray">${esc(k)}: ${v}</span>`).join(' ') || '<span class="muted">—</span>';
       box.innerHTML = `<div class="kpis"><div class="kpi ok"><div class="l">${t('جاهز للإضافة')}</div><div class="v">${result.items.length}</div></div><div class="kpi warn"><div class="l">${t('مكرر (لن يُضاف)')}</div><div class="v">${result.duplicates.length}</div></div><div class="kpi alert"><div class="l">${t('صفوف ناقصة')}</div><div class="v">${result.errors.length}</div></div></div>
         <div class="field"><label>${t('عملاء مصر حسب المحافظة')}</label><div class="chips">${ul(result.egypt)}</div></div>
         <div class="field"><label>${t('عملاء الخارج حسب الدولة')}</label><div class="chips">${ul(result.intl)}</div></div>
+        <div class="field"><label>${t('رجل البيع المسؤول')}</label><div class="chips">${ul(result.owners)}</div></div>
+        <div class="field"><label>${t('مرحلة العملاء')}</label><div class="chips">${ul(result.stages)}</div></div>
+        <div class="chips"><span class="pill p-green">${t('عملاء اشتروا: {n}', { n: result.buyers })}</span><span class="pill p-blue">${t('ملاحظات تُحفظ كأول متابعة: {n}', { n: result.notes })}</span><span class="pill p-gray">${t('مرتبطون بموزع: {n}', { n: result.dists })}</span></div>
         ${result.unknownGov ? `<div class="demo-banner">${t('تعذر تحديد المحافظة لعدد {n} من عملاء مصر، وسيُضافون باسم "غير محدد" ويمكن تعديلهم لاحقًا.', { n: result.unknownGov })}</div>` : ''}
-        ${result.duplicates.length || result.errors.length ? `<details class="tv" open><summary>${t('تفاصيل الصفوف المستبعدة')}</summary><table><tr><th>${t('الصف')}</th><th>${t('الاسم')}</th><th>${t('السبب')}</th></tr>${[...result.duplicates.map(x => [x.line, x.name, t('رقم مكرر ({o})', { o: x.owner })]), ...result.errors.map(x => [x.line, x.name, t(x.why)])].slice(0, 30).map(r => `<tr><td>${r[0]}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join('')}</table></details>` : ''}`;
+        ${result.duplicates.length || result.errors.length ? `<div class="mt"><button class="btn sm" id="impBad">⬇ ${t('تنزيل كل الصفوف المستبعدة ({n})', { n: result.duplicates.length + result.errors.length })}</button></div><details class="tv" open><summary>${t('تفاصيل الصفوف المستبعدة')}</summary><table><tr><th>${t('الصف')}</th><th>${t('الاسم')}</th><th>${t('السبب')}</th></tr>${[...result.duplicates.map(x => [x.line, x.name, t('رقم مكرر ({o})', { o: x.owner })]), ...result.errors.map(x => [x.line, x.name, t(x.why)])].slice(0, 30).map(r => `<tr><td>${r[0]}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join('')}</table></details>` : ''}`;
       $('#impGo', m.el).disabled = !result.items.length;
+      const bad = $('#impBad', m.el);
+      if (bad) bad.onclick = () => exportSheet(t('الصفوف المستبعدة'), [[t('الصف'), t('الاسم'), t('الهاتف'), t('السبب')], ...result.errors.map(x => [x.line, x.name, '', t(x.why)]), ...result.duplicates.map(x => [x.line, x.name, x.phone, t('رقم مكرر ({o})', { o: x.owner })])].sort((a, b) => (+a[0] || 0) - (+b[0] || 0)));
     } catch (err) {
       box.innerHTML = `<div class="err-msg">${esc(err.message)}</div>`;
     }
   };
   $('#impGo', m.el).onclick = () => {
-    result.items.forEach(it => syncPartner(createCustomer(it, { silent: true })));
-    audit('import', 'customer', null, 'رفع ملف عملاء: {a} جديد، {b} مكرر، {c} ناقص', { a: result.items.length, b: result.duplicates.length, c: result.errors.length });
-    toast(t('أُضيف العملاء وقُسِّموا تلقائيًا: {n}', { n: result.items.length }), 'ok');
-    m.close();
-    route();
+    const btn = $('#impGo', m.el);
+    btn.disabled = true;
+    btn.textContent = t('جارٍ الإضافة...');
+    // ملف كبير: يُحفظ مرة واحدة في النهاية بدل حفظ بعد كل عميل، حتى لا يتجمد المتصفح
+    setTimeout(() => {
+      const fieldId = name => {
+        let f = DB.customFields.find(x => normHeader(x.name) === normHeader(name));
+        if (!f) { f = { id: uid(), name, en: '', type: 'text', section: 'request', options: [], domainId: '', required: false, showInTable: false, active: true }; DB.customFields.push(f); }
+        return f.id;
+      };
+      result.items.forEach(it => {
+        const c = createCustomer(it, { silent: true, noSave: true });
+        const more = it._more || {};
+        if (more.dist) c.viaDistributorId = findOrCreateDistributor(more.dist, 'موزع');
+        if (more.reportType) c.custom[fieldId('نوع التقرير')] = more.reportType;
+        if (more.expected && +more.expected) c.custom[fieldId('قيمة المبيعات المتوقعة')] = more.expected;
+        if (more.note) DB.followups.unshift({ id: uid(), customerId: c.id, userId: c.ownerId, at: new Date(`${c.contactDate}T12:00:00`).toISOString(), text: more.note, outcome: 'تم الرد', nextDate: c.followupDate, viaVoice: false, stageId: c.stageId, imported: true });
+        if (isPartner(c.category)) syncPartner(c);
+      });
+      audit('import', 'customer', null, 'رفع ملف عملاء: {a} جديد، {b} مكرر، {c} ناقص', { a: result.items.length, b: result.duplicates.length, c: result.errors.length });
+      toast(t('أُضيف العملاء وقُسِّموا تلقائيًا: {n}', { n: result.items.length }), 'ok');
+      m.close();
+      route();
+    }, 30);
   };
 }
 
