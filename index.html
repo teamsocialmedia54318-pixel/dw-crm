@@ -454,6 +454,36 @@ html { -webkit-text-size-adjust: 100%; }
 .inp.bad-inp { border-color: var(--red, #c62828); }
 .map-chip { display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; padding: 3px 10px; border-radius: 999px; background: rgba(255,255,255,.16); color: #fff; font-size: 12.5px; text-decoration: none; }
 .map-chip:hover { background: rgba(255,255,255,.26); }
+/* قائمة اختيار بالبحث في الخانة نفسها */
+.combo { position: relative; min-width: 0; }
+.combo-native { display: none !important; }
+.combo-inp { padding-inline-end: 30px; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' fill='none' stroke='%2361698B' stroke-width='1.6'/%3E%3C/svg%3E") no-repeat; background-position: left 10px center; text-overflow: ellipsis; }
+[dir="ltr"] .combo-inp { background-position: right 10px center; }
+.combo-inp:disabled { background-color: var(--card-soft); color: var(--muted); }
+.combo-list { position: absolute; inset-inline: 0; top: calc(100% + 4px); z-index: 60; max-height: 260px; overflow-y: auto; background: #fff; border: 1px solid #cdd6e6; border-radius: 8px; box-shadow: 0 8px 24px rgba(13,26,77,.14); padding: 4px; }
+.combo-list[hidden] { display: none; }
+.combo-o { padding: 7px 10px; border-radius: 6px; cursor: pointer; line-height: 1.4; }
+.combo-o.act { background: var(--blue-bg); }
+.combo-o.sel { font-weight: 700; color: var(--teal); }
+.combo-o.blank { color: var(--muted); }
+.combo-o.fresh { color: var(--teal); font-weight: 600; }
+.combo-g { padding: 6px 10px 2px; font-size: 12px; font-weight: 700; color: var(--muted); }
+.combo-empty { padding: 8px 10px; color: var(--muted); }
+/* عدة مصادر مياه أو عدة أجهزة: صف لكل واحد */
+.multi-rows { display: flex; flex-direction: column; gap: 8px; }
+.multi-row { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) auto; gap: 8px; align-items: center; }
+.multi-row.dev { grid-template-columns: minmax(0, 1fr) 84px auto; }
+.multi-row .x-btn { width: 37px; height: 37px; padding: 0; font-size: 18px; line-height: 1; }
+.multi-add { margin-top: 8px; }
+.multi-list { margin: 0; padding-inline-start: 18px; }
+@media (max-width: 640px) {
+  .multi-row { grid-template-columns: minmax(0, 1fr) auto; }
+  .multi-row > :nth-child(2) { grid-column: 1; }
+  .multi-row > .x-btn { grid-row: 1 / span 2; grid-column: 2; }
+  .multi-row.dev { grid-template-columns: minmax(0, 1fr) 72px auto; }
+  .multi-row.dev > :nth-child(2) { grid-column: auto; }
+  .multi-row.dev > .x-btn { grid-row: auto; grid-column: auto; }
+}
 /* أرقام لوحة اليوم: الضغط عليها ينزل لقائمتها */
 button.kpi { font: inherit; text-align: start; width: 100%; cursor: pointer; color: inherit; }
 button.kpi:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
@@ -843,7 +873,8 @@ const EN = {
   'نص': 'Text', 'رقم': 'Number', 'تاريخ': 'Date', 'قائمة اختيار': 'Dropdown', 'نعم / لا': 'Yes / No', 'أضف أي بيانات جديدة تريد تسجيلها للعميل. يظهر الحقل تلقائيًا في نموذج الإدخال وملف العميل والتصدير ورفع الملفات.': 'Add any new customer data you want to record. The field appears automatically in forms, the customer file, exports and uploads.', 'حقل جديد': 'New field', 'الحقل': 'Field', 'إلزامي': 'Required', 'في الجدول': 'In table', 'لا توجد حقول مخصصة بعد': 'No custom fields yet', 'تعديل الحقل': 'Edit field', 'يظهر في قسم': 'Shown in section', 'خيارات القائمة': 'Dropdown options', 'افصل بين الخيارات بفاصلة': 'Separate options with commas', 'حقل إلزامي': 'Required field', 'يظهر في جدول العملاء': 'Show in customer table', 'يرجى إدخال خيارات القائمة': 'Please enter dropdown options',
   'إضافة قيمة': 'Add a value', 'أنواع الري': 'Irrigation types', 'مصادر المياه': 'Water sources', 'مصادر المعرفة': 'Lead sources', 'أنواع طلبات الدعم': 'Support ticket types',
   'خطة متابعة ما بعد البيع': 'After-sales follow-up plan', 'عند تسليم أي طلب تُنشأ هذه المتابعات تلقائيًا لرجل البيع المسؤول، ولا يتأثر ما أُنشئ سابقًا.': 'When an order is delivered, these follow-ups are created for the responsible rep. Existing ones are not affected.', 'بعد التسليم بعدد أيام': 'Days after delivery', 'إضافة متابعة': 'Add follow-up', 'حفظ الخطة': 'Save plan', 'متابعة جديدة': 'New follow-up', 'تم الحفظ': 'Saved', 'سعر الدولار (ج.م)': 'USD rate (EGP)', 'موعد بريد الصباح': 'Morning email time', 'يجب أن يكون سعر الدولار أكبر من صفر': 'The USD rate must be greater than zero',
-  'البيانات في النسخة التجريبية محفوظة في هذا المتصفح فقط. يرجى تنزيل نسخة احتياطية قبل مسح بيانات المتصفح.': 'In this trial, data is stored in this browser only. Please download a backup before clearing browser data.', 'نسخة تلقائية جاهزة للاسترجاع': 'Automatic copy ready to restore', 'حُفظت في {d} قبل: {r}': 'Saved {d} before: {r}', 'الطلبات: {n}': 'Orders: {n}', 'استرجاع هذه البيانات': 'Restore this data', 'استرجاع نسخة': 'Restore a backup', 'منطقة خطرة': 'Danger zone', 'قبل أي عملية هنا ينزّل النظام نسخة احتياطية ويحتفظ بنسخة تلقائية يمكن استرجاعها من الشاشة نفسها.': 'Before any action here, the system downloads a backup and keeps an automatic copy you can restore from this screen.', 'إعادة البيانات التجريبية': 'Reset to demo data', 'مسح جميع البيانات والبدء من جديد': 'Erase all data and start fresh', 'مسح جميع البيانات': 'Erase all data', 'استرجاع النسخة التلقائية': 'Restore automatic copy', 'ستُستبدل البيانات الحالية بهذه النسخة، وستحتاج إلى تسجيل الدخول مرة أخرى.': 'Current data will be replaced by this copy, and you will need to sign in again.', 'استرجاع': 'Restore', 'النسخة التلقائية غير سليمة': 'The automatic copy is invalid', 'ستُستبدل البيانات الحالية بالكامل بهذه النسخة.': 'All current data will be replaced by this backup.', 'استرجاع ملف نسخة': 'Restoring a backup file', 'الملف ليس نسخة احتياطية سليمة': 'This file is not a valid backup', 'ستُستبدل جميع البيانات الحالية بالبيانات التجريبية.': 'All current data will be replaced by demo data.', 'ستُحذف جميع بيانات العملاء والطلبات والسجل وحسابات رجال البيع، ويبقى حساب الإدارة ومدير المبيعات والأكواد وجدول المحاصيل الأصلي.': 'All customers, orders, logs and sales rep accounts will be deleted. The management and sales manager accounts, codes, and original crop calendar remain.', 'مسح': 'ERASE', 'إعادة': 'RESET', 'لديك الآن: العملاء {a}، الطلبات {b}. سينزل ملف نسخة احتياطية على جهازك قبل التنفيذ، وتبقى نسخة تلقائية في هذه الشاشة.': 'You currently have: customers {a}, orders {b}. A backup file will download before this runs, and an automatic copy stays on this screen.', 'للتأكيد اكتب كلمة': 'To confirm, type', 'المساحة غير كافية للنسخة التلقائية، واعتمد على الملف الذي نزل': 'Not enough space for the automatic copy. Rely on the downloaded file',
+  'الأجهزة المطلوبة': 'Requested devices', 'الجهاز والعدد': 'device and quantity', 'إضافة جهاز آخر': 'Add another device', 'اختر مصدر المياه': 'Choose a water source', 'مصادر المياه ودرجة ملوحتها': 'Water sources and salinity', 'لكل مصدر ملوحته': 'salinity for each source', 'إضافة مصدر مياه آخر': 'Add another water source', 'اكتب اسم المحصول أو اختر من القائمة': 'Type a crop name or pick from the list',
+  'البيانات في النسخة التجريبية محفوظة في هذا المتصفح فقط. يرجى تنزيل نسخة احتياطية قبل مسح بيانات المتصفح.': 'In this trial, data is stored in this browser only. Please download a backup before clearing browser data.','نسخة تلقائية جاهزة للاسترجاع': 'Automatic copy ready to restore', 'حُفظت في {d} قبل: {r}': 'Saved {d} before: {r}', 'الطلبات: {n}': 'Orders: {n}', 'استرجاع هذه البيانات': 'Restore this data', 'استرجاع نسخة': 'Restore a backup', 'منطقة خطرة': 'Danger zone', 'قبل أي عملية هنا ينزّل النظام نسخة احتياطية ويحتفظ بنسخة تلقائية يمكن استرجاعها من الشاشة نفسها.': 'Before any action here, the system downloads a backup and keeps an automatic copy you can restore from this screen.', 'إعادة البيانات التجريبية': 'Reset to demo data', 'مسح جميع البيانات والبدء من جديد': 'Erase all data and start fresh', 'مسح جميع البيانات': 'Erase all data', 'استرجاع النسخة التلقائية': 'Restore automatic copy', 'ستُستبدل البيانات الحالية بهذه النسخة، وستحتاج إلى تسجيل الدخول مرة أخرى.': 'Current data will be replaced by this copy, and you will need to sign in again.', 'استرجاع': 'Restore', 'النسخة التلقائية غير سليمة': 'The automatic copy is invalid', 'ستُستبدل البيانات الحالية بالكامل بهذه النسخة.': 'All current data will be replaced by this backup.', 'استرجاع ملف نسخة': 'Restoring a backup file', 'الملف ليس نسخة احتياطية سليمة': 'This file is not a valid backup', 'ستُستبدل جميع البيانات الحالية بالبيانات التجريبية.': 'All current data will be replaced by demo data.', 'ستُحذف جميع بيانات العملاء والطلبات والسجل وحسابات رجال البيع، ويبقى حساب الإدارة ومدير المبيعات والأكواد وجدول المحاصيل الأصلي.': 'All customers, orders, logs and sales rep accounts will be deleted. The management and sales manager accounts, codes, and original crop calendar remain.', 'مسح': 'ERASE', 'إعادة': 'RESET', 'لديك الآن: العملاء {a}، الطلبات {b}. سينزل ملف نسخة احتياطية على جهازك قبل التنفيذ، وتبقى نسخة تلقائية في هذه الشاشة.': 'You currently have: customers {a}, orders {b}. A backup file will download before this runs, and an automatic copy stays on this screen.', 'للتأكيد اكتب كلمة': 'To confirm, type', 'المساحة غير كافية للنسخة التلقائية، واعتمد على الملف الذي نزل': 'Not enough space for the automatic copy. Rely on the downloaded file',
   'توجد بيانات أحدث من نافذة أخرى، وستُعاد تحميل الصفحة': 'Newer data exists from another window. The page will reload', 'وُجدت تعديلات على هذا الجهاز لم تُحفظ قبل إغلاق الصفحة، ودُمجت مع بيانات الفريق وتُحفظ الآن': 'Changes on this device that were not saved before the page closed were merged with the team\'s data and are being saved now','تعذر الحفظ في ملف البيانات. تأكد من تشغيل النظام من start.bat': 'Could not save to the data file. Make sure the system is running from start.bat', 'النظام مفتوح دون start.bat، فالبيانات محفوظة في هذا المتصفح فقط.': 'The system is open without start.bat, so data is stored in this browser only.', 'نسخة تجريبية ببيانات وهمية، والبيانات محفوظة في ملف على هذا الجهاز.': 'Trial version with sample data. Data is stored in a file on this computer.', 'البيانات محفوظة في مجلد data داخل مجلد النظام على هذا الجهاز، مع نسخة احتياطية يومية من الملف.': 'Data is stored in the data folder inside the system folder on this computer, with a daily backup of the file.', 'هذه معاينة لبريد رجل البيع. الإرسال الفعلي حاليًا إلى عناوين الاختبار فقط، وبعد ربط الخادم سيُرسل لكل رجل بيع الساعة {h}.': "This is a preview of a sales rep's email. Actual sending currently goes to test addresses only. Once a server is connected, each rep will receive it at {h}.",
   'البريد اليومي': 'Daily email', 'الإرسال اليومي من سيرفرات جوجل': 'Daily sending from Google servers', 'يُرسل البريد كل يوم الساعة 8 صباحًا حتى لو كان الجهاز مغلقًا، ويعتمد على آخر بيانات رُفعت من النظام أثناء فتحه.': 'Email is sent every day at 8 AM even when this computer is off, using the latest data uploaded while the system was open.', 'رابط الخدمة': 'Service URL', 'مفتاح المزامنة': 'Sync key', 'حفظ ورفع البيانات': 'Save and upload data', 'إرسال البريد الآن': 'Send email now', 'آخر رفع للبيانات: {d}': 'Last data upload: {d}', 'لم تُرفع البيانات بعد': 'Data has not been uploaded yet', 'الخدمة غير مفعلة بعد. خطوات التفعيل في ملف README.md': 'The service is not active yet. Setup steps are in README.md', 'رابط الخدمة غير صحيح. يجب أن ينتهي بـ exec': 'Invalid service URL. It must end with exec', 'جارٍ رفع البيانات...': 'Uploading data...', 'تم رفع البيانات': 'Data uploaded', 'تعذر الاتصال بالخدمة: {e}': 'Could not reach the service: {e}', 'جارٍ الإرسال...': 'Sending...', 'تم إرسال البريد': 'Email sent', 'إرسال بريد المتابعة من سيرفرات جوجل': 'Sent the follow-up email from Google servers', 'تعديل إعدادات البريد اليومي': 'Edited daily email settings', 'هذه معاينة لبريد رجل البيع. الإرسال الفعلي حاليًا إلى عناوين الاختبار فقط، وبعد ربط الخادم سيُرسل لكل رجل بيع.': "This is a preview of a sales rep's email. Actual sending currently goes to test addresses only. Once a server is connected, each rep will receive it.",
   'تعذر الحفظ. تأكد من الاتصال بالإنترنت': 'Could not save. Check your internet connection', 'يحتاج هذا الجهاز إلى كود الاتصال مرة واحدة': 'This device needs the access code once', 'كود الاتصال': 'Access code', 'متابعة ': 'Continue', 'تعذر الوصول إلى البيانات. تأكد من الاتصال بالإنترنت ثم أعد المحاولة': 'Could not reach the data. Check your internet connection and try again', 'إعادة المحاولة': 'Try again', 'نسخة تجريبية للبيانات الوهمية فقط، ويمكن فتحها من أي جهاز.': 'Trial version for sample data only. It can be opened from any device.', 'يُرسل البريد كل يوم الساعة 8 صباحًا من آخر البيانات المحفوظة، حتى لو كانت كل الأجهزة مغلقة.': 'Email is sent every day at 8 AM from the latest saved data, even when all devices are off.', 'نسخ رابط الفتح من جهاز آخر': 'Copy link for another device', 'الرابط يتضمن كود الاتصال، فشاركه مع فريقك فقط.': 'The link includes the access code, so share it with your team only.', 'تم نسخ الرابط': 'Link copied', 'تعذر النسخ': 'Could not copy',
@@ -1163,7 +1194,7 @@ const OUTCOMES = ['تم الرد', 'لم يرد', 'مشغول', 'غير متاح
 const curLabel = o => t(o.currency === 'USD' ? 'دولار' : 'ج.م');
 
 const FIELD_LABELS = {
-  name: 'الاسم', mapLink: 'موقع المزرعة', category: 'تصنيف العميل',buyerClass: 'تصنيف العميل المشتري', viaDistributorId: 'عن طريق الوكيل أو الموزع', phone1: 'رقم الهاتف 1', phone2: 'رقم الهاتف 2', address: 'العنوان', govCode: 'كود المحافظة', subCode: 'كود المنطقة الفرعية', country: 'الدولة', area: 'المساحة', irrigation: 'نوع الري', crops: 'نوع المحصول', salinity: 'درجة ملوحة المياه', waterSource: 'مصدر المياه', deviceType: 'نوع الجهاز المطلوب', deviceSize: 'مقاس الجهاز المطلوب', source: 'مصدر المعرفة', rating: 'تقييم العميل', contactDate: 'تاريخ الاتصال', followupDate: 'تاريخ المتابعة', ownerId: 'رجل البيع', payType: 'حالة الشراء', deposit: 'قيمة المقدم', payDate: 'تاريخ السداد', domainId: 'المجال', assistantIds: 'الزملاء المساعدون', asNextDate: 'موعد متابعة ما بعد البيع', asLastDate: 'آخر متابعة بعد البيع', purchased: 'عميل مشترٍ', purchaseDate: 'تاريخ الشراء',
+  name: 'الاسم', mapLink: 'موقع المزرعة', category: 'تصنيف العميل',buyerClass: 'تصنيف العميل المشتري', viaDistributorId: 'عن طريق الوكيل أو الموزع', phone1: 'رقم الهاتف 1', phone2: 'رقم الهاتف 2', address: 'العنوان', govCode: 'كود المحافظة', subCode: 'كود المنطقة الفرعية', country: 'الدولة', area: 'المساحة', irrigation: 'نوع الري', crops: 'نوع المحصول', salinity: 'درجة ملوحة المياه', waterSource: 'مصدر المياه', deviceType: 'نوع الجهاز المطلوب', deviceSize: 'مقاس الجهاز المطلوب', source: 'مصدر المعرفة', rating: 'تقييم العميل', contactDate: 'تاريخ الاتصال', followupDate: 'تاريخ المتابعة', ownerId: 'رجل البيع', payType: 'حالة الشراء', deposit: 'قيمة المقدم', payDate: 'تاريخ السداد', domainId: 'المجال', assistantIds: 'الزملاء المساعدون', asNextDate: 'موعد متابعة ما بعد البيع', asLastDate: 'آخر متابعة بعد البيع', purchased: 'عميل مشترٍ', purchaseDate: 'تاريخ الشراء', waters: 'مصادر المياه ودرجة ملوحتها', devices: 'الأجهزة المطلوبة',
 };
 
 let DB = null;
@@ -1843,6 +1874,8 @@ function createCustomer(data, opts = {}) {
 }
 const fieldStr = (f, v) => {
   if (f === 'assistantIds' || f === 'shareIds') return (v || []).map(userName).join('، ');
+  if (f === 'waters') return waterText(v || []);
+  if (f === 'devices') return devicesText({ devices: v || [] });
   if (Array.isArray(v)) return v.join('، ');
   if (f === 'ownerId') return userName(v);
   if (f === 'payType') return PAY_TYPES[v] || v || '';
@@ -1861,7 +1894,11 @@ function updateCustomer(id, patch, key, params) {
       });
       return;
     }
-    const a = fieldStr(k, c[k]), b = fieldStr(k, patch[k]);
+    // الحقول القديمة المشتقة من القوائم الجديدة لا تُسجَّل مرتين في سجل التعديلات
+    if ('waters' in patch && (k === 'waterSource' || k === 'salinity')) return;
+    if ('devices' in patch && (k === 'deviceType' || k === 'deviceSize')) return;
+    const cur = k === 'waters' ? custWaters(c) : k === 'devices' ? custDevices(c) : c[k];
+    const a = fieldStr(k, cur), b = fieldStr(k, patch[k]);
     if (a !== b) changes.push({ field: FIELD_LABELS[k] || k, from: a, to: b });
   });
   if (!changes.length) return false;
@@ -1901,6 +1938,24 @@ function deviceName(type, size) {
 const productLabel = p => deviceName(p.type, p.size);
 // لملفات إكسيل: الاسم نفسه دون علامات اتجاه النص
 const deviceText = (type, size) => deviceName(type, size).replace(/[⁦-⁩]/g, '');
+// ------- عدة مصادر مياه وعدة أجهزة للعميل الواحد -------
+// القوائم الجديدة waters و devices تُحفظ بجانب الحقول القديمة، والقديمة تبقى معبأة (أول جهاز، والمصادر مجمّعة)
+// فيستمر عمل كل ما يقرؤها: البريد اليومي وكارت المكالمات والتصدير والاستيراد. العميل القديم يُقرأ من حقوله القديمة
+const custWaters = c => Array.isArray(c?.waters) && c.waters.length ? c.waters : (c?.waterSource || c?.salinity ? [{ source: c.waterSource || '', salinity: c.salinity || '' }] : []);
+const custDevices = c => Array.isArray(c?.devices) && c.devices.length ? c.devices : (c?.deviceType ? [{ type: c.deviceType, size: c.deviceSize || '', qty: 1 }] : []);
+function watersFields(list) {
+  const waters = (list || []).map(w => ({ source: String(w.source || '').trim(), salinity: String(w.salinity || '').trim() })).filter(w => w.source || w.salinity);
+  const salinity = waters.length <= 1 ? waters[0]?.salinity || '' : waters.filter(w => w.salinity).map(w => w.source ? `${w.source}: ${w.salinity}` : w.salinity).join('، ');
+  return { waters, waterSource: [...new Set(waters.map(w => w.source).filter(Boolean))].join(' + '), salinity };
+}
+function devicesFields(list) {
+  const devices = (list || []).filter(x => x.type).map(x => ({ type: x.type, size: x.size || '', qty: Math.max(1, parseInt(x.qty, 10) || 1) }));
+  return { devices, deviceType: devices[0]?.type || '', deviceSize: devices[0]?.size || '' };
+}
+const waterText = list => list.map(w => [tv(w.source), w.salinity].filter(Boolean).join(': ')).join('، ');
+const devicesText = c => custDevices(c).map(x => `${deviceText(x.type, x.size)}${x.qty > 1 ? ` ×${x.qty}` : ''}`).join(' + ');
+const devicesHtml = c => custDevices(c).map(x => `${esc(deviceName(x.type, x.size))}${x.qty > 1 ? ` <b>×${x.qty}</b>` : ''}`).join('<br>');
+const watersHtml = c => custWaters(c).map(w => `${esc(tv(w.source) || '—')}${w.salinity ? ` · <span dir="ltr">${esc(w.salinity)}</span>` : ''}`).join('<br>');
 // الترتيب: المقاس من الأصغر للأكبر، ثم الموديل X1 إلى X4، والأجهزة الأخرى في النهاية
 const productSort = (a, b) => (MODEL_RX.test(b.type) - MODEL_RX.test(a.type)) || inchOf(a.size) - inchOf(b.size) || a.type.localeCompare(b.type);
 
@@ -2323,9 +2378,10 @@ const BASE_COLUMNS = [
   ['irrigation', 'نوع الري', c => tv(c.irrigation)],
   ['crops', 'نوع المحصول', c => (c.crops || []).map(tv).join(LANG === 'en' ? ', ' : '، ')],
   ['salinity', 'درجة ملوحة المياه', c => c.salinity],
-  ['waterSource', 'مصدر المياه', c => tv(c.waterSource)],
+  ['waterSource', 'مصدر المياه', c => custWaters(c).map(w => tv(w.source)).filter(Boolean).join(' + ')],
   ['deviceType', 'نوع الجهاز المطلوب', c => tv(c.deviceType)],
   ['deviceSize', 'مقاس الجهاز المطلوب', c => tv(c.deviceSize)],
+  ['devices', 'الأجهزة المطلوبة', c => devicesText(c)],
   ['source', 'مصدر المعرفة', c => tv(c.source)],
   ['via', 'عن طريق الوكيل أو الموزع', c => distName(c.viaDistributorId)],
   ['rating', 'تقييم العميل', c => tv(c.rating)],
@@ -2371,7 +2427,7 @@ function dailySheet(userId, date) {
   const custs = liveCustomers().filter(c => followedBy(c, userId));
   const due = custs.filter(c => c.followupDate === date), late = custs.filter(c => c.followupDate && c.followupDate < today());
   const h = ['الحالة', 'كود العميل', 'الاسم', 'رقم الهاتف 1', 'رقم الهاتف 2', 'المحافظة / الدولة', 'المحصول', 'الجهاز المطلوب', 'التقييم', 'المرحلة', 'تاريخ المتابعة', 'آخر متابعة'].map(x => t(x));
-  const row = (c, st) => [st, c.code, c.name, c.phone1, c.phone2, custLocation(c), c.crops.map(tv).join('، '), deviceText(c.deviceType, c.deviceSize), tv(c.rating), label(stageById(c.stageId)), fmtDate(c.followupDate), followupsOf(c.id)[0]?.text || ''];
+  const row = (c, st) => [st, c.code, c.name, c.phone1, c.phone2, custLocation(c), c.crops.map(tv).join('، '), devicesText(c), tv(c.rating), label(stageById(c.stageId)), fmtDate(c.followupDate), followupsOf(c.id)[0]?.text || ''];
   const inst = DB.orders.filter(o => creditedTo(o, userId) && o.status !== 'cancelled').flatMap(o => o.installments.filter(i => !i.paid && i.due <= date).map(i => [o.no, custById(o.customerId)?.name, custById(o.customerId)?.phone1, fmtDate(i.due), i.amount, curLabel(o)]));
   const after = [
     ...DB.afterSales.filter(a => a.status === 'pending' && a.due <= date && a.userId === userId).map(a => [tv(a.name), custById(a.customerId)?.name, custById(a.customerId)?.phone1, fmtDate(a.due)]),
@@ -3305,6 +3361,116 @@ const opts = (list, sel, blank) => (blank !== undefined ? `<option value="">${bl
   return `<option value="${esc(val)}" ${String(val) === String(sel ?? '') ? 'selected' : ''}>${esc(lab)}</option>`;
 }).join('');
 const optsT = (list, sel, blank) => opts(list.map(v => Array.isArray(v) ? [v[0], t(v[1])] : [v, tv(v)]), sel, blank);
+
+// ------- قائمة اختيار بالبحث: يكتب المستخدم في الخانة نفسها فتظهر الاختيارات المطابقة -------
+// تُطبَّق تلقائيًا داخل النوافذ على كل قائمة طويلة (8 اختيارات أو أكثر) وعلى أي قائمة عليها data-combo.
+// القائمة الأصلية تبقى مخفية وهي التي تحمل القيمة وتطلق change، فلا يتغير شيء في قراءة القيم أو حفظها.
+// data-allow-new: إذا لم يوجد ما كُتب يظهر اختيار "+ إضافة" بالنص نفسه
+const COMBO_MIN = 8;
+const normAr = s => String(s ?? '').toLowerCase().replace(/[أإآٱ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/[ً-ْـ]/g, '').trim();
+const SELECT_VALUE = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value');
+function comboize(sel) {
+  if (sel.dataset.comboOn || sel.multiple || sel.dataset.combo === 'off' || !sel.parentNode) return;
+  sel.dataset.comboOn = '1';
+  const allowNew = sel.hasAttribute('data-allow-new');
+  const wrap = document.createElement('div');
+  wrap.className = 'combo';
+  sel.parentNode.insertBefore(wrap, sel);
+  wrap.appendChild(sel);
+  sel.classList.add('combo-native');
+  sel.tabIndex = -1;
+  sel.setAttribute('aria-hidden', 'true');
+  const inp = document.createElement('input');
+  inp.type = 'text';
+  inp.className = 'inp combo-inp';
+  inp.autocomplete = 'off';
+  inp.spellcheck = false;
+  inp.setAttribute('role', 'combobox');
+  inp.setAttribute('aria-autocomplete', 'list');
+  inp.setAttribute('aria-expanded', 'false');
+  const lab = sel.getAttribute('aria-label') || sel.closest('.field')?.querySelector('label')?.textContent.replace('*', '').trim();
+  if (lab) inp.setAttribute('aria-label', lab);
+  const list = document.createElement('div');
+  list.className = 'combo-list';
+  list.setAttribute('role', 'listbox');
+  list.hidden = true;
+  wrap.append(inp, list);
+  const items = () => [...sel.options].map(o => ({ v: o.value, l: o.textContent, g: o.parentElement.tagName === 'OPTGROUP' ? o.parentElement.label : '', off: o.disabled }));
+  const sync = () => {
+    const o = sel.selectedOptions[0];
+    if (document.activeElement !== inp || list.hidden) inp.value = o && o.value !== '' ? o.textContent : '';
+    inp.placeholder = [...sel.options].find(x => x.value === '')?.textContent || t('اختر');
+    inp.disabled = sel.disabled;
+  };
+  // تعيين القيمة من الكود (مثل sel.value = '') يُحدّث النص الظاهر أيضًا
+  Object.defineProperty(sel, 'value', { configurable: true, get() { return SELECT_VALUE.get.call(this); }, set(v) { SELECT_VALUE.set.call(this, v); sync(); } });
+  let shown = [], active = -1;
+  const mark = () => {
+    $$('.combo-o', list).forEach(el => el.classList.toggle('act', +el.dataset.i === active));
+    list.querySelector('.combo-o.act')?.scrollIntoView({ block: 'nearest' });
+  };
+  const draw = q => {
+    const nq = normAr(q);
+    const all = items();
+    shown = all.filter(x => x.v !== '' && !x.off && (!nq || normAr(x.l).includes(nq) || normAr(x.v).includes(nq) || normAr(x.g).includes(nq)));
+    const blank = all.find(x => x.v === '');
+    if (!nq && blank) shown.unshift(blank);
+    if (allowNew && nq && !shown.some(x => normAr(x.l) === nq || normAr(x.v) === nq)) shown.push({ v: q.trim(), l: `+ ${t('إضافة')} "${q.trim()}"`, g: '', fresh: true });
+    let lastG = '';
+    list.innerHTML = shown.length ? shown.map((x, i) => {
+      const g = x.g && x.g !== lastG ? `<div class="combo-g">${esc(x.g)}</div>` : '';
+      lastG = x.g;
+      return `${g}<div class="combo-o${x.v === sel.value && x.v !== '' ? ' sel' : ''}${x.v === '' ? ' blank' : ''}${x.fresh ? ' fresh' : ''}" role="option" data-i="${i}">${esc(x.l)}</div>`;
+    }).join('') : `<div class="combo-empty">${t('لا توجد نتائج')}</div>`;
+    active = nq ? 0 : shown.findIndex(x => x.v === sel.value && x.v !== '');
+    mark();
+  };
+  const open = () => {
+    if (sel.disabled) return;
+    draw('');
+    list.hidden = false;
+    inp.setAttribute('aria-expanded', 'true');
+    inp.select();
+  };
+  const close = () => { list.hidden = true; inp.setAttribute('aria-expanded', 'false'); sync(); };
+  const pick = x => {
+    if (!x) return;
+    if (x.fresh && ![...sel.options].some(o => o.value === x.v)) sel.add(new Option(x.v, x.v));
+    list.hidden = true;
+    inp.setAttribute('aria-expanded', 'false');
+    SELECT_VALUE.set.call(sel, x.v);
+    sel.dispatchEvent(new Event('change', { bubbles: true }));
+    sync();
+  };
+  inp.addEventListener('focus', open);
+  inp.addEventListener('mousedown', () => { if (list.hidden && document.activeElement === inp) setTimeout(open); });
+  inp.addEventListener('input', () => { list.hidden = false; inp.setAttribute('aria-expanded', 'true'); draw(inp.value); });
+  inp.addEventListener('keydown', e => {
+    if (e.key === 'ArrowDown') { e.preventDefault(); if (list.hidden) open(); else { active = Math.min(shown.length - 1, active + 1); mark(); } }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); active = Math.max(0, active - 1); mark(); }
+    else if (e.key === 'Enter') { if (!list.hidden && shown[active]) { e.preventDefault(); pick(shown[active]); } }
+    else if (e.key === 'Escape') { if (!list.hidden) { e.preventDefault(); e.stopPropagation(); close(); } }
+  });
+  inp.addEventListener('blur', () => setTimeout(() => { if (document.activeElement !== inp) close(); }, 120));
+  list.addEventListener('mousedown', e => {
+    e.preventDefault();
+    const el = e.target.closest('.combo-o');
+    if (el) pick(shown[+el.dataset.i]);
+  });
+  sel.addEventListener('change', () => { if (list.hidden) sync(); });
+  new MutationObserver(sync).observe(sel, { childList: true, subtree: true, attributes: true, attributeFilter: ['disabled'] });
+  sync();
+}
+const comboWanted = sel => sel.matches('select.inp') && !sel.dataset.comboOn && (sel.hasAttribute('data-combo') || sel.options.length >= COMBO_MIN);
+function comboizeIn(root) {
+  if (root.matches?.('select')) { if (comboWanted(root)) comboize(root); return; }
+  root.querySelectorAll?.('select.inp').forEach(s => { if (comboWanted(s)) comboize(s); });
+}
+// النوافذ (إدخال العميل وتعديله والطلبات...) تُفحص كلما أُضيف فيها محتوى، وكذلك القائمة التي تمتلئ لاحقًا (مثل المنطقة الفرعية)
+new MutationObserver(recs => recs.forEach(r => {
+  if (r.target.matches?.('select.inp')) { if (comboWanted(r.target)) comboize(r.target); return; }
+  r.addedNodes.forEach(n => n.nodeType === 1 && comboizeIn(n));
+})).observe(document.getElementById('modal-root'), { childList: true, subtree: true });
 const govOptions = sel => opts(GOVS.map(g => [g, govLabel(g)]), sel, t('جميع المحافظات'));
 const regionLabel = r => `${r.code} - ${govLabel(r.gov)}${r.main === 'المناطق الرئيسية' ? '' : ' / ' + r.main}`;
 const repOptions = (sel, blank) => opts(sellers().map(u => [u.id, u.name]), sel, blank === undefined ? t('جميع رجال البيع') : blank);
@@ -3499,7 +3665,7 @@ function viewCustomers(root, market) {
         return `<tr class="click ${seas ? 'season' : ''}" data-id="${c.id}">
         <td class="sticky-col card-title" data-label="">${esc(c.name)} ${c.rating === 'مميز' ? ratingPill(c.rating) : ''}${(c.files || []).length ? ` <span class="pill p-gray" title="${t('التحاليل')}">📎 ${c.files.length}</span>` : ''}</td><td data-label="${t('التصنيف')}">${c.category ? categoryPill(c.category) : ''}</td><td data-label="${t('رقم الهاتف 1')}">${phoneLink(c.phone1)}</td><td data-label="${t('رقم الهاتف 2')}">${phoneLink(c.phone2)}</td>
         <td class="wrap card-wide" data-label="${t('العنوان')}">${esc(custAddress(c))}</td>${market === 'egypt' ? `<td class="card-hide" data-label="${t('الكود')}"><span class="code-tag">${esc(c.subCode || c.govCode || '-')}</span></td>` : ''}
-        <td class="card-hide" data-label="${t('المساحة')}">${c.area === '' ? '' : `${esc(c.area)} ${t('فدان')}`}</td><td class="card-hide" data-label="${t('نوع الري')}">${esc(tv(c.irrigation))}</td><td class="card-wide" data-label="${t('نوع المحصول')}">${esc(c.crops.map(tv).join(LANG === 'en' ? ', ' : '، '))} ${seasonBadges(c, m)}</td><td class="num card-hide" data-label="${t('الملوحة')}">${esc(c.salinity)}</td><td class="card-hide" data-label="${t('مصدر المياه')}">${esc(tv(c.waterSource))}</td><td class="card-wide" data-label="${t('الجهاز المطلوب')}">${esc(deviceName(c.deviceType, c.deviceSize))}</td><td class="card-hide" data-label="${t('مصدر المعرفة')}">${esc(tv(c.source))}${c.viaDistributorId ? `<div class="muted">${esc(distName(c.viaDistributorId))}</div>` : ''}</td>
+        <td class="card-hide" data-label="${t('المساحة')}">${c.area === '' ? '' : `${esc(c.area)} ${t('فدان')}`}</td><td class="card-hide" data-label="${t('نوع الري')}">${esc(tv(c.irrigation))}</td><td class="card-wide" data-label="${t('نوع المحصول')}">${esc(c.crops.map(tv).join(LANG === 'en' ? ', ' : '، '))} ${seasonBadges(c, m)}</td><td class="num card-hide" data-label="${t('الملوحة')}">${custWaters(c).filter(w => w.salinity).map(w => esc(w.salinity)).join('<br>')}</td><td class="card-hide" data-label="${t('مصدر المياه')}">${esc(custWaters(c).map(w => tv(w.source)).filter(Boolean).join(' + '))}</td><td class="card-wide" data-label="${t('الجهاز المطلوب')}">${devicesHtml(c)}</td><td class="card-hide" data-label="${t('مصدر المعرفة')}">${esc(tv(c.source))}${c.viaDistributorId ? `<div class="muted">${esc(distName(c.viaDistributorId))}</div>` : ''}</td>
         <td data-label="${t('التقييم')}">${ratingPill(c.rating)}</td><td data-label="${t('المرحلة')}">${stagePill(c)}</td><td class="card-hide" data-label="${t('تاريخ الاتصال')}">${fmtDate(c.contactDate)}</td><td data-label="${t('تاريخ المتابعة')}">${followPill(c.followupDate)}</td>
         <td class="card-hide" data-label="${t('الدفع')}">${payPill(c)}</td><td class="card-hide" data-label="${t('قيمة المقدم')}">${c.deposit ? money(c.deposit) : ''}</td><td class="card-hide" data-label="${t('تاريخ السداد')}">${fmtDate(c.payDate)}</td>${fields.map(f => `<td class="card-hide" data-label="${esc(label(f))}">${esc(c.custom?.[f.id] ?? '')}</td>`).join('')}${manyOwners ? `<td data-label="${t('رجل البيع')}">${esc(userName(c.ownerId))}</td>` : ''}</tr>`;
       }).join('')}</tbody></table>
@@ -3570,24 +3736,20 @@ function bindLocation(root, prefix, d) {
   gov.onchange = () => { d.subCode = ''; fill(); };
   fill();
 }
-// المحاصيل: اختيار من قائمة مصنفة أو كتابة الاسم، وكل محصول يُحفظ وحده
-const cropPicker = () => `<div class="grid2"><select class="inp" id="cropsel" aria-label="${t('اختر المحصول من القائمة')}">${cropOptions(DB.crops.map(c => c.name), '', t('اختر المحصول من القائمة'))}</select><input class="inp" id="cropq" list="croplist" placeholder="${t('أو اكتب اسم المحصول ثم اضغط Enter')}"></div><datalist id="croplist">${DB.crops.map(c => `<option value="${esc(tv(c.name))}">`).join('')}</datalist><div class="chips mt" id="cropchips"></div>`;
+// المحاصيل: خانة واحدة يُكتب فيها اسم المحصول فتظهر المحاصيل المطابقة، أو يُضاف الاسم المكتوب إن لم يوجد. وكل محصول يُحفظ وحده
+const cropPicker = () => `<select class="inp" id="cropsel" data-combo data-allow-new aria-label="${t('نوع المحصول')}">${cropOptions(DB.crops.map(c => c.name), '', t('اكتب اسم المحصول أو اختر من القائمة'))}</select><div class="chips mt" id="cropchips"></div>`;
 function bindCropPicker(root, d) {
   const draw = () => {
     $('#cropchips', root).innerHTML = d.crops.map(c => `<button type="button" class="chip on" data-c="${esc(c)}">${esc(tv(c))} <span class="x">×</span></button>`).join('');
     $$('#cropchips .chip', root).forEach(b => b.onclick = () => { d.crops = d.crops.filter(x => x !== b.dataset.c); draw(); });
   };
   const push = list => { splitCrops(list).forEach(c => { if (!d.crops.includes(c)) d.crops.push(c); }); draw(); };
-  const add = () => {
-    const inp = $('#cropq', root), v = inp.value.trim();
-    if (!v) return;
-    // الاسم الإنجليزي المختار من القائمة يُحوَّل إلى اسمه المعتمد
-    push(DB.crops.find(c => tv(c.name).toLowerCase() === v.toLowerCase())?.name || v);
-    inp.value = '';
+  $('#cropsel', root).onchange = e => {
+    const v = e.target.value.trim();
+    // الاسم المكتوب بالإنجليزية أو بصيغة أخرى يُحوَّل إلى اسمه المعتمد في جدول المحاصيل
+    if (v) push(DB.crops.find(c => c.name === v || tv(c.name).toLowerCase() === v.toLowerCase())?.name || v);
+    e.target.value = '';
   };
-  $('#cropq', root).addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); add(); } });
-  $('#cropq', root).addEventListener('change', add);
-  $('#cropsel', root).onchange = e => { if (e.target.value) push(e.target.value); e.target.value = ''; };
   draw();
 }
 const CATEGORY_PILL = { 'مزارع': 'p-plant', 'مهندس زراعي': 'p-after', 'وكيل': 'p-blue', 'موزع': 'p-orange' };
@@ -3630,9 +3792,9 @@ function readVia(root, source) {
 const viaId = (via, source) => via.newName ? findOrCreateDistributor(via.newName, source) : via.id || '';
 // الأجهزة حسب سوق العميل: داخل مصر بالجنيه وخارجها بالدولار، مع السعر الحالي من قائمة الأسعار
 // قائمة واحدة بكل جهاز (المقاس + الموديل) مجمّعة حسب المقاس، بالسعر الحالي من قائمة الأسعار
-function deviceOptions(d) {
+function deviceOptions(d, x = { type: d.deviceType, size: d.deviceSize }) {
   const list = productsFor(d.domainId, d.market || 'egypt').sort(productSort);
-  const cur = d.deviceType ? `${d.deviceType}||${d.deviceSize}` : '';
+  const cur = x.type ? `${x.type}||${x.size || ''}` : '';
   const groups = [];
   list.forEach(p => {
     const g = MODEL_RX.test(p.type) ? tv(p.size) : t('أجهزة أخرى');
@@ -3647,12 +3809,55 @@ function deviceOptions(d) {
     return `<option value="${esc(v)}" ${v === cur ? 'selected' : ''}>${esc(productLabel(p))} · ${money(p.price)} ${curName(productCurrency(p))}</option>`;
   }).join('')}</optgroup>`).join('');
   // الجهاز المسجل سابقًا يبقى ظاهرًا حتى لو أُوقف، فلا يُمسح عند حفظ التعديل
-  const old = cur && !found ? `<option value="${esc(cur)}" selected>${esc(deviceName(d.deviceType, d.deviceSize))}</option>` : '';
+  const old = cur && !found ? `<option value="${esc(cur)}" selected>${esc(deviceName(x.type, x.size))}</option>` : '';
   return `<option value="">${t('اختر')}</option>${old}${html}`;
 }
-const deviceFields = d => `<div class="field"><label>${t('الجهاز المطلوب')}</label><select class="inp" id="device">${deviceOptions(d)}</select></div>`;
-function bindDevice() {}
-const readDevice = root => { const [deviceType = '', deviceSize = ''] = ($('#device', root)?.value || '').split('||'); return { deviceType, deviceSize }; };
+// الأجهزة المطلوبة: صف لكل جهاز (موديل ومقاس مختلف) مع العدد، وزر لإضافة جهاز آخر
+const deviceRow = (d, x = {}) => `<div class="multi-row dev"><select class="inp" data-combo data-dv aria-label="${t('الجهاز المطلوب')}">${deviceOptions(d, x)}</select><input class="inp" type="number" min="1" data-dq value="${esc(x.qty || 1)}" aria-label="${t('العدد')}" title="${t('العدد')}"><button type="button" class="btn sm x-btn" data-del aria-label="${t('حذف')}">×</button></div>`;
+const deviceFields = d => {
+  const list = custDevices(d);
+  return `<div class="field"><label>${t('الأجهزة المطلوبة')} <small class="muted">(${t('الجهاز والعدد')})</small></label><div class="multi-rows" id="drows">${(list.length ? list : [{}]).map(x => deviceRow(d, x)).join('')}</div><button type="button" class="btn sm multi-add" id="dadd">+ ${t('إضافة جهاز آخر')}</button></div>`;
+};
+function bindDevice(root, d) {
+  const rows = $('#drows', root);
+  if (!rows) return;
+  const bindDel = () => $$('[data-del]', rows).forEach(b => b.onclick = () => {
+    if ($$('.multi-row', rows).length > 1) b.closest('.multi-row').remove();
+    else { const s = $('[data-dv]', b.closest('.multi-row')); s.value = ''; $('[data-dq]', rows).value = 1; }
+  });
+  $('#dadd', root).onclick = () => {
+    rows.insertAdjacentHTML('beforeend', deviceRow(d));
+    bindDel();
+    setTimeout(() => $('.multi-row:last-child .combo-inp', rows)?.focus());
+  };
+  bindDel();
+}
+const readDevices = root => $$('#drows .multi-row', root).map(r => {
+  const [type = '', size = ''] = ($('[data-dv]', r).value || '').split('||');
+  return { type, size, qty: $('[data-dq]', r).value };
+}).filter(x => x.type);
+// مصادر المياه: أكثر من مصدر للعميل (مثل بئر وصرف زراعي)، ولكل مصدر درجة ملوحته، ويمكن تكرار المصدر نفسه (بئر أول وبئر ثانٍ)
+const waterOpts = cur => `${optsT(DB.lists.waterSource || [], cur, t('اختر مصدر المياه'))}${cur && !(DB.lists.waterSource || []).includes(cur) ? `<option value="${esc(cur)}" selected>${esc(tv(cur))}</option>` : ''}`;
+const waterRow = (w = {}) => `<div class="multi-row"><select class="inp" data-combo data-allow-new data-ws aria-label="${t('مصدر المياه')}">${waterOpts(w.source || '')}</select><input class="inp" dir="ltr" data-wsal value="${esc(w.salinity || '')}" placeholder="2500 ppm" aria-label="${t('درجة ملوحة المياه')}"><button type="button" class="btn sm x-btn" data-del aria-label="${t('حذف')}">×</button></div>`;
+const waterFields = d => {
+  const list = custWaters(d);
+  return `<div class="field"><label>${t('مصادر المياه ودرجة ملوحتها')} <small class="muted">(${t('لكل مصدر ملوحته')})</small></label><div class="multi-rows" id="wrows">${(list.length ? list : [{}]).map(waterRow).join('')}</div><button type="button" class="btn sm multi-add" id="wadd">+ ${t('إضافة مصدر مياه آخر')}</button></div>`;
+};
+function bindWaters(root) {
+  const rows = $('#wrows', root);
+  if (!rows) return;
+  const bindDel = () => $$('[data-del]', rows).forEach(b => b.onclick = () => {
+    if ($$('.multi-row', rows).length > 1) b.closest('.multi-row').remove();
+    else { $('[data-ws]', rows).value = ''; $('[data-wsal]', rows).value = ''; }
+  });
+  $('#wadd', root).onclick = () => {
+    rows.insertAdjacentHTML('beforeend', waterRow());
+    bindDel();
+    setTimeout(() => $('.multi-row:last-child .combo-inp', rows)?.focus());
+  };
+  bindDel();
+}
+const readWaters = root => $$('#wrows .multi-row', root).map(r => ({ source: $('[data-ws]', r).value, salinity: $('[data-wsal]', r).value.trim() })).filter(w => w.source || w.salinity);
 // رفع تحليل المياه أو التربة: صورة أو PDF
 const fileKindSelect = (id, sel = 'water') => `<select class="inp" id="${id}">${optsT(Object.entries(FILE_KINDS), sel)}</select>`;
 const FILE_ACCEPT = 'image/*,application/pdf';
@@ -3737,7 +3942,7 @@ function openWizard(market = 'egypt', preset = {}) {
   // عضو سمح له مسؤول الفريق بتسجيل العملاء الجدد باسمه: يُسجَّل العميل باسم المسؤول دون أن يُشارَك مع من أدخله
   const forLeader = myMembership()?.addForLeader ? myTeam().leaderId : '';
   const defOwner = forLeader || (userCan(ME, 'customers.hold') ? ME.id : (sellers()[0]?.id || ME.id));
-  const d = { market, category: '', viaDistributorId: '', country: '', govCode: '', subCode: '', name: '', phone1: '', phone2: '', address: '', area: '', irrigation: '', crops: [], salinity: '', waterSource: '', deviceType: '', deviceSize: '', source: '', rating: 'جيد', contactDate: today(), followupDate: addDays(today(), 3), firstNote: '', ownerId: defOwner, domainId: activeDomains()[0]?.id, custom: {}, ...preset };
+  const d = { market, category: '', viaDistributorId: '', country: '', govCode: '', subCode: '', name: '', phone1: '', phone2: '', address: '', area: '', irrigation: '', crops: [], salinity: '', waterSource: '', deviceType: '', deviceSize: '', waters: [], devices: [], source: '', rating: 'جيد', contactDate: today(), followupDate: addDays(today(), 3), firstNote: '', ownerId: defOwner, domainId: activeDomains()[0]?.id, custom: {}, ...preset };
   const STEPS = ['بيانات الاتصال', 'الموقع', 'الأرض والمياه', 'الطلب والتقييم', 'المتابعة'];
   let step = 0, via = { id: '', newName: '' };
   // ملفات التحاليل المختارة أثناء الإدخال، وتُرفع بعد حفظ العميل
@@ -3750,7 +3955,8 @@ function openWizard(market = 'egypt', preset = {}) {
     stopNoteMic();
     $$('[data-f]', box).forEach(el => { d[el.dataset.f] = el.value.trim ? el.value.trim() : el.value; });
     if ($('#xgov', box)) { d.govCode = $('#xgov', box).value; d.subCode = $('#xsub', box).value; }
-    if ($('#device', box)) Object.assign(d, readDevice(box));
+    if ($('#drows', box)) d.devices = readDevices(box);
+    if ($('#wrows', box)) d.waters = readWaters(box);
     d.custom = readCustomFields(box, d.custom);
   };
   const validate = () => {
@@ -3791,10 +3997,9 @@ function openWizard(market = 'egypt', preset = {}) {
       () => d.market === 'egypt'
         ? `${locationFields('x', d)}<div class="field"><label>${t('العنوان بالتفصيل')}</label><input class="inp" data-f="address" value="${esc(d.address)}" placeholder="${t('القرية، الجمعية، علامة مميزة')}"></div>${mapField(d)}`
         : `<div class="field"><label>${t('الدولة')} <span class="req">*</span></label><select class="inp" data-f="country">${countryOptions(d.country)}</select></div><div class="field"><label>${t('العنوان')}</label><input class="inp" data-f="address" value="${esc(d.address)}"></div>${mapField(d)}`,
-      () => `<div class="grid3"><div class="field"><label>${t('المساحة (فدان)')}</label><input class="inp" type="number" min="0" data-f="area" value="${esc(d.area)}"></div>
-        <div class="field"><label>${t('نوع الري')}</label><select class="inp" data-f="irrigation">${optsT(DB.lists.irrigation, d.irrigation, t('اختر'))}</select></div>
-        <div class="field"><label>${t('مصدر المياه')}</label><select class="inp" data-f="waterSource">${optsT(DB.lists.waterSource, d.waterSource, t('اختر'))}</select></div></div>
-        <div class="field"><label>${t('درجة ملوحة المياه')}</label><input class="inp" data-f="salinity" dir="ltr" value="${esc(d.salinity)}" placeholder="2500 ppm"></div>
+      () => `<div class="grid2"><div class="field"><label>${t('المساحة (فدان)')}</label><input class="inp" type="number" min="0" data-f="area" value="${esc(d.area)}"></div>
+        <div class="field"><label>${t('نوع الري')}</label><select class="inp" data-f="irrigation">${optsT(DB.lists.irrigation, d.irrigation, t('اختر'))}</select></div></div>
+        ${waterFields(d)}
         <div class="field"><label>${t('نوع المحصول')} <span class="req">*</span></label>${cropPicker()}</div>
         <div class="field"><label>${t('تحليل المياه أو التربة (اختياري)')}</label><div class="grid2">${fileKindSelect('wkind')}<input class="inp" type="file" id="wfile" accept="${FILE_ACCEPT}" multiple></div><div class="chips mt" id="wfiles"></div><small class="muted">${t('صورة أو ملف PDF، ويمكن إضافته لاحقًا من ملف العميل')}</small></div>
         <div class="grid2">${customFieldInputs('land', d)}</div>`,
@@ -3818,7 +4023,7 @@ function openWizard(market = 'egypt', preset = {}) {
         el.className = dup ? 'bad' : '';
         el.textContent = dup ? t('هذا الرقم مسجل باسم "{name}" لدى {owner}', { name: dup.name, owner: userName(dup.ownerId) }) : '';
       };
-      $$('[data-mk]', box).forEach(b => b.onclick = () => { collect(); d.market = b.dataset.mk; d.deviceType = ''; d.deviceSize = ''; render(); });
+      $$('[data-mk]', box).forEach(b => b.onclick = () => { collect(); d.market = b.dataset.mk; d.deviceType = ''; d.deviceSize = ''; d.devices = []; render(); });
       bindCategory(box, d);
     }
     if (step === 1 && d.market === 'egypt') bindLocation(box, 'x', d);
@@ -3826,6 +4031,7 @@ function openWizard(market = 'egypt', preset = {}) {
     if (step === 4) stopNoteMic = bindMic(box, { mic: '#fmic', status: '#fms', input: '#fnote1' });
     if (step === 2) {
       bindCropPicker(box, d);
+      bindWaters(box);
       const drawFiles = () => {
         $('#wfiles', box).innerHTML = pending.map((p, i) => `<button type="button" class="chip on" data-pf="${i}">📎 ${esc(tv(FILE_KINDS[p.kind]))}: ${esc(p.file.name)} <span class="x">×</span></button>`).join('');
         $$('[data-pf]', box).forEach(b => b.onclick = () => { pending.splice(+b.dataset.pf, 1); drawFiles(); });
@@ -3853,6 +4059,7 @@ function openWizard(market = 'egypt', preset = {}) {
     if (step < STEPS.length - 1) { step++; render(); return; }
     const { firstNote, ...data } = d;
     if (data.market === 'intl') { data.govCode = ''; data.subCode = ''; } else data.country = '';
+    Object.assign(data, watersFields(data.waters), devicesFields(data.devices));
     data.viaDistributorId = viaId(via, data.source);
     const c = createCustomer(data);
     if (firstNote) {
@@ -3984,8 +4191,8 @@ function openCustomer(id, tab = 'journey') {
         ${kv(t('العنوان'), esc(custAddress(c)))}${kv(t('موقع المزرعة'), mapLinkHtml(c.mapLink))}${kv(t('كود المنطقة'), c.subCode || c.govCode ? `<span class="code-tag">${esc(c.subCode || c.govCode)}</span>` : '')}
         ${activeDomains().length > 1 ? kv(t('المجال'), esc(label(DB.domains.find(x => x.id === c.domainId)))) : ''}${kv(t('المرحلة'), stagePill(c))}
         ${kv(t('المساحة'), c.area === '' ? '' : `${esc(c.area)} ${t('فدان')}`)}${kv(t('نوع الري'), esc(tv(c.irrigation)))}
-        ${kv(t('نوع المحصول'), esc(c.crops.map(tv).join(LANG === 'en' ? ', ' : '، ')))}${kv(t('درجة ملوحة المياه'), esc(c.salinity))}
-        ${kv(t('مصدر المياه'), esc(tv(c.waterSource)))}${kv(t('الجهاز المطلوب'), esc(deviceName(c.deviceType, c.deviceSize)))}
+        ${kv(t('نوع المحصول'), esc(c.crops.map(tv).join(LANG === 'en' ? ', ' : '، ')))}${kv(t('مصادر المياه ودرجة ملوحتها'), watersHtml(c))}
+        ${kv(t('الأجهزة المطلوبة'), devicesHtml(c))}
         ${kv(t('مصدر المعرفة'), esc(tv(c.source)))}
         ${kv(t('تقييم العميل'), ratingPill(c.rating))}${kv(t('تاريخ الاتصال'), fmtDate(c.contactDate))}
         ${kv(t('تاريخ المتابعة'), followPill(c.followupDate))}${kv(t('حالة الشراء'), payPill(c))}
@@ -4085,8 +4292,8 @@ function openEditCustomer(id, onDone) {
       ${c.market === 'egypt' ? locationFields('e', d) : `<div class="field"><label>${t('الدولة')}</label><select class="inp" data-f="country">${countryOptions(c.country)}</select></div>`}
       <div class="field"><label>${t('العنوان')}</label><input class="inp" data-f="address" value="${esc(c.address)}"></div>
       ${mapField(c)}
-      <div class="grid3"><div class="field"><label>${t('المساحة (فدان)')}</label><input class="inp" type="number" data-f="area" value="${esc(c.area)}"></div><div class="field"><label>${t('نوع الري')}</label><select class="inp" data-f="irrigation">${optsT(DB.lists.irrigation, c.irrigation, t('اختر'))}</select></div><div class="field"><label>${t('مصدر المياه')}</label><select class="inp" data-f="waterSource">${optsT(DB.lists.waterSource, c.waterSource, t('اختر'))}</select></div></div>
-      <div class="field"><label>${t('درجة ملوحة المياه')}</label><input class="inp" dir="ltr" data-f="salinity" value="${esc(c.salinity)}"></div>
+      <div class="grid3"><div class="field"><label>${t('المساحة (فدان)')}</label><input class="inp" type="number" data-f="area" value="${esc(c.area)}"></div><div class="field"><label>${t('نوع الري')}</label><select class="inp" data-f="irrigation">${optsT(DB.lists.irrigation, c.irrigation, t('اختر'))}</select></div><div></div></div>
+      ${waterFields(c)}
       <div class="field"><label>${t('نوع المحصول')}</label>${cropPicker()}</div>
       ${deviceFields(c)}
       <div class="grid3"><div class="field"><label>${t('مصدر المعرفة')}</label><select class="inp" data-f="source">${optsT(DB.lists.source, c.source, t('اختر'))}</select></div><div class="field"><label>${t('التقييم')}</label><select class="inp" data-f="rating">${optsT(RATINGS, c.rating)}</select></div><div class="field"><label>${t('تاريخ المتابعة')}</label><input class="inp" type="date" data-f="followupDate" value="${c.followupDate}"></div></div>
@@ -4100,6 +4307,7 @@ function openEditCustomer(id, onDone) {
   bindCropPicker(m.el, d);
   bindMap(m.el);
   bindDevice(m.el, c);
+  bindWaters(m.el);
   bindCategory(m.el, d);
   bindVia(m.el);
   $$('#asst .chip', m.el).forEach(b => b.onclick = () => b.classList.toggle('on'));
@@ -4109,7 +4317,7 @@ function openEditCustomer(id, onDone) {
     const via = readVia(m.el, patch.source);
     if (via.error) { toast(via.error, 'err'); return; }
     if (c.market === 'egypt') { patch.govCode = $('#egov', m.el).value; patch.subCode = $('#esub', m.el).value; }
-    Object.assign(patch, readDevice(m.el));
+    Object.assign(patch, watersFields(readWaters(m.el)), devicesFields(readDevices(m.el)));
     const shareTo = $('#asst', m.el) ? $$('#asst .chip.on', m.el).map(b => b.dataset.u) : null;
     if (!patch.name || !patch.phone1) { toast(t('الاسم ورقم الهاتف 1 مطلوبان'), 'err'); return; }
     if (mapError(patch.mapLink)) { toast(mapError(patch.mapLink), 'err'); return; }
@@ -4493,7 +4701,7 @@ function viewCalendar(root) {
     bindCallRows(box);
     $$('[data-as]', box).forEach(b => b.onclick = () => openCustomer(after.find(a => a.id === b.dataset.as).customerId, 'after'));
     $('#dayX', box).onclick = () => {
-      const rows = [['الاسم', 'الهاتف', 'الموقع', 'المحصول', 'الجهاز', 'التقييم', 'آخر متابعة', 'رجل البيع'].map(x => t(x)), ...list.map(c => [c.name, showPhone(c.phone1), custLocation(c), c.crops.map(tv).join('، '), deviceText(c.deviceType, c.deviceSize), tv(c.rating), followupsOf(c.id)[0]?.text || '', userName(c.ownerId)])];
+      const rows = [['الاسم', 'الهاتف', 'الموقع', 'المحصول', 'الجهاز', 'التقييم', 'آخر متابعة', 'رجل البيع'].map(x => t(x)), ...list.map(c => [c.name, showPhone(c.phone1), custLocation(c), c.crops.map(tv).join('، '), devicesText(c), tv(c.rating), followupsOf(c.id)[0]?.text || '', userName(c.ownerId)])];
       downloadBlob(buildXlsx([{ name: t('متابعات'), rows }]), `${t('متابعات')} ${st.sel}.xlsx`);
       audit('export', 'customer', null, 'تنزيل ملف متابعات {d}: {n}', { d: fmtDate(st.sel), n: list.length });
     };
@@ -4661,10 +4869,14 @@ function openOrderForm(customerId) {
   const items = [{ productId: '', qty: 1, price: 0 }];
   const preset = customerId ? custById(customerId) : null;
   const presetCur = preset?.market === 'intl' ? 'USD' : 'EGP';
+  // الطلب يبدأ بكل الأجهزة المطلوبة في ملف العميل وأعدادها
   if (preset) {
-    const same = x => x.type === preset.deviceType && x.size === preset.deviceSize;
-    const p = productsFor(null, preset.market).find(same) || activeProducts().find(same);
-    if (p) { items[0].productId = p.id; items[0].price = productPrice(p, presetCur); }
+    const wanted = custDevices(preset).map(dv => {
+      const same = x => x.type === dv.type && x.size === dv.size;
+      const p = productsFor(null, preset.market).find(same) || activeProducts().find(same);
+      return p ? { productId: p.id, qty: dv.qty || 1, price: productPrice(p, presetCur) } : null;
+    }).filter(Boolean);
+    if (wanted.length) items.splice(0, items.length, ...wanted);
   }
   // قائمة الأجهزة مقسمة: داخل مصر بالجنيه، وخارج مصر بالدولار
   const productOpts = sel => `<option value="">${t('اختر')}</option>${Object.entries(PRODUCT_MARKETS).map(([mk, l]) => {
@@ -5054,7 +5266,7 @@ const buyerRow = c => {
   const o = lastOrderOf(c);
   const dist = o?.distributorId ? DB.distributors.find(d => d.id === o.distributorId) : null;
   const lastAfter = DB.followups.find(f => f.customerId === c.id && f.phase === 'after');
-  return { c, o, device: o ? o.items.map(i => `${deviceName(i.type, i.size)} ×${i.qty}`).join(' + ') : deviceName(c.deviceType, c.deviceSize), date: purchaseDateOf(c), dist: dist?.name || '', last: lastAfter?.text || '', due: afterDueOf(c) };
+  return { c, o, device: o ? o.items.map(i => `${deviceName(i.type, i.size)} ×${i.qty}`).join(' + ') : custDevices(c).map(x => `${deviceName(x.type, x.size)}${x.qty > 1 ? ` ×${x.qty}` : ''}`).join(' + '), date: purchaseDateOf(c), dist: dist?.name || '', last: lastAfter?.text || '', due: afterDueOf(c) };
 };
 function viewBuyers(root) {
   const st = buyersState;
@@ -5413,7 +5625,7 @@ function openDistributor(id, onDone) {
   const s = distributorStats(d);
   const custs = partnerCustomers(d).filter(customerVisible);
   const own = d.customerId && custById(d.customerId);
-  const custTable = custs.length ? `<div class="section-bar mt">${t('العملاء التابعون ({n})', { n: custs.length })}</div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>${t('العميل')}</th><th>${t('الموقع')}</th><th>${t('المحصول')}</th><th>${t('الجهاز المطلوب')}</th><th>${t('المرحلة')}</th><th>${t('رجل البيع')}</th></tr></thead><tbody>${custs.map(c => `<tr class="click" data-c="${c.id}"><td>${esc(c.name)}</td><td>${esc(custLocation(c))}</td><td>${esc(c.crops.map(tv).join('، '))}</td><td>${esc(deviceName(c.deviceType, c.deviceSize))}</td><td>${stagePill(c)}</td><td>${esc(userName(c.ownerId))}</td></tr>`).join('')}</tbody></table></div>` : '';
+  const custTable = custs.length ? `<div class="section-bar mt">${t('العملاء التابعون ({n})', { n: custs.length })}</div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>${t('العميل')}</th><th>${t('الموقع')}</th><th>${t('المحصول')}</th><th>${t('الجهاز المطلوب')}</th><th>${t('المرحلة')}</th><th>${t('رجل البيع')}</th></tr></thead><tbody>${custs.map(c => `<tr class="click" data-c="${c.id}"><td>${esc(c.name)}</td><td>${esc(custLocation(c))}</td><td>${esc(c.crops.map(tv).join('، '))}</td><td>${devicesHtml(c)}</td><td>${stagePill(c)}</td><td>${esc(userName(c.ownerId))}</td></tr>`).join('')}</tbody></table></div>` : '';
   const m = openModal({
     title: esc(d.name), wide: true,
     body: `${own && customerVisible(own) ? `<div class="filters"><button class="btn sm" id="ownC">${t('فتح ملفه كعميل')}</button></div>` : ''}<div class="kv"><div><div class="k">${t('التصنيف')}</div><div class="val">${distTypePill(d.type)}</div></div><div><div class="k">${t(isAgent(d) ? 'الدول' : 'منطقة التغطية')}</div><div class="val">${esc(coverageLabel(d)) || `<span class="muted">${t('غير محددة')}</span>`}</div></div><div><div class="k">${t('الهاتف')}</div><div class="val">${phoneLink(d.phone)}</div></div><div><div class="k">${t('الأجهزة المباعة')}</div><div class="val">${s.units}</div></div><div><div class="k">${t('قيمة المبيعات')}</div><div class="val">${money(s.value)} ${t('ج.م')}</div></div><div><div class="k">${t('ملاحظات')}</div><div class="val">${esc(d.notes)}</div></div></div>
