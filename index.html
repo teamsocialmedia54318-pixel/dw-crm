@@ -533,6 +533,68 @@ html { -webkit-text-size-adjust: 100%; }
   .soc-back { display: inline-flex; }
   .social-list { max-height: none; }
 }
+/* "قطرة": المساعد العائم بشكل قطرة مياه */
+.drop-fab { position: fixed; bottom: 18px; inset-inline-start: 18px; z-index: 150; width: 64px; height: 76px; border: 0; background: none; padding: 0; cursor: pointer; filter: drop-shadow(0 6px 10px rgba(13,26,77,.28)); animation: dropFloat 3.2s ease-in-out infinite; }
+.drop-fab.hidden { display: none; }
+.drop-fab:hover { animation: dropJelly .7s ease; }
+.drop-fab:focus-visible { outline: 3px solid var(--cyan-bar); outline-offset: 4px; border-radius: 50%; }
+.drop-svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.drop-eyes { transform-origin: 32px 52px; transition: transform .12s; }
+.blink .drop-eyes { transform: scaleY(.1); }
+.drop-pupil { transition: transform .15s; }
+.drop-hint { position: absolute; bottom: 70px; inset-inline-start: 4px; white-space: nowrap; background: var(--navy); color: #fff; font-size: 12.5px; font-weight: 700; padding: 5px 11px; border-radius: 14px; opacity: 0; transform: translateY(6px); transition: .3s; pointer-events: none; }
+.drop-fab.hello .drop-hint, .drop-fab:hover .drop-hint { opacity: 1; transform: none; }
+.drop-fab.hello .drop-svg { animation: dropWave 1.4s ease 2; }
+.thinking .drop-svg { animation: dropThink .9s ease-in-out infinite; }
+.happy .drop-svg { animation: dropJelly .8s ease 2; }
+.sad .drop-svg { animation: dropShake .5s ease 2; }
+@keyframes dropFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+@keyframes dropJelly { 0% { transform: scale(1, 1); } 25% { transform: scale(1.12, .88); } 50% { transform: scale(.92, 1.08); } 75% { transform: scale(1.04, .96); } 100% { transform: scale(1, 1); } }
+@keyframes dropThink { 0%, 100% { transform: translateY(0) rotate(0); } 25% { transform: translateY(-4px) rotate(-6deg); } 75% { transform: translateY(-4px) rotate(6deg); } }
+@keyframes dropWave { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(-10deg); } 40% { transform: rotate(8deg); } 60% { transform: rotate(-5deg); } }
+@keyframes dropShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+.drop-panel { position: fixed; bottom: 18px; inset-inline-start: 18px; z-index: 160; width: min(400px, calc(100vw - 24px)); height: min(620px, calc(100dvh - 36px)); background: var(--card); border-radius: 18px; box-shadow: 0 18px 50px rgba(13,26,77,.28); display: flex; flex-direction: column; overflow: hidden; animation: dropOpen .28s cubic-bezier(.2,.9,.3,1.3); transform-origin: bottom left; }
+[dir="rtl"] .drop-panel { transform-origin: bottom right; }
+@keyframes dropOpen { from { transform: scale(.4) translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+.drop-head { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: linear-gradient(135deg, #0D1A4D, #0D74A7); color: #fff; }
+.drop-head .muted { color: rgba(255,255,255,.75); font-size: 12px; }
+.drop-mini { width: 34px; height: 42px; flex: none; }
+.drop-ic { background: rgba(255,255,255,.14); border: 0; color: #fff; width: 32px; height: 32px; border-radius: 10px; cursor: pointer; font-size: 16px; }
+.drop-ic:hover { background: rgba(255,255,255,.26); }
+.drop-body { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; background: var(--card-soft); }
+.drop-welcome { text-align: center; padding: 10px 6px; }
+.drop-big { display: block; width: 74px; height: 90px; margin: 4px auto 8px; animation: dropFloat 3.2s ease-in-out infinite; }
+.drop-msg { display: flex; gap: 8px; align-items: flex-end; max-width: 92%; }
+.drop-msg.user { align-self: flex-end; flex-direction: row-reverse; }
+.drop-msg .bubble { padding: 9px 12px; border-radius: 14px; line-height: 1.6; font-size: 13.5px; background: #fff; border: 1px solid var(--border); word-break: break-word; }
+.drop-msg.user .bubble { background: var(--navy); color: #fff; border-color: var(--navy); }
+.drop-msg .li { display: block; padding-inline-start: 4px; }
+.drop-av { width: 26px; height: 32px; flex: none; }
+.drop-acts { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.typing { display: flex; gap: 4px; padding: 12px 14px !important; }
+.typing i { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); animation: dropDot 1s infinite; }
+.typing i:nth-child(2) { animation-delay: .15s; } .typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes dropDot { 0%, 80%, 100% { transform: translateY(0); opacity: .4; } 40% { transform: translateY(-5px); opacity: 1; } }
+.drop-quick { display: flex; gap: 6px; overflow-x: auto; padding: 8px 12px; border-top: 1px solid var(--border); scrollbar-width: thin; }
+.drop-quick .chip { white-space: nowrap; font-size: 12.5px; }
+.drop-input { display: flex; gap: 8px; padding: 8px 12px; align-items: flex-end; }
+.drop-input textarea { resize: none; max-height: 120px; }
+.drop-foot { font-size: 11px; padding: 0 12px 10px; text-align: center; }
+@media (max-width: 640px) { .drop-panel { inset: 0; width: 100%; height: 100dvh; border-radius: 0; } .drop-fab { width: 54px; height: 64px; bottom: 12px; inset-inline-start: 12px; } }
+@media (prefers-reduced-motion: reduce) { .drop-fab, .drop-big, .drop-svg, .drop-panel { animation: none !important; } }
+.drop-skills { display: flex; gap: 4px; padding: 8px 10px; background: #fff; border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
+.drop-skills button { flex: none; border: 1px solid var(--border); background: var(--card-soft); color: var(--text); border-radius: 999px; padding: 5px 11px; font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.drop-skills button.on { background: var(--navy); border-color: var(--navy); color: #fff; }
+.drop-ic.on { background: rgba(255,255,255,.34); }
+.drop-skillcard { display: inline-block; margin-top: 6px; padding: 6px 14px; border-radius: 999px; background: var(--blue-bg); color: var(--navy); }
+.drop-hist { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.drop-hrow { display: flex; gap: 6px; align-items: stretch; }
+.drop-hopen { flex: 1; min-width: 0; display: grid; grid-template-columns: auto 1fr; gap: 2px 8px; text-align: start; background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; font: inherit; cursor: pointer; color: inherit; }
+.drop-hopen:hover { border-color: var(--teal); }
+.drop-hopen .t { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.drop-hopen .muted { grid-column: 2; font-size: 11.5px; }
+.drop-hdel { border: 1px solid var(--border); background: #fff; border-radius: 10px; cursor: pointer; padding: 0 10px; }
+.ai-btn { background: linear-gradient(135deg, #2FC2F0, #0D74A7); color: #fff; border: 0; }
 .click-name { cursor: pointer; color: var(--navy); }
 .click-name:hover { text-decoration: underline; }
 /* أرقام لوحة اليوم: الضغط عليها ينزل لقائمتها */
@@ -944,6 +1006,12 @@ const EN = {
   'لوحة الأداء': 'Performance', 'لوحة أداء السوشيال': 'Social performance', 'الرسائل': 'Messages', 'إكسيل': 'Excel', 'تقرير وورد': 'Word report', 'آخر 7 أيام': 'Last 7 days', 'آخر 30 يومًا': 'Last 30 days', 'هذا الشهر': 'This month', 'فترة محددة': 'Custom period', 'محادثات جديدة': 'New conversations', 'أرسلوا أرقامهم': 'Sent their number', 'من المحادثات': 'of conversations', 'تحوّلوا لعملاء': 'Became customers', 'اشتروا': 'Bought', 'متوسط أول رد من الفريق': 'Median first team reply', '{p} خلال ساعة': '{p} within an hour', 'المحادثات يومًا بيوم': 'Conversations by day', 'اختر فترة أطول لعرض الرسم': 'Choose a longer period to show the chart', 'أي إعلان يأتي بعملاء يشترون؟': 'Which ad brings customers who buy?', 'محادثات': 'Conversations', 'أرقام': 'Numbers', 'عملاء': 'Customers', 'نسبة الشراء': 'Purchase rate', 'المبيعات (ج.م)': 'Sales (EGP)', 'رسائل مباشرة (بدون إعلان)': 'Direct messages (no ad)', 'القنوات': 'Channels', 'أداء السوشيال': 'Social performance', 'تقرير أداء السوشيال': 'Social performance report', 'ماسنجر وإنستجرام': 'Messenger & Instagram', 'أداء الإعلانات': 'Ad performance', 'عدد المحادثات لكل إعلان': 'Conversations per ad', '{n} دقيقة': '{n} min', '{n} ساعة': '{n} h', '{n} يوم': '{n} days', 'تعذر تحميل البيانات: {e}': 'Could not load data: {e}', 'جارٍ تحميل البيانات...': 'Loading data...',
   'تقرير تحليل المبيعات': 'Sales analysis report', 'تم إنشاء التقرير': 'Report created', 'تاريخ التقرير': 'Report date', 'أعده': 'Prepared by', 'ميتا': 'Meta', 'عميل محتمل': 'Lead', 'شراء': 'Purchase',
   'حملات المتابعة': 'Follow-up campaigns', 'حملة جديدة': 'New campaign', 'حملة متابعة جديدة': 'New follow-up campaign', 'اسم الحملة': 'Campaign name', 'فترة الإرسال': 'Sending period', 'الرسالة': 'Message', 'معاينة لأول عميل': 'Preview for the first customer', 'إنشاء الحملة ومراجعة الرسائل': 'Create campaign and review messages', 'مسودة': 'Draft', 'بانتظار المراجعة': 'Awaiting review', 'معتمدة للإرسال': 'Approved to send', 'اكتملت': 'Completed', 'مرفوضة': 'Rejected', 'تحتاج مراجعتك': 'Needs your review', 'أُرسل': 'Sent', 'متبقي': 'Remaining', 'إرسال للمراجعة': 'Send for review', 'اعتماد الحملة': 'Approve campaign', 'رفض مع ملاحظة': 'Reject with a note', 'إنهاء الحملة': 'Finish campaign', 'إرسال واتساب': 'Send on WhatsApp', 'أُرسلت': 'Sent', 'استبعاد': 'Exclude', 'مستبعد': 'Excluded', 'بانتظار الاعتماد': 'Awaiting approval', 'رسالة واتساب': 'WhatsApp message', 'الحملات': 'Campaigns', 'فتح الحملة': 'Open campaign', 'أُرسلت الحملة للمراجعة': 'Campaign sent for review', 'اعتُمدت الحملة': 'Campaign approved', 'رفض الحملة': 'Reject campaign',
+  'قطرة': 'Qatra', 'قطرة: مساعد دلتا ووتر': 'Qatra: Delta Water assistant', 'اسألني 💧': 'Ask me 💧', 'مساعد دلتا ووتر الخاص · يعمل على {w}': 'Delta Water private assistant · runs on {w}', 'سيرفر الشركة': 'Company server', 'إعدادات قطرة': 'Qatra settings', 'محادثة جديدة': 'New chat', 'أهلًا {n}، أنا قطرة 💧': 'Hi {n}, I am Qatra 💧', 'أقرأ أرقام المبيعات وأحللها، وأكتب رسائل متابعة وردودًا للعملاء من معلومات دلتا ووتر، وأجهز تقارير وورد. اختر من الأزرار أو اكتب سؤالك.': 'I read and analyse sales numbers, write follow-up messages and customer replies from Delta Water information, and prepare Word reports. Pick a button or type your question.', 'اسأل قطرة عن المبيعات أو اطلب رسالة...': 'Ask Qatra about sales or request a message...', 'موديل مفتوح المصدر على حساب الشركة، لا يتعلم من بياناتكم. للتحليل تُرسل أرقام مجمّعة فقط بلا أسماء أو هواتف.': 'An open-source model on the company account that does not learn from your data. For analysis only aggregated numbers are sent, with no names or phones.',
+  '📊 ملخص مبيعات الشهر': '📊 This month\'s sales', '🏆 أداء رجال البيع': '🏆 Sales team performance', '🌱 أفضل المحافظات والمحاصيل': '🌱 Best regions and crops', '⚠ متابعات متأخرة وفرص ضائعة': '⚠ Late follow-ups and lost chances', '📄 تقرير وورد بقراءة قطرة': '📄 Word report with Qatra\'s reading', '📣 اكتب رسالة متابعة': '📣 Write a follow-up message', 'جهزت التقرير ونزل على جهازك ✓. هذه قراءتي للأرقام التي وضعتها في أوله:': 'The report is ready and downloaded ✓. Here is my reading of the numbers, placed at its start:', 'استخدمها في حملة جديدة': 'Use in a new campaign', 'نسخ': 'Copy', 'تم النسخ': 'Copied', 'قراءة قطرة للأرقام والتوصيات': 'Qatra\'s reading and recommendations',
+  'لم يُحدد عنوان سيرفر الشركة في إعدادات قطرة': 'The company server address is not set in Qatra settings', 'قطرة تحتاج ربط Cloudflare أولًا (رابط المستقبِل في إعدادات رسائل السوشيال)': 'Qatra needs the Cloudflare connection first (receiver URL in social settings)', 'وصلت قطرة للحد اليومي المجاني على Cloudflare، وتعود للعمل غدًا': 'Qatra reached the free daily limit on Cloudflare and will work again tomorrow', 'لم يُفعَّل Workers AI على المستقبِل بعد': 'Workers AI is not enabled on the receiver yet', 'مكان تشغيل الموديل': 'Where the model runs', 'من يرى قطرة': 'Who sees Qatra', 'كل المستخدمين': 'All users', 'الإدارة وفريق السوشيال فقط': 'Management and social team only', 'قطرة مفعّلة': 'Qatra enabled', 'اختبار قطرة': 'Test Qatra', 'عنوان السيرفر': 'Server address', 'اسم الموديل على السيرفر': 'Model name on the server', 'اكتب عنوان السيرفر بشكل صحيح': 'Enter a valid server address',
+  'محلل المبيعات': 'Sales analyst', 'مدرب المبيعات': 'Sales coach', 'خبير السوشيال ميديا': 'Social media expert', 'مستشار الإدارة': 'Management advisor', 'مهارات قطرة': 'Qatra skills', 'المحادثات المحفوظة': 'Saved chats', 'محادثاتك المحفوظة': 'Your saved chats', 'لا توجد محادثات محفوظة بعد. كل محادثة مع قطرة تُحفظ تلقائيًا هنا.': 'No saved chats yet. Every chat with Qatra is saved here automatically.', 'اختار مهارة من فوق، وبعدين اضغط زرار جاهز أو اكتب سؤالك. كل محادثة بتتحفظ وتقدر ترجعلها من 🕘.': 'Pick a skill above, then press a ready button or type your question. Every chat is saved and you can return to it from 🕘.', 'اختار العميل': 'Choose the customer', 'اكتب اسم العميل أو كوده': 'Type the customer name or code', 'حذف المحادثة': 'Delete chat', 'ستُحذف هذه المحادثة نهائيًا.': 'This chat will be deleted permanently.', 'محادثة': 'Chat', 'اسأل قطرة...': 'Ask Qatra...', 'اكتب هدف الرسالة ومن هم العملاء...': 'Write the message goal and who the customers are...', 'جهزني للمكالمة': 'Prepare me for the call', 'تحضير مكالمة: {n}': 'Call prep: {n}', '📞 جهزني لمكالمة {n}': '📞 Prepare me to call {n}',
+  '📞 جهزني لمكالمة عميل': '📞 Prepare me to call a customer', '🛡 رد على "الجهاز غالي"': '🛡 Answer "too expensive"', '🤔 "مش مقتنع إنه بيشتغل"': '🤔 "Not convinced it works"', '🎯 أسئلة تأهيل عميل جديد': '🎯 Qualifying questions', '🔁 خطة متابعة 30 يومًا': '🔁 30-day follow-up plan', '📣 اكتب رسالة متابعة لحملة': '📣 Write a campaign message', '✍ 3 بوستات فيسبوك': '✍ 3 Facebook posts', '🎬 سكريبت ريلز 30 ثانية': '🎬 30-second reel script', '📣 3 نصوص إعلان رسائل': '📣 3 message-ad texts', '🗓 خطة محتوى أسبوعين': '🗓 Two-week content plan', '💬 رد على تعليق "بكام؟"': '💬 Reply to "how much?"', '📈 أي إعلان شغال؟': '📈 Which ad works?', '📈 توقع الشهر الجاي': '📈 Next month forecast', '🧾 التحصيل والمخاطر': '🧾 Collection and risks', '👥 قرارات الفريق': '👥 Team decisions',
+  'اقترح رد': 'Suggest a reply', 'قطرة تكتب...': 'Qatra is writing...', 'راجع الرد وعدّله قبل الإرسال': 'Review and edit the reply before sending', 'اكتب مع قطرة': 'Write with Qatra',
   'سؤال عن السعر': 'Asking about price', 'جاهز للشراء': 'Ready to buy', 'يريد معلومات': 'Wants information', 'شكوى أو مشكلة': 'Complaint or problem', 'يطلب اتصال': 'Asks for a call',
   'البريد الإلكتروني 1': 'Email 1', 'البريد الإلكتروني 2': 'Email 2', 'البريد الإلكتروني غير صحيح. اكتبه بالشكل name@example.com': 'The email address is not valid. Write it like name@example.com',
   'الأجهزة المطلوبة': 'Requested devices', 'الجهاز والعدد': 'device and quantity', 'إضافة جهاز آخر': 'Add another device', 'اختر مصدر المياه': 'Choose a water source', 'مصادر المياه ودرجة ملوحتها': 'Water sources and salinity', 'لكل مصدر ملوحته': 'salinity for each source', 'إضافة مصدر مياه آخر': 'Add another water source', 'اكتب اسم المحصول أو اختر من القائمة': 'Type a crop name or pick from the list',
@@ -4378,7 +4446,7 @@ function openCustomer(id, tab = 'journey') {
     if (showSupport) tabs.push(['support', t('الدعم الفني ({n})', { n: tickets.length })]);
     tabs.push(['log', t('سجل التعديلات ({n})', { n: history.length })]);
     dr.innerHTML = `<div class="drawer-h"><div style="display:flex;gap:8px;align-items:flex-start"><div style="flex:1"><h2>${esc(c.name)}</h2><div class="meta">${esc(c.code)} · ${esc(custLocation(c))} · ${esc(userName(c.ownerId))}</div>${mapUrl(c.mapLink) ? `<a class="map-chip" href="${esc(mapUrl(c.mapLink))}" target="_blank" rel="noopener noreferrer">📍 ${t('موقع المزرعة')}</a>` : ''}</div><button class="modal-x" style="color:#fff" id="dx" aria-label="${t('إغلاق')}">×</button></div>
-      <div class="chips mt">${can('followups.add') && can('customers.view_phones') ? `<button class="btn sm call" id="dcall">📞 ${t('اتصال وتسجيل متابعة')}</button>` : ''}${can('followups.add') ? `<button class="btn sm" id="dfu">🎙 ${t('متابعة صوتية')}</button>` : ''}${can('stages.move') ? `<button class="btn sm" id="dst">➜ ${t('تغيير المرحلة')}</button>` : ''}${can('orders.create') ? `<button class="btn sm" id="dord">+ ${t('طلب')}</button>` : ''}${showSupport && can('support.create') ? `<button class="btn sm" id="dtk">🛠 ${t('طلب دعم')}</button>` : ''}${canTransferCustomer(c) && transferTargets().length ? `<button class="btn sm" id="dsh">↪ ${t('تحويل لزميل')}</button>` : ''}${can('customers.edit') ? `<button class="btn sm" id="ded">${t('تعديل')}</button>` : ''}${can('customers.archive') ? `<button class="btn sm danger" id="darc">${t('أرشفة')}</button>` : ''}</div></div>
+      <div class="chips mt">${can('followups.add') && can('customers.view_phones') ? `<button class="btn sm call" id="dcall">📞 ${t('اتصال وتسجيل متابعة')}</button>` : ''}${can('followups.add') ? `<button class="btn sm" id="dfu">🎙 ${t('متابعة صوتية')}</button>` : ''}${can('stages.move') ? `<button class="btn sm" id="dst">➜ ${t('تغيير المرحلة')}</button>` : ''}${can('orders.create') ? `<button class="btn sm" id="dord">+ ${t('طلب')}</button>` : ''}${showSupport && can('support.create') ? `<button class="btn sm" id="dtk">🛠 ${t('طلب دعم')}</button>` : ''}${canTransferCustomer(c) && transferTargets().length ? `<button class="btn sm" id="dsh">↪ ${t('تحويل لزميل')}</button>` : ''}${typeof aiEnabled === 'function' && aiEnabled() ? `<button class="btn sm ai-btn" id="dai">✨ ${t('جهزني للمكالمة')}</button>` : ''}${can('customers.edit') ? `<button class="btn sm" id="ded">${t('تعديل')}</button>` : ''}${can('customers.archive') ? `<button class="btn sm danger" id="darc">${t('أرشفة')}</button>` : ''}</div></div>
       <div class="drawer-b">
       ${season.length ? `<div class="demo-banner"><b>${t('موسم الشهر:')}</b> ${season.map(s => `${t(s.kind === 'plant' ? 'زراعة' : 'حصاد')} ${esc(tv(s.crop))}${s.start ? ` (${t('بداية الموسم')})` : ''}`).join(' · ')}</div>` : ''}
       <div class="card" style="padding:12px">${journeyHtml(c)}</div>
@@ -4394,6 +4462,7 @@ function openCustomer(id, tab = 'journey') {
     on('#dord', () => { close(); openOrderForm(c.id); });
     on('#dtk', () => openTicketForm(c.id, draw));
     on('#ded', () => openEditCustomer(c.id, draw));
+    on('#dai', () => qatraCallPrep(c));
     on('#dsh', () => openTransferCustomer(c, draw));
     on('#darc', () => confirmBox(t('أرشفة العميل'), t('سيُزال "{name}" من السجلات ويبقى محفوظًا في سجل النشاط.', { name: esc(c.name) }), () => {
       c.archived = true;
@@ -6217,7 +6286,7 @@ function exportAnalytics(st, a) {
 }
 
 // تقرير وورد منسق بهوية دلتا ووتر لنفس التحليل المعروض (نفس عوامل التصفية)
-async function analyticsDocx(st, a) {
+async function analyticsDocx(st, a, aiSummary) {
   const scope = st.rep ? userName(st.rep) : t('الفريق');
   const egp = t('ج.م'), clean = s => String(s).replace(/[⁦-⁩]/g, '');
   const change = a.prevSales ? Math.round((a.sales - a.prevSales) / a.prevSales * 100) : null;
@@ -6229,6 +6298,8 @@ async function analyticsDocx(st, a) {
     { heading: t('المبيعات الشهرية'), chart: { rows: a.months.map(m => [m.label, Math.round(m.value)]), fmt: v => moneyShort(v), caption: `${t('آخر 12 شهرًا')} · ${egp}` },
       table: { head: [t('الشهر'), `${t('القيمة')} (${egp})`, t('الطلبات'), t('الأجهزة')], rows: a.months.map(m => [m.label, Math.round(m.value), m.count, m.units]) } },
   ];
+  // قراءة المساعد "قطرة" للأرقام وتوصياتها، في أول التقرير بعد الملخص
+  if (aiSummary) sections.splice(1, 0, { heading: t('قراءة قطرة للأرقام والتوصيات'), text: String(aiSummary).replace(/\*\*/g, '').split(/\n+/).map(s => s.trim()).filter(Boolean) });
   if (!st.rep && a.repRows.length) sections.push({ heading: t('أداء رجال البيع'), chart: { horizontal: true, rows: a.repRows.map(x => [x.u.name, Math.round(x.sales)]), fmt: v => moneyShort(v) },
     table: { head: [t('رجل البيع'), `${t('المبيعات')} (${egp})`, t('الطلبات'), t('الأجهزة'), `${t('المحصّل')} (${egp})`, t('عدد العملاء'), t('متابعات'), t('متأخرة')], rows: a.repRows.map(x => [x.u.name, Math.round(x.sales), x.orders, x.units, Math.round(x.coll), x.cust, x.fu, x.late]) } });
   sections.push(
@@ -7485,7 +7556,7 @@ function drawSocialThread() {
       <button class="btn" id="socAddPhone">${t('إضافة رقم يدويًا')}</button>
     </div>
     <div class="soc-msgs" id="socMsgs">${msgs.length ? msgs.map(m => `<div class="soc-msg ${m.dir}"><div class="bubble">${esc(m.text || '')}${m.attach ? socialAttach(m.attach) : ''}</div><div class="muted soc-meta">${socialTime(m.at)}${m.dir === 'out' && m.by && m.by !== 'page' ? ` · ${esc(userName(m.by))}` : ''}</div></div>`).join('') : `<div class="muted" style="padding:12px">${t('لا توجد رسائل')}</div>`}</div>
-    <div class="soc-reply">${windowOpen ? `${templates.length ? `<select class="inp" id="socTpl" aria-label="${t('رد جاهز')}"><option value="">${t('رد جاهز...')}</option>${templates.map((x, i) => `<option value="${i}">${esc(x.name)}</option>`).join('')}</select>` : ''}
+    <div class="soc-reply">${windowOpen ? `${typeof aiEnabled === 'function' && aiEnabled() ? `<button class="btn ai-btn" id="socAI" type="button" title="${t('تكتب قطرة ردًا مقترحًا من معلومات دلتا ووتر بدون أسعار، وتراجعه أنت قبل الإرسال')}">✨ ${t('اقترح رد')}</button>` : ''}${templates.length ? `<select class="inp" id="socTpl" aria-label="${t('رد جاهز')}"><option value="">${t('رد جاهز...')}</option>${templates.map((x, i) => `<option value="${i}">${esc(x.name)}</option>`).join('')}</select>` : ''}
       <textarea class="inp" id="socText" rows="2" placeholder="${t('اكتب ردك هنا، ويصل للعميل على {ch}', { ch: t(SOCIAL_CHANNELS[c.channel]) })}"></textarea><button class="btn primary" id="socSend">${t('إرسال')}</button>`
       : `<div class="muted">${t('مرّ أكثر من 24 ساعة على آخر رسالة من العميل، وميتا لا تسمح بالرد من النظام بعدها. يمكن الرد من تطبيق ماسنجر أو إنستجرام، أو الاتصال بالعميل على رقمه.')}</div>`}</div>`;
   const m = $('#socMsgs', box);
@@ -7514,6 +7585,12 @@ function drawSocialThread() {
     if (done) { addNotice(to, 'social', [], c.last_text || '', { id: c.id, name: c.name || t('عميل') }); audit('social', 'social', c.id, 'تحويل محادثة سوشيال ({name}) إلى {u}', { name: c.name || '', u: userName(to) }); }
   };
   const tpl = $('#socTpl', box), txt = $('#socText', box);
+  on('#socAI', async () => {
+    const btn = $('#socAI', box); btn.disabled = true; btn.textContent = `✨ ${t('قطرة تكتب...')}`;
+    try { txt.value = await aiSuggestReply(c, msgs, ins); txt.focus(); toast(t('راجع الرد وعدّله قبل الإرسال'), 'ok'); }
+    catch (err) { toast(err.message, 'err'); }
+    btn.disabled = false; btn.textContent = `✨ ${t('اقترح رد')}`;
+  });
   if (tpl) tpl.onchange = () => { const x = templates[+tpl.value]; if (x) txt.value = x.text.replace(/\{الاسم\}/g, (c.name || '').split(' ')[0]).replace(/\{اسمي\}/g, ME.name); tpl.value = ''; txt.focus(); };
   on('#socSend', async () => {
     const text = txt.value.trim();
@@ -7849,7 +7926,7 @@ function openCampaignBuilder() {
         <div class="field"><label>${t('سُجّل إلى')}</label><input class="inp" type="date" data-cf="to" value="${f.to}"></div>
       </div>
       <div class="soc-note" id="cpCount"></div>
-      <div class="section-bar">${t('الرسالة')}</div>
+      <div class="section-bar">${t('الرسالة')}${typeof aiEnabled === 'function' && aiEnabled() ? ` <button type="button" class="btn sm ai-btn" id="cpAI">✨ ${t('اكتب مع قطرة')}</button>` : ''}</div>
       <div class="field"><textarea class="inp" id="cpTpl" rows="5" placeholder="${t('أهلًا {الاسم}، معك {اسمي} من دلتا ووتر. حابين نطمن على {المحصول} ...')}"></textarea>
       <small class="muted">${t('متغيرات تُستبدل لكل عميل: {الاسم} {الاسم_كامل} {المحصول} {الجهاز} {المحافظة} {رجل_البيع} {اسمي}. لا تكتب أسعارًا في رسائل المتابعة الجماعية.')}</small></div>
       <div class="field"><label>${t('معاينة لأول عميل')}</label><div class="card" id="cpPrev" style="white-space:pre-wrap;background:var(--card-soft)"></div></div>`,
@@ -7863,6 +7940,16 @@ function openCampaignBuilder() {
     return list;
   };
   $$('[data-cf]', m.el).forEach(el => el.addEventListener('change', recount));
+  // قطرة تكتب قالب الرسالة من اسم الحملة ووصف العملاء المختارين
+  const aiBtn = $('#cpAI', m.el);
+  if (aiBtn) aiBtn.onclick = async () => {
+    const f = campFilter, who = [f.market && (f.market === 'egypt' ? 'عملاء مصر' : 'عملاء الخارج'), f.gov && `في ${govLabel(f.gov)}`, f.country && `في ${f.country}`, f.crop && `يزرعون ${tv(f.crop)}`, f.bought === 'no' && 'لم يشتروا بعد', f.bought === 'yes' && 'اشتروا جهازًا (متابعة ما بعد البيع)', f.idle && `لم نتواصل معهم منذ أكثر من ${f.idle} يومًا`, f.rating && `تقييمهم ${f.rating}`].filter(Boolean).join('، ');
+    const goal = `${$('#cpName', m.el).value.trim() || 'رسالة متابعة'}${who ? ` — العملاء: ${who}` : ''}`;
+    aiBtn.disabled = true; aiBtn.textContent = `✨ ${t('قطرة تكتب...')}`;
+    try { const ta = $('#cpTpl', m.el); ta.value = await aiFollowupTemplate(goal); recount(); }
+    catch (err) { toast(err.message, 'err'); }
+    aiBtn.disabled = false; aiBtn.textContent = `✨ ${t('اكتب مع قطرة')}`;
+  };
   $('#cpTpl', m.el).oninput = recount;
   recount();
   $('#cpSave', m.el).onclick = () => {
@@ -7951,6 +8038,447 @@ function viewCampaign(root, cp) {
     saveDB();
     setTimeout(redraw, 300);
   }));
+}
+
+</script>
+<script>
+// ------- "قطرة": المساعد الخاص بدلتا ووتر داخل الـ CRM -------
+// موديل مفتوح المصدر (ليس مرتبطًا بأي شركة ذكاء اصطناعي) يعمل الآن على Cloudflare Workers AI بحساب الشركة،
+// ويمكن نقله لاحقًا إلى سيرفر الشركة (Ollama أو أي خادم متوافق مع OpenAI) بتغيير "مكان التشغيل" فقط من الإعدادات.
+// أربع مهارات: محلل مبيعات، مدرب مبيعات، خبير سوشيال ميديا، مستشار للإدارة. ومحادثات كل مستخدم تُحفظ ليرجع إليها من أي جهاز.
+// الخصوصية: للتحليل تُرسل أرقام مجمّعة فقط. عند "جهزني للمكالمة" يُرسل ملف عميل واحد يختاره الموظف بلا هاتف أو إيميل.
+// الأسعار ممنوعة في أي نص موجه للعميل، ولا يُرسل أي رد للعميل إلا بعد مراجعة موظف.
+
+const aiCfg = () => DB.settings.ai || {};
+const aiEnabled = () => !!ME && aiCfg().enabled !== false && (aiCfg().who !== 'team' || canSocial() || canManageSocial());
+const canManageAI = () => !!ME && (ME.role === 'owner' || ME.role === 'manager');
+
+// ------- الاتصال بالموديل: Cloudflare الآن، وسيرفر الشركة لاحقًا -------
+async function aiAsk(messages, { maxTokens = 900, temperature = 0.4 } = {}) {
+  const cfg = aiCfg();
+  if (cfg.provider === 'server') {
+    const base = String(cfg.serverUrl || '').replace(/\/+$/, '');
+    if (!base) throw new Error(t('لم يُحدد عنوان سيرفر الشركة في إعدادات قطرة'));
+    const res = await fetch(`${base}/v1/chat/completions`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', ...(cfg.serverKey ? { Authorization: `Bearer ${cfg.serverKey}` } : {}) },
+      body: JSON.stringify({ model: cfg.serverModel || 'qwen2.5:14b', messages, temperature, max_tokens: maxTokens, stream: false }),
+    });
+    const out = await res.json().catch(() => ({}));
+    const text = out.choices?.[0]?.message?.content;
+    if (!res.ok || !text) throw new Error(out.error?.message || out.error || `HTTP ${res.status}`);
+    return String(text).trim();
+  }
+  if (!socialCfg().url) throw new Error(t('قطرة تحتاج ربط Cloudflare أولًا (رابط المستقبِل في إعدادات رسائل السوشيال)'));
+  try {
+    const out = await socialApi('ai', { method: 'POST', body: { messages, maxTokens, temperature } });
+    return out.text;
+  } catch (err) {
+    if (err.code === 'daily limit') throw new Error(t('وصلت قطرة للحد اليومي المجاني على Cloudflare، وتعود للعمل غدًا'));
+    if (err.code === 'ai not configured') throw new Error(t('لم يُفعَّل Workers AI على المستقبِل بعد'));
+    throw err;
+  }
+}
+
+// ------- مكتبة معلومات دلتا ووتر: ما تعرفه قطرة عن الشركة والمنتجات (بلا أسعار) -------
+function defaultKnowledge() {
+  const models = [...new Map(activeProducts().filter(p => MODEL_RX.test(p.type)).map(p => { const m = p.type.match(MODEL_RX); return [`X${m[1]}`, +m[2]]; })).entries()].sort();
+  const sizes = [...new Set(activeProducts().map(p => p.size).filter(Boolean))].sort((a, b) => inchOf(a) - inchOf(b));
+  return [
+    'دلتا ووتر شركة مصرية متخصصة في المعالجة المغناطيسية لمياه الري.',
+    'الجهاز يُركّب على خط المياه بدون كهرباء وبدون كيماويات، ويعالج المياه مغناطيسيًا فيقلل أثر الأملاح على النبات والتربة، ويحسّن ذوبان العناصر وامتصاص النبات للمياه والأسمدة، ويقلل الترسيبات في شبكة الري والتنقيط.',
+    models.length ? `الموديلات حسب درجة ملوحة المياه: ${models.map(([n, ppm]) => `${n} حتى ${ppm} PPM`).join('، ')}.` : '',
+    sizes.length ? `المقاسات المتاحة: ${sizes.join('، ')}، ويُختار المقاس حسب قطر خط المياه وتصرف البئر أو المضخة.` : '',
+    'لاختيار الجهاز المناسب نحتاج: درجة ملوحة المياه (تحليل مياه أو قراءة TDS)، مصدر المياه (بئر، ترعة، صرف...)، نوع الري، المساحة، والمحصول.',
+    'نخدم عملاء داخل مصر وخارجها من خلال فريق المبيعات والوكلاء.',
+  ].filter(Boolean).join('\n');
+}
+const knowledge = () => (aiCfg().kb || defaultKnowledge()).slice(0, 8000);
+
+const AI_RULES = [
+  'أنت "قطرة"، المساعد الذكي الخاص بشركة دلتا ووتر داخل نظام إدارة العملاء، وتساعد الإدارة ومدير المبيعات ورجال البيع وفريق السوشيال.',
+  'اكتب بالعربية الواضحة (فصحى مبسطة، أو عامية مصرية مهذبة حين يُطلب نص يُقال للعميل)، باختصار ونقاط مرتبة. استخدم **للتأكيد** وقوائم بشرطة "-".',
+  'لا تخترع أرقامًا أبدًا: استخدم فقط الأرقام الموجودة في البيانات المرفقة، وإذا لم تكفِ البيانات قل ذلك بوضوح واقترح ما يلزم.',
+  'ممنوع ذكر أي أسعار أو خصومات في أي نص موجه لعميل. إذا سأل العميل عن السعر: مهندس مختص سيتواصل معه لترشيح الموديل المناسب بعد معرفة ملوحة المياه والمساحة.',
+  'لا تَعِد بنتائج مضمونة أو أرقام إنتاجية محددة.',
+  'لا تملك وصولًا لأي بيانات غير المرفقة في هذه المحادثة.',
+].join('\n');
+
+// ------- المهارات -------
+const SKILLS = {
+  analyst: {
+    icon: '📊', name: 'محلل المبيعات', data: 'sales',
+    prompt: 'مهارتك الآن: محلل مبيعات. اقرأ أرقام الـ CRM المرفقة وحوّلها لرؤى: ما الذي ارتفع وما الذي انخفض وأسبابه المحتملة، وأين الفرص. ابدأ بالخلاصة في سطر، ثم الأرقام الداعمة، ثم 3 توصيات عملية قابلة للتنفيذ هذا الأسبوع. قارن بالفترة السابقة متى توفرت.',
+    quick: [
+      ['📊 ملخص مبيعات الشهر', 'لخّص أداء المبيعات هذا الشهر مقارنة بالفترة السابقة، وأهم 3 ملاحظات، و3 توصيات عملية.'],
+      ['🌱 أفضل المحافظات والمحاصيل', 'ما أفضل المحافظات والمحاصيل والموديلات مبيعًا في آخر 12 شهرًا؟ وأين توجد فرص يجب التركيز عليها؟'],
+      ['🏆 أداء رجال البيع', 'قارن أداء رجال البيع هذا الشهر: من الأفضل في المبيعات والمتابعة، ومن يحتاج دعمًا ولماذا، مع توصية لكل واحد.'],
+      ['⚠ متابعات متأخرة وفرص ضائعة', 'ما المخاطر في الأرقام الحالية (متابعات متأخرة، طلبات ملغاة أو مؤجلة، تحصيل)؟ وما الإجراءات المقترحة هذا الأسبوع؟'],
+      ['📄 تقرير وورد بقراءة قطرة', '@report'],
+    ],
+  },
+  coach: {
+    icon: '🎯', name: 'مدرب المبيعات', data: '',
+    prompt: [
+      'مهارتك الآن: مدرب مبيعات محترف متخصص في بيع أجهزة المعالجة المغناطيسية للمياه للمزارعين والمهندسين الزراعيين والموزعين في مصر والوطن العربي.',
+      'منهجك:',
+      '- البيع الاستشاري بأسئلة SPIN: الوضع (مصدر المياه، الملوحة، المحصول، المساحة، نوع الري) ← المشكلة (ملوحة، قشرة ملحية، ضعف الإنتاج، انسداد النقاطات، هدر السماد) ← أثرها (خسارة المحصول والمال والوقت) ← قيمة الحل للعميل.',
+      '- تأهيل العميل: ملوحة المياه، المساحة، المحصول وموسمه، صاحب القرار، التوقيت، وطريقة الدفع المناسبة (كاش، مقدم، تقسيط).',
+      '- الاعتراضات بخطوات: استمع ← اعترف بشعوره ← اسأل لتفهم السبب الحقيقي ← أجب بدليل (تحليل مياه، تجربة عميل في نفس المنطقة أو المحصول، الضمان والدعم) ← اطلب خطوة تالية محددة.',
+      '- الاعتراضات الشائعة: "غالي"، "مش مقتنع إنه بيشتغل"، "هجرب الأول"، "هستشير حد"، "مش وقته"، "عندي فلتر أو جهاز تاني"، "الضمان إيه".',
+      '- خطة المتابعة: يوم 1 ثم 3 ثم 7 ثم 14 ثم 30، مكالمة ثم واتساب، وربطها بموسم المحصول.',
+      '- الإغلاق بالتزام صغير وواضح: زيارة، تحليل مياه، أو موعد تركيب.',
+      'اكتب سكريبتات جاهزة بالعامية المصرية المهذبة يقولها رجل البيع حرفيًا، وأسئلة مرقمة. لا تخترع أسعارًا أو نسب خصم؛ إذا لزم ذكر السعر داخليًا فاكتب [السعر حسب قائمة الأسعار].',
+    ].join('\n'),
+    quick: [
+      ['📞 جهزني لمكالمة عميل', '@pick'],
+      ['🛡 رد على "الجهاز غالي"', 'عميل مزارع قال: "الجهاز غالي". اكتب 3 ردود مختلفة بالعامية المصرية، كل رد يتبع خطوات التعامل مع الاعتراض وينتهي بخطوة تالية.'],
+      ['🤔 "مش مقتنع إنه بيشتغل"', 'عميل قال: "مش مقتنع إن الجهاز المغناطيسي بيشتغل". اكتب طريقة الرد خطوة بخطوة مع أسئلة لفهم سبب شكه، وأدلة يمكن تقديمها، وخطوة تالية.'],
+      ['🎯 أسئلة تأهيل عميل جديد', 'اكتب أهم 10 أسئلة تأهيل لعميل جديد في أول مكالمة، مرتبة من الأسهل للأعمق، مع سبب كل سؤال وما الذي يكشفه.'],
+      ['🔁 خطة متابعة 30 يومًا', 'اكتب خطة متابعة لعميل مهتم لم يشترِ بعد على 30 يومًا: اليوم، القناة (مكالمة أو واتساب)، والرسالة أو نقاط المكالمة لكل خطوة.'],
+      ['📣 اكتب رسالة متابعة لحملة', '@template'],
+    ],
+  },
+  social: {
+    icon: '📱', name: 'خبير السوشيال ميديا', data: 'social',
+    prompt: [
+      'مهارتك الآن: خبير تسويق سوشيال ميديا للشركات الزراعية (فيسبوك، إنستجرام، تيك توك، واتساب، يوتيوب شورتس). الجمهور: مزارعون ومهندسون زراعيون وموزعون، باللهجة المصرية أو لهجة البلد المستهدف.',
+      '- البوست: أول سطر خطاف يوقف التمرير (سؤال عن مشكلة حقيقية، أو مشهد من الغيط) ← المشكلة ← الحل والفائدة ← دليل (تجربة عميل أو تحليل) ← دعوة واضحة "ابعت رسالة" أو "اطلب تحليل مياهك".',
+      '- الريلز: خطاف في أول 3 ثوانٍ، ثم المشكلة، ثم الجهاز وفكرته ببساطة، ثم الدليل، ثم الدعوة؛ 20-40 ثانية، مع وصف اللقطات والنص على الشاشة لكل لقطة.',
+      '- إعلانات الرسائل (Click to Message): 3 نسخ بزوايا مختلفة (المشكلة، النتيجة، الدليل)، لكل نسخة نص أساسي وعنوان قصير ورسالة ترحيب مقترحة.',
+      '- الكابشن: قصير وواضح، مع 5-8 هاشتاجات مرتبطة بالعربي والإنجليزي.',
+      '- خطة المحتوى: توزيع أسبوعي (تعليمي 40%، تجارب عملاء 30%، منتج 20%، تفاعل 10%) ومربوط بمواسم المحاصيل.',
+      '- الرد على التعليقات: ودود، يحوّل للرسائل الخاصة، بدون أسعار علنًا.',
+      'قواعد ميتا والمصداقية: لا ادعاءات مبالغ فيها ولا نتائج مضمونة، لا صور قبل وبعد مضللة، ولا مخاطبة صفات شخصية للمتلقي. إن وُجد أداء الإعلانات في البيانات المرفقة فاعتمد عليه لتقول ما الذي ينجح فعلًا.',
+    ].join('\n'),
+    quick: [
+      ['✍ 3 بوستات فيسبوك', 'اكتب 3 بوستات فيسبوك بزوايا مختلفة عن أجهزة دلتا ووتر لمزارعين يعانون من ملوحة المياه، كل بوست بخطاف قوي ودعوة لإرسال رسالة.'],
+      ['🎬 سكريبت ريلز 30 ثانية', 'اكتب سكريبت ريلز 30 ثانية عن مشكلة ملوحة مياه الري وحل دلتا ووتر: اللقطات، والنص على الشاشة، والكلام، والكابشن والهاشتاجات.'],
+      ['📣 3 نصوص إعلان رسائل', 'اكتب 3 نسخ إعلان بهدف الرسائل (Click to Message) لأجهزة دلتا ووتر، لكل نسخة نص أساسي وعنوان ورسالة ترحيب.'],
+      ['🗓 خطة محتوى أسبوعين', 'اعمل خطة محتوى لأسبوعين على فيسبوك وإنستجرام: اليوم، نوع المحتوى، الفكرة، الخطاف، والدعوة.'],
+      ['💬 رد على تعليق "بكام؟"', 'اكتب 3 ردود قصيرة ومحترمة على تعليق "بكام الجهاز؟" تحت بوست، تحوّل العميل للرسائل بدون ذكر السعر علنًا.'],
+      ['📈 أي إعلان شغال؟', 'من أداء الإعلانات المرفق في آخر 30 يومًا: أي إعلان يجلب محادثات وأرقامًا ومشترين فعلًا؟ وماذا أوقف أو أزوّد؟ واقترح فكرتين لإعلانات جديدة.'],
+    ],
+  },
+  exec: {
+    icon: '📈', name: 'مستشار الإدارة', data: 'sales',
+    prompt: 'مهارتك الآن: مستشار للإدارة ومدير المبيعات. قدّم الصورة الكبيرة: مؤشرات الأداء الرئيسية واتجاهها، وتوقعًا مبسطًا للشهر القادم مبنيًا على متوسط آخر 3-6 أشهر مع ذكر الافتراضات بوضوح، والمخاطر (التحصيل، المتابعات المتأخرة، الإلغاءات)، وتوزيع الفريق والمناطق، وقرارات مقترحة مرتبة بالأولوية. اكتب كتقرير تنفيذي موجز.',
+    quick: [
+      ['📈 توقع الشهر الجاي', 'بناءً على المبيعات الشهرية المرفقة، ما توقعك للشهر القادم (نطاق منخفض ومتوقع ومرتفع)؟ وضّح الافتراضات وما الذي يرفع النتيجة.'],
+      ['🧾 التحصيل والمخاطر', 'حلّل التحصيل والمتبقي والإلغاءات والمتابعات المتأخرة، ورتّب المخاطر حسب الأولوية مع إجراء لكل خطر.'],
+      ['👥 قرارات الفريق', 'من أرقام الفريق والمناطق: كيف نعيد توزيع الجهد والعملاء لنرفع المبيعات الشهر القادم؟ قرارات محددة ومرتبة.'],
+      ['📄 تقرير وورد بقراءة قطرة', '@report'],
+    ],
+  },
+};
+
+// ------- البيانات المرفقة: أرقام مجمّعة فقط -------
+function analyticsContext() {
+  const team = can('analytics.team');
+  const base = { rep: team ? '' : ME.id, market: '', gov: '', from: '', to: '', subGov: '' };
+  const pick = period => {
+    const a = computeAnalytics({ ...base, period });
+    const top = (rows, n = 8) => rows.slice(0, n).map(r => [r[0], Math.round(r[1])]);
+    return {
+      الفترة: t(a.r.label), المبيعات_جنيه: Math.round(a.sales), الفترة_السابقة_جنيه: Math.round(a.prevSales), الطلبات: a.count, الأجهزة: a.unitsCount,
+      المحصل: Math.round(a.coll), عملاء_جدد: a.newCust, اشتروا: a.buyers, متابعات: a.fups.length, متابعات_متأخرة: a.late, طلبات_ملغاة: a.cancelled, مؤجلة: a.postponed,
+      حسب_المنطقة: top(a.byGov), حسب_المحصول: top(a.byCrop), حسب_المصدر: top(a.bySource), حسب_تصنيف_العميل: top(a.byCategory),
+      حسب_الموديل: a.byType.slice(0, 8).map(x => [String(x[0]).replace(/[⁦-⁩]/g, ''), x[1], Math.round(x[2])]),
+      ...(team && period === 'month' ? { رجال_البيع: a.repRows.map(x => ({ الاسم: x.u.name, مبيعات: Math.round(x.sales), طلبات: x.orders, عملاء: x.cust, متابعات: x.fu, متأخرة: x.late })) } : {}),
+    };
+  };
+  const year = computeAnalytics({ ...base, period: 'year' });
+  const custs = visibleCustomers();
+  return {
+    اليوم: today(), النطاق: team ? 'الفريق كله' : `أداء ${ME.name} فقط`, العملة: `جنيه (طلبات الدولار بسعر ${DB.settings.usdRate})`,
+    هذا_الشهر: pick('month'), آخر_12_شهرًا: pick('year'),
+    المبيعات_الشهرية: year.months.map(m => [m.label, Math.round(m.value), m.count]),
+    مراحل_العملاء: year.funnel.filter(x => x[1]), عدد_العملاء: custs.length,
+    التقييمات: RATINGS.map(r => [r, custs.filter(c => c.rating === r).length]),
+  };
+}
+// أداء السوشيال في آخر 30 يومًا من المستقبِل (محادثات وأرقام وعملاء ومشترين لكل إعلان)
+async function socialContext() {
+  if (!socialCfg().url || !cloudMode) return null;
+  try {
+    const end = new Date(); end.setHours(24, 0, 0, 0);
+    const period = { from: end.getTime() - 30 * 86400000, to: end.getTime(), label: t('آخر 30 يومًا') };
+    const s = socialDashCompute(await socialApi(`report?from=${period.from}&to=${period.to}`), period);
+    return { الفترة: 'آخر 30 يومًا', محادثات: s.total, أرسلوا_أرقامهم: s.withPhone, تحولوا_لعملاء: s.customers, اشتروا: s.buyers, المبيعات_جنيه: Math.round(s.value),
+      الإعلانات: s.ads.slice(0, 15).map(a => ({ الإعلان: a.title, محادثات: a.convs, أرقام: a.phones, عملاء: a.customers, مشترين: a.buyers })), الدول: s.countries };
+  } catch { return null; }
+}
+// ملف عميل واحد لتحضير المكالمة: بلا هاتف أو إيميل، والاسم الأول فقط
+function customerBrief(c) {
+  const fus = followupsOf(c.id).slice(0, 6).map(f => ({ التاريخ: String(f.at).slice(0, 10), النتيجة: f.outcome || '', الملاحظة: String(f.text || '').slice(0, 300) }));
+  return {
+    الاسم_الأول: firstName(c.name), السوق: c.market === 'egypt' ? 'مصر' : 'خارج مصر', المكان: c.market === 'egypt' ? custLocation(c) : c.country,
+    التصنيف: c.category || '', المحصول: c.crops || [], المساحة_فدان: c.area, مصادر_المياه_والملوحة: custWaters(c), نوع_الري: c.irrigation || '',
+    الأجهزة_المطلوبة: devicesText(c), المرحلة: label(stageById(c.stageId)), التقييم: c.rating, مصدر_المعرفة: c.source || '',
+    اشترى_قبل_ذلك: buyerIds().has(c.id), المتابعة_القادمة: c.followupDate || '', آخر_المتابعات: fus,
+    ...(c.social ? { جاء_من: `${SOCIAL_CHANNELS[c.social.channel] || ''}${c.social.adTitle ? ` - إعلان ${c.social.adTitle}` : ''}` } : {}),
+  };
+}
+
+// ------- حفظ المحادثات لكل مستخدم: على المستقبِل (من أي جهاز)، أو في هذا المتصفح إن لم يوجد -------
+const aiState = { open: false, busy: false, msgs: [], skill: 'analyst', chatId: '', title: '', view: 'chat', history: [], pick: false, mode: '' };
+const localChatsKey = () => `dw_qatra_${ME?.id || ''}`;
+const useServerChats = () => !!socialCfg().url && cloudMode;
+const readLocalChats = () => { try { return JSON.parse(localStorage.getItem(localChatsKey()) || '[]'); } catch { return []; } };
+let saveTimer = null;
+function saveChat() {
+  if (!aiState.msgs.some(m => m.role === 'assistant')) return;
+  aiState.chatId = aiState.chatId || uid();
+  aiState.title = aiState.title || (aiState.msgs.find(m => m.role === 'user')?.content || t('محادثة')).slice(0, 70);
+  const chat = { id: aiState.chatId, title: aiState.title, skill: aiState.skill, msgs: aiState.msgs.map(m => ({ role: m.role, content: m.content, ...(m.kind ? { kind: m.kind } : {}), at: m.at || Date.now() })), updated_at: Date.now() };
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async () => {
+    if (useServerChats()) {
+      try { await socialApi(`aichat/${encodeURIComponent(chat.id)}`, { method: 'POST', body: { user: ME.id, ...chat } }); return; } catch (err) { console.warn('qatra save', err.message); }
+    }
+    try { const list = readLocalChats().filter(x => x.id !== chat.id); localStorage.setItem(localChatsKey(), JSON.stringify([chat, ...list].slice(0, 40))); } catch {}
+  }, 400);
+}
+async function loadHistory() {
+  let list = [];
+  if (useServerChats()) { try { list = (await socialApi(`aichats?user=${encodeURIComponent(ME.id)}`)).chats; } catch {} }
+  const local = readLocalChats().map(c => ({ id: c.id, title: c.title, skill: c.skill, updated_at: c.updated_at, local: true }));
+  const ids = new Set(list.map(c => c.id));
+  aiState.history = [...list, ...local.filter(c => !ids.has(c.id))].sort((a, b) => b.updated_at - a.updated_at);
+}
+async function openChat(id) {
+  let chat = readLocalChats().find(c => c.id === id);
+  if (!chat && useServerChats()) { try { chat = (await socialApi(`aichat/${encodeURIComponent(id)}?user=${encodeURIComponent(ME.id)}`)).chat; } catch (err) { toast(err.message, 'err'); return; } }
+  if (!chat) return;
+  Object.assign(aiState, { chatId: chat.id, title: chat.title, skill: SKILLS[chat.skill] ? chat.skill : 'analyst', msgs: chat.msgs || [], view: 'chat', pick: false, mode: '' });
+  drawAssistant();
+}
+async function deleteChat(id) {
+  if (useServerChats()) { try { await socialApi(`aichat/${encodeURIComponent(id)}/delete`, { method: 'POST', body: { user: ME.id } }); } catch {} }
+  try { localStorage.setItem(localChatsKey(), JSON.stringify(readLocalChats().filter(c => c.id !== id))); } catch {}
+  if (aiState.chatId === id) newChat();
+  await loadHistory(); drawAssistant();
+}
+function newChat(skill) { Object.assign(aiState, { msgs: [], chatId: '', title: '', view: 'chat', pick: false, mode: '', ...(skill ? { skill } : {}) }); drawAssistant(); }
+
+// ------- الواجهة: القطرة العائمة ونافذة المحادثة -------
+let dropSeq = 0;
+// كل قطرة لها تدرج لوني باسم مختلف، لأن التدرج المشترك يختفي إذا كانت القطرة الأولى مخفية
+const dropSvg = (cls = '') => { const gid = `dropG${++dropSeq}`; return `<svg class="drop-svg ${cls}" viewBox="0 0 64 80" aria-hidden="true"><defs><linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2FC2F0"/><stop offset=".55" stop-color="#0D74A7"/><stop offset="1" stop-color="#0D1A4D"/></linearGradient></defs>
+  <path d="M32 3 C32 3 6 33 6 51 a26 26 0 0 0 52 0 C58 33 32 3 32 3 Z" fill="url(#${gid})"/><path d="M18 46 C18 38 24 30 27 26" stroke="#fff" stroke-opacity=".55" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <g class="drop-eyes"><ellipse cx="24" cy="52" rx="4.2" ry="5.2" fill="#fff"/><ellipse cx="40" cy="52" rx="4.2" ry="5.2" fill="#fff"/><circle class="drop-pupil" cx="24.6" cy="53" r="2.3" fill="#0D1A4D"/><circle class="drop-pupil" cx="40.6" cy="53" r="2.3" fill="#0D1A4D"/></g>
+  <ellipse cx="18" cy="61" rx="3.2" ry="1.8" fill="#FF8FB1" opacity=".55"/><ellipse cx="46" cy="61" rx="3.2" ry="1.8" fill="#FF8FB1" opacity=".55"/>
+  <path class="drop-mouth" d="M27 63 Q32 67.5 37 63" stroke="#0D1A4D" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>`; };
+function mountAssistant() {
+  let fab = document.getElementById('drop-fab');
+  if (!aiEnabled()) { fab?.remove(); document.getElementById('drop-panel')?.remove(); return; }
+  if (fab) return;
+  fab = document.createElement('button');
+  fab.id = 'drop-fab'; fab.className = 'drop-fab idle';
+  fab.setAttribute('aria-label', t('قطرة: مساعد دلتا ووتر'));
+  fab.innerHTML = `${dropSvg()}<span class="drop-hint">${t('اسألني 💧')}</span>`;
+  document.body.appendChild(fab);
+  fab.onclick = () => toggleAssistant(true);
+  document.addEventListener('mousemove', e => {
+    const f = document.getElementById('drop-fab'); if (!f) return;
+    const r = f.getBoundingClientRect(), dx = Math.max(-1, Math.min(1, (e.clientX - r.left - r.width / 2) / 300)), dy = Math.max(-1, Math.min(1, (e.clientY - r.top - r.height / 2) / 300));
+    f.querySelectorAll('.drop-pupil').forEach(p => { p.style.transform = `translate(${dx * 1.6}px, ${dy * 1.6}px)`; });
+  }, { passive: true });
+  setInterval(() => { const f = document.getElementById('drop-fab'); if (!f) return; f.classList.add('blink'); setTimeout(() => f.classList.remove('blink'), 180); }, 4200);
+  setTimeout(() => fab.classList.add('hello'), 600);
+  setTimeout(() => fab.classList.remove('hello'), 4600);
+}
+function toggleAssistant(open) {
+  aiState.open = open;
+  let panel = document.getElementById('drop-panel');
+  const fab = document.getElementById('drop-fab');
+  if (!open) { panel?.remove(); fab?.classList.remove('hidden'); return; }
+  fab?.classList.add('hidden');
+  if (!panel) {
+    panel = document.createElement('section');
+    panel.id = 'drop-panel'; panel.className = 'drop-panel';
+    panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-label', t('قطرة: مساعد دلتا ووتر'));
+    document.body.appendChild(panel);
+  }
+  drawAssistant();
+}
+const mdLite = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/^#{1,4} (.+)$/gm, '<b>$1</b>').replace(/^\s*[-•*] (.+)$/gm, '<span class="li">• $1</span>').replace(/^\s*(\d+)[.)] (.+)$/gm, '<span class="li">$1. $2</span>').replace(/<\/span>\n/g, '</span>').replace(/\n{2,}/g, '\n').replace(/\n/g, '<br>');
+const msgActions = m => m.kind === 'template' ? `<div class="drop-acts"><button class="btn sm primary" data-act="campaign" data-text="${encodeURIComponent(m.content)}">📣 ${t('استخدمها في حملة جديدة')}</button><button class="btn sm" data-act="copy" data-text="${encodeURIComponent(m.content)}">⧉ ${t('نسخ')}</button></div>`
+  : m.role === 'assistant' && !m.content.startsWith('⚠') ? `<div class="drop-acts"><button class="btn sm" data-act="copy" data-text="${encodeURIComponent(m.content)}">⧉ ${t('نسخ')}</button></div>` : '';
+function drawAssistant() {
+  const panel = document.getElementById('drop-panel');
+  if (!panel) return;
+  const where = aiCfg().provider === 'server' ? t('سيرفر الشركة') : 'Cloudflare';
+  const sk = SKILLS[aiState.skill];
+  const history = aiState.view === 'history';
+  panel.innerHTML = `<header class="drop-head"><span class="drop-mini ${aiState.busy ? 'thinking' : ''}">${dropSvg()}</span><div><b>${t('قطرة')}</b><div class="muted">${t('مساعد دلتا ووتر الخاص · يعمل على {w}', { w: where })}</div></div><span class="spacer"></span>
+      <button class="drop-ic ${history ? 'on' : ''}" id="dpHist" aria-label="${t('المحادثات المحفوظة')}" title="${t('المحادثات المحفوظة')}">🕘</button>
+      ${canManageAI() ? `<button class="drop-ic" id="dpSet" aria-label="${t('إعدادات قطرة')}" title="${t('إعدادات قطرة')}">⚙</button>` : ''}<button class="drop-ic" id="dpNew" aria-label="${t('محادثة جديدة')}" title="${t('محادثة جديدة')}">＋</button><button class="drop-ic" id="dpClose" aria-label="${t('إغلاق')}">×</button></header>
+    <nav class="drop-skills" aria-label="${t('مهارات قطرة')}">${Object.entries(SKILLS).map(([k, s]) => `<button class="${aiState.skill === k && !history ? 'on' : ''}" data-skill="${k}" ${aiState.busy ? 'disabled' : ''}>${s.icon} ${esc(t(s.name))}</button>`).join('')}</nav>
+    ${history ? `<div class="drop-body"><b>${t('محادثاتك المحفوظة')}</b>${aiState.history.length ? `<div class="drop-hist">${aiState.history.map(h => `<div class="drop-hrow"><button class="drop-hopen" data-open="${esc(h.id)}"><span>${SKILLS[h.skill]?.icon || '💧'}</span><span class="t">${esc(h.title || t('محادثة'))}</span><span class="muted">${fmtDT(new Date(h.updated_at).toISOString())}</span></button><button class="drop-hdel" data-del="${esc(h.id)}" aria-label="${t('حذف')}">🗑</button></div>`).join('')}</div>` : `<p class="muted">${t('لا توجد محادثات محفوظة بعد. كل محادثة مع قطرة تُحفظ تلقائيًا هنا.')}</p>`}</div>`
+    : `<div class="drop-body" id="dpBody">${aiState.msgs.length ? aiState.msgs.map(m => `<div class="drop-msg ${m.role}">${m.role === 'assistant' ? `<span class="drop-av">${dropSvg()}</span>` : ''}<div class="bubble">${m.role === 'assistant' ? mdLite(m.content) : esc(m.content)}${msgActions(m)}</div></div>`).join('')
+      : `<div class="drop-welcome"><span class="drop-big">${dropSvg()}</span><b>${t('أهلًا {n}، أنا قطرة 💧', { n: firstName(ME.name) })}</b><p class="muted">${t('اختار مهارة من فوق، وبعدين اضغط زرار جاهز أو اكتب سؤالك. كل محادثة بتتحفظ وتقدر ترجعلها من 🕘.')}</p><div class="drop-skillcard">${sk.icon} <b>${esc(t(sk.name))}</b></div></div>`}
+      ${aiState.pick ? customerPickerHtml() : ''}
+      ${aiState.busy ? `<div class="drop-msg assistant"><span class="drop-av">${dropSvg('thinking')}</span><div class="bubble typing"><i></i><i></i><i></i></div></div>` : ''}</div>
+    <div class="drop-quick">${sk.quick.map(([l], i) => `<button class="chip" data-q="${i}" ${aiState.busy ? 'disabled' : ''}>${esc(t(l))}</button>`).join('')}</div>
+    <form class="drop-input" id="dpForm"><textarea class="inp" id="dpText" rows="1" placeholder="${t(aiState.mode === 'template' ? 'اكتب هدف الرسالة ومن هم العملاء...' : 'اسأل قطرة...')}" ${aiState.busy ? 'disabled' : ''}></textarea><button class="btn primary" ${aiState.busy ? 'disabled' : ''} aria-label="${t('إرسال')}">➤</button></form>`}
+    <div class="drop-foot muted">${t('موديل مفتوح المصدر على حساب الشركة، لا يتعلم من بياناتكم. للتحليل تُرسل أرقام مجمّعة فقط بلا أسماء أو هواتف.')}</div>`;
+  const body = $('#dpBody', panel); if (body) body.scrollTop = body.scrollHeight;
+  $('#dpClose', panel).onclick = () => toggleAssistant(false);
+  $('#dpNew', panel).onclick = () => newChat();
+  $('#dpHist', panel).onclick = async () => { if (history) { aiState.view = 'chat'; drawAssistant(); return; } aiState.view = 'history'; drawAssistant(); await loadHistory(); if (aiState.view === 'history') drawAssistant(); };
+  const set = $('#dpSet', panel); if (set) set.onclick = openAISettings;
+  $$('[data-skill]', panel).forEach(b => b.onclick = () => { if (aiState.view === 'history' || !aiState.msgs.length) { aiState.view = 'chat'; aiState.skill = b.dataset.skill; aiState.pick = false; aiState.mode = ''; drawAssistant(); } else newChat(b.dataset.skill); });
+  $$('[data-open]', panel).forEach(b => b.onclick = () => openChat(b.dataset.open));
+  $$('[data-del]', panel).forEach(b => b.onclick = () => confirmBox(t('حذف المحادثة'), t('ستُحذف هذه المحادثة نهائيًا.'), () => deleteChat(b.dataset.del), t('حذف')));
+  $$('[data-q]', panel).forEach(b => b.onclick = () => quickAction(+b.dataset.q));
+  $$('[data-act]', panel).forEach(b => b.onclick = () => aiActions[b.dataset.act]?.(b));
+  const pickSel = $('#dpPick', panel);
+  if (pickSel) { comboizeIn(pickSel.parentNode); pickSel.onchange = () => { const c = custById(pickSel.value); if (c) qatraCallPrep(c, true); }; }
+  const ta = $('#dpText', panel);
+  if (ta) {
+    ta.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $('#dpForm', panel).requestSubmit(); } });
+    ta.addEventListener('input', () => { ta.style.height = 'auto'; ta.style.height = Math.min(120, ta.scrollHeight) + 'px'; });
+    $('#dpForm', panel).onsubmit = e => { e.preventDefault(); const q = ta.value.trim(); if (q) chatAsk(q); };
+    if (!aiState.busy && !aiState.pick) ta.focus();
+  }
+}
+const customerPickerHtml = () => `<div class="drop-msg assistant"><span class="drop-av">${dropSvg()}</span><div class="bubble"><b>${t('اختار العميل')}</b><div class="mt"><select class="inp" id="dpPick" data-combo><option value="">${t('اكتب اسم العميل أو كوده')}</option>${visibleCustomers().filter(c => !c.archived).slice(0, 3000).map(c => `<option value="${c.id}" data-s="${esc(c.code)}">${esc(c.name)} · ${esc(c.code)}</option>`).join('')}</select></div></div></div>`;
+function setDropMood(mood) {
+  document.querySelectorAll('.drop-mini, .drop-fab').forEach(el => { el.classList.remove('thinking', 'happy', 'sad'); if (mood) el.classList.add(mood); });
+  if (mood === 'happy' || mood === 'sad') setTimeout(() => setDropMood(''), 1600);
+}
+// سؤال للمهارة الحالية: تعليمات المهارة + مكتبة المعلومات + البيانات المناسبة لها + آخر رسائل المحادثة
+async function chatAsk(q, { label, extra, kind } = {}) {
+  if (aiState.mode === 'template' && !extra) { aiState.mode = ''; return writeTemplate(q); }
+  const sk = SKILLS[aiState.skill];
+  aiState.msgs.push({ role: 'user', content: label || q, at: Date.now() });
+  aiState.busy = true; aiState.view = 'chat'; drawAssistant(); setDropMood('thinking');
+  try {
+    let data = '';
+    if (sk.data === 'sales') data = `\n\nأرقام الـ CRM الحالية (مجمّعة، JSON):\n${JSON.stringify(analyticsContext())}`;
+    if (sk.data === 'social') {
+      const soc = await socialContext();
+      data = `\n\nأداء السوشيال (مجمّع، JSON):\n${soc ? JSON.stringify(soc) : 'غير متاح الآن'}`;
+    }
+    if (extra) data += `\n\n${extra}`;
+    const history = aiState.msgs.slice(-11, -1).map(m => ({ role: m.role, content: m.content }));
+    const text = await aiAsk([
+      { role: 'system', content: `${AI_RULES}\n\n${sk.prompt}\n\nمعلومات دلتا ووتر:\n${knowledge()}${data}` },
+      ...history, { role: 'user', content: q },
+    ], { maxTokens: 1200, temperature: aiState.skill === 'social' ? 0.7 : 0.4 });
+    aiState.msgs.push({ role: 'assistant', content: text, at: Date.now(), ...(kind ? { kind } : {}) });
+    setDropMood('happy');
+    saveChat();
+  } catch (err) {
+    aiState.msgs.push({ role: 'assistant', content: `⚠ ${err.message}`, at: Date.now() });
+    setDropMood('sad');
+  }
+  aiState.busy = false; drawAssistant();
+}
+function quickAction(i) {
+  const [l, p] = SKILLS[aiState.skill].quick[i];
+  aiState.pick = false;
+  if (p === '@report') return aiReport();
+  if (p === '@pick') { aiState.view = 'chat'; aiState.pick = true; drawAssistant(); setTimeout(() => $('#drop-panel .combo-inp')?.focus(), 50); return; }
+  if (p === '@template') {
+    aiState.msgs.push({ role: 'assistant', content: t('اكتب لي في سطر هدف الرسالة ومن هم العملاء، مثل: "متابعة مزارعي المانجو اللي ما اشتروش من شهرين وتذكيرهم بتحليل المياه". وسأكتبها بمتغيرات {الاسم} و{المحصول} لتستخدمها في حملات المتابعة.'), at: Date.now() });
+    aiState.mode = 'template'; drawAssistant(); return;
+  }
+  chatAsk(p, { label: t(l) });
+}
+// "جهزني للمكالمة": ملخص العميل، أسئلة لازم تتسأل، اعتراضات متوقعة وردودها، وهدف المكالمة
+function qatraCallPrep(c, inPanel) {
+  if (!inPanel) { toggleAssistant(true); }
+  Object.assign(aiState, { skill: 'coach', view: 'chat', pick: false, mode: '' });
+  if (!inPanel) Object.assign(aiState, { msgs: [], chatId: '', title: '' });
+  aiState.title = t('تحضير مكالمة: {n}', { n: c.name });
+  chatAsk('جهزني لمكالمة هذا العميل: ملخص وضعه في سطرين، هدف المكالمة، افتتاحية بالعامية، 5 أسئلة مهمة، أهم اعتراض متوقع ورده، والخطوة التالية التي أطلبها منه.', {
+    label: t('📞 جهزني لمكالمة {n}', { n: c.name }),
+    extra: `ملف العميل (JSON، بلا بيانات اتصال):\n${JSON.stringify(customerBrief(c))}`,
+  });
+}
+async function writeTemplate(goal) {
+  aiState.msgs.push({ role: 'user', content: goal, at: Date.now() });
+  aiState.busy = true; drawAssistant(); setDropMood('thinking');
+  try {
+    aiState.msgs.push({ role: 'assistant', content: await aiFollowupTemplate(goal), kind: 'template', at: Date.now() });
+    setDropMood('happy'); saveChat();
+  } catch (err) { aiState.msgs.push({ role: 'assistant', content: `⚠ ${err.message}`, at: Date.now() }); setDropMood('sad'); }
+  aiState.busy = false; drawAssistant();
+}
+// تقرير وورد كامل: نفس تحليل المبيعات + قراءة قطرة للأرقام وتوصياتها في أول التقرير
+async function aiReport() {
+  aiState.msgs.push({ role: 'user', content: t('📄 تقرير وورد بقراءة قطرة'), at: Date.now() });
+  aiState.busy = true; aiState.view = 'chat'; drawAssistant(); setDropMood('thinking');
+  try {
+    const st = { ...dashState, rep: can('analytics.team') ? dashState.rep : ME.id };
+    const a = computeAnalytics(st);
+    const summary = await aiAsk([
+      { role: 'system', content: `${AI_RULES}\n\n${SKILLS.exec.prompt}\nاكتب ملخصًا تنفيذيًا لتقرير مبيعات رسمي: فقرة قصيرة ثم "أهم الملاحظات" (3-5 نقاط) ثم "التوصيات" (3-5 نقاط). بدون عناوين Markdown كبيرة.` },
+      { role: 'user', content: `بيانات الفترة "${t(a.r.label)}":\n${JSON.stringify(analyticsContext())}` },
+    ], { maxTokens: 900, temperature: 0.3 });
+    await analyticsDocx(st, a, summary);
+    aiState.msgs.push({ role: 'assistant', content: `${t('جهزت التقرير ونزل على جهازك ✓. هذه قراءتي للأرقام التي وضعتها في أوله:')}\n\n${summary}`, at: Date.now() });
+    setDropMood('happy'); saveChat();
+  } catch (err) { aiState.msgs.push({ role: 'assistant', content: `⚠ ${err.message}`, at: Date.now() }); setDropMood('sad'); }
+  aiState.busy = false; drawAssistant();
+}
+const aiActions = {
+  campaign: b => { const txt = decodeURIComponent(b.dataset.text || ''); toggleAssistant(false); location.hash = '#/campaigns'; setTimeout(() => { openCampaignBuilder(); setTimeout(() => { const ta = document.querySelector('.modal #cpTpl'); if (ta) { ta.value = txt; ta.dispatchEvent(new Event('input')); } }, 200); }, 300); },
+  copy: b => { navigator.clipboard?.writeText(decodeURIComponent(b.dataset.text || '')).then(() => toast(t('تم النسخ'), 'ok')); },
+};
+// قالب رسالة متابعة بمتغيرات الحملات
+async function aiFollowupTemplate(goal) {
+  return aiAsk([
+    { role: 'system', content: `${AI_RULES}\n\n${SKILLS.coach.prompt}\n\nاكتب رسالة واتساب واحدة قصيرة (40-70 كلمة) ودودة ومحترمة من دلتا ووتر لعميل. استخدم المتغيرات كما هي بالأقواس: {الاسم} لاسم العميل، {المحصول}، {المحافظة}، {اسمي} لاسم الموظف. بلا أسعار، وبجملة تدعو للرد. اكتب نص الرسالة فقط بدون مقدمات.\n\nمعلومات دلتا ووتر:\n${knowledge()}` },
+    { role: 'user', content: goal },
+  ], { maxTokens: 400, temperature: 0.6 });
+}
+// رد مقترح على عميل السوشيال (يراجعه الموظف ويرسله بنفسه)
+async function aiSuggestReply(conv, msgs, ins) {
+  const chat = msgs.slice(-14).map(m => `${m.dir === 'in' ? 'العميل' : 'دلتا ووتر'}: ${m.text || ''}`).join('\n');
+  const known = [ins.gov && `المكان: ${ins.gov}`, ins.country && `الدولة: ${ins.country}`, ins.crops.length && `المحصول: ${ins.crops.join('، ')}`, ins.salinity && `الملوحة: ${ins.salinity}`, ins.area && `المساحة: ${ins.area} فدان`, (conv.phones || []).length && 'أرسل رقمه بالفعل'].filter(Boolean).join(' · ');
+  return aiAsk([
+    { role: 'system', content: `${AI_RULES}\n\n${SKILLS.social.prompt}\n\nاكتب ردًا واحدًا مقترحًا (حتى 70 كلمة) على آخر رسالة للعميل في شات ${conv.channel === 'ig' ? 'إنستجرام' : 'ماسنجر'} باسم فريق دلتا ووتر، بنفس لغة العميل ولهجته. أجب على سؤاله من معلومات الشركة فقط. إذا كان ينقصنا رقم هاتفه أو مكانه أو المحصول أو ملوحة المياه فاطلب واحدًا أو اثنين منها بلطف. اكتب نص الرد فقط.\n\nمعلومات دلتا ووتر:\n${knowledge()}` },
+    { role: 'user', content: `المعروف عن العميل: ${known || 'لا شيء بعد'}\n\nالشات:\n${chat}` },
+  ], { maxTokens: 350, temperature: 0.5 });
+}
+
+// ------- الإعدادات (للإدارة): مكان التشغيل، من يستخدمها، ومكتبة المعلومات -------
+function openAISettings() {
+  const cfg = aiCfg();
+  const m = openModal({
+    title: t('إعدادات قطرة'), wide: true,
+    body: `<div class="field"><label>${t('مكان تشغيل الموديل')}</label><div class="chips" id="aiProv">
+        <button type="button" class="chip ${cfg.provider !== 'server' ? 'on' : ''}" data-p="cloudflare">☁ Cloudflare Workers AI</button>
+        <button type="button" class="chip ${cfg.provider === 'server' ? 'on' : ''}" data-p="server">🖥 ${t('سيرفر الشركة')}</button></div>
+        <small class="muted">${t('الآن: Cloudflare بحساب الشركة. عند تجهيز سيرفر الشركة (Ollama أو أي خادم متوافق مع OpenAI) اختره واكتب عنوانه، ويعمل كل شيء كما هو.')}</small></div>
+      <div class="grid2" id="aiSrv" ${cfg.provider === 'server' ? '' : 'hidden'}><div class="field"><label>${t('عنوان السيرفر')}</label><input class="inp" dir="ltr" id="aiUrl" value="${esc(cfg.serverUrl || '')}" placeholder="https://ai.deltawater.example"></div><div class="field"><label>${t('اسم الموديل على السيرفر')}</label><input class="inp" dir="ltr" id="aiModel" value="${esc(cfg.serverModel || '')}" placeholder="qwen2.5:14b"></div></div>
+      <div class="field"><label>${t('من يرى قطرة')}</label><select class="inp" id="aiWho">${optsT([['all', 'كل المستخدمين'], ['team', 'الإدارة وفريق السوشيال فقط']], cfg.who || 'all')}</select></div>
+      <label class="chk"><input type="checkbox" id="aiOn" ${cfg.enabled === false ? '' : 'checked'}> ${t('قطرة مفعّلة')}</label>
+      <div class="field mt"><label>${t('مكتبة معلومات دلتا ووتر (ما تعرفه قطرة عن الشركة والمنتجات والأسئلة الشائعة)')}</label><textarea class="inp" id="aiKb" rows="12">${esc(cfg.kb || defaultKnowledge())}</textarea>
+      <small class="muted">${t('اكتب هنا كل ما تريد أن تعرفه قطرة: عن الشركة، كل موديل ومتى يُستخدم، الأسئلة الشائعة وإجاباتها، طريقة التركيب والضمان، تجارب عملاء حقيقية... لا تكتب أسعارًا: قطرة ممنوعة من ذكرها للعملاء.')}</small></div>
+      <div class="mt"><button class="btn" id="aiTest">${t('اختبار قطرة')}</button> <span class="muted" id="aiMsg"></span></div>`,
+    footer: `<button class="btn primary" id="aiSave">${t('حفظ')}</button>`,
+  });
+  $$('#aiProv .chip', m.el).forEach(b => b.onclick = () => { $$('#aiProv .chip', m.el).forEach(x => x.classList.toggle('on', x === b)); $('#aiSrv', m.el).hidden = b.dataset.p !== 'server'; });
+  const read = () => ({ provider: $('#aiProv .chip.on', m.el).dataset.p, serverUrl: $('#aiUrl', m.el).value.trim().replace(/\/+$/, ''), serverModel: $('#aiModel', m.el).value.trim(), who: $('#aiWho', m.el).value, enabled: $('#aiOn', m.el).checked, kb: $('#aiKb', m.el).value.trim().slice(0, 8000), serverKey: cfg.serverKey || '' });
+  $('#aiTest', m.el).onclick = async () => {
+    const msg = $('#aiMsg', m.el), prev = DB.settings.ai;
+    msg.textContent = t('جارٍ الاختبار...');
+    DB.settings.ai = read();
+    try { const r = await aiAsk([{ role: 'system', content: AI_RULES }, { role: 'user', content: 'عرّف نفسك في جملة واحدة.' }], { maxTokens: 80 }); msg.textContent = `✓ ${r.slice(0, 140)}`; }
+    catch (err) { msg.textContent = `✗ ${err.message}`; }
+    DB.settings.ai = prev;
+  };
+  $('#aiSave', m.el).onclick = () => {
+    const v = read();
+    if (v.provider === 'server' && !/^https?:\/\/[\w.-]+(:\d+)?(\/[\w./-]*)?$/.test(v.serverUrl)) { toast(t('اكتب عنوان السيرفر بشكل صحيح'), 'err'); return; }
+    DB.settings.ai = v;
+    audit('settings', 'settings', null, 'تعديل إعدادات قطرة', null, [{ field: 'مكان التشغيل', from: '', to: v.provider === 'server' ? v.serverUrl : 'Cloudflare' }]);
+    m.close(); toast(t('تم الحفظ'), 'ok');
+    document.getElementById('drop-fab')?.remove(); document.getElementById('drop-panel')?.remove(); mountAssistant();
+  };
 }
 
 </script>
@@ -8096,6 +8624,7 @@ function route() {
   scrollTo(0, 0);
   resumePendingCall();
   updateNotices();
+  if (window.mountAssistant) mountAssistant();
   if (!pushRefreshed && pushSupported() && Notification.permission === 'granted') { pushRefreshed = true; enablePush(false).catch(() => {}); }
 }
 
@@ -8240,6 +8769,8 @@ function softReload() {
 function signOut() {
   disablePushForDevice();
   pushRefreshed = false;
+  ['drop-fab', 'drop-panel'].forEach(id => document.getElementById(id)?.remove());
+  if (typeof aiState !== 'undefined') aiState.msgs = [];
   logout();
   updateNotices();
   history.replaceState(null, '', location.pathname);
