@@ -533,18 +533,35 @@ html { -webkit-text-size-adjust: 100%; }
   .soc-back { display: inline-flex; }
   .social-list { max-height: none; }
 }
-/* "قطرة": المساعد العائم بشكل قطرة مياه */
-.drop-fab { position: fixed; bottom: 18px; inset-inline-start: 18px; z-index: 150; width: 64px; height: 76px; border: 0; background: none; padding: 0; cursor: pointer; filter: drop-shadow(0 6px 10px rgba(13,26,77,.28)); animation: dropFloat 3.2s ease-in-out infinite; }
+/* "Dropy": روبوت المساعد العائم، يتسحب لأي مكان */
+.drop-fab { position: fixed; bottom: 18px; inset-inline-start: 18px; z-index: 150; width: 70px; height: 76px; border: 0; background: none; padding: 0; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; filter: drop-shadow(0 8px 12px rgba(13,26,77,.25)); animation: dropFloat 3.2s ease-in-out infinite; }
 .drop-fab.hidden { display: none; }
-.drop-fab:hover { animation: dropJelly .7s ease; }
+.drop-fab:hover:not(.dragging) { animation: dropJelly .7s ease; }
+.drop-fab.dragging { cursor: grabbing; animation: none; transform: scale(1.1) rotate(-4deg); filter: drop-shadow(0 16px 18px rgba(13,26,77,.32)); transition: transform .15s; }
 .drop-fab:focus-visible { outline: 3px solid var(--cyan-bar); outline-offset: 4px; border-radius: 50%; }
 .drop-svg { width: 100%; height: 100%; display: block; overflow: visible; }
-.drop-eyes { transform-origin: 32px 52px; transition: transform .12s; }
+.drop-svg * { transform-box: view-box; }
+.drop-eyes { transform-origin: 40px 44px; transition: transform .12s; }
 .blink .drop-eyes { transform: scaleY(.1); }
 .drop-pupil { transition: transform .15s; }
-.drop-hint { position: absolute; bottom: 70px; inset-inline-start: 4px; white-space: nowrap; background: var(--navy); color: #fff; font-size: 12.5px; font-weight: 700; padding: 5px 11px; border-radius: 14px; opacity: 0; transform: translateY(6px); transition: .3s; pointer-events: none; }
-.drop-fab.hello .drop-hint, .drop-fab:hover .drop-hint { opacity: 1; transform: none; }
+.drop-ant { transform-origin: 47px 22px; animation: dropAnt 2.8s ease-in-out infinite; }
+.drop-glow { animation: dropGlow 2.2s ease-in-out infinite; }
+.drop-arm-l { transform-origin: 16px 57px; }
+.drop-arm-r { transform-origin: 64px 57px; }
+.drop-fab.hello .drop-arm-r, .drop-fab:hover .drop-arm-r, .happy .drop-arm-r { animation: dropArm .5s ease-in-out 4; }
+.happy .drop-arm-l { animation: dropArmL .5s ease-in-out 4; }
+.drop-hint { position: absolute; bottom: 80px; left: 0; white-space: nowrap; background: var(--navy); color: #fff; font-size: 12.5px; font-weight: 700; padding: 5px 11px; border-radius: 14px; opacity: 0; transform: translateY(6px); transition: .3s; pointer-events: none; }
+.drop-fab.hint-end .drop-hint { left: auto; right: 0; }
+.drop-fab.hint-below .drop-hint { bottom: auto; top: 82px; transform: translateY(-6px); }
+.drop-fab.hello .drop-hint, .drop-fab:hover:not(.dragging) .drop-hint { opacity: 1; transform: none; }
 .drop-fab.hello .drop-svg { animation: dropWave 1.4s ease 2; }
+@keyframes dropAnt { 0%, 100% { transform: rotate(0); } 30% { transform: rotate(-9deg); } 60% { transform: rotate(6deg); } }
+@keyframes dropGlow { 0%, 100% { opacity: .45; } 50% { opacity: 1; } }
+@keyframes dropArm { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-38deg); } }
+@keyframes dropArmL { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(38deg); } }
+.drop-panel.dragging { user-select: none; opacity: .96; }
+.drop-head { cursor: move; touch-action: none; }
+.drop-head button { cursor: pointer; }
 .thinking .drop-svg { animation: dropThink .9s ease-in-out infinite; }
 .happy .drop-svg { animation: dropJelly .8s ease 2; }
 .sad .drop-svg { animation: dropShake .5s ease 2; }
@@ -558,18 +575,18 @@ html { -webkit-text-size-adjust: 100%; }
 @keyframes dropOpen { from { transform: scale(.4) translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
 .drop-head { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: linear-gradient(135deg, #0D1A4D, #0D74A7); color: #fff; }
 .drop-head .muted { color: rgba(255,255,255,.75); font-size: 12px; }
-.drop-mini { width: 34px; height: 42px; flex: none; }
+.drop-mini { width: 40px; height: 44px; flex: none; }
 .drop-ic { background: rgba(255,255,255,.14); border: 0; color: #fff; width: 32px; height: 32px; border-radius: 10px; cursor: pointer; font-size: 16px; }
 .drop-ic:hover { background: rgba(255,255,255,.26); }
 .drop-body { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; background: var(--card-soft); }
 .drop-welcome { text-align: center; padding: 10px 6px; }
-.drop-big { display: block; width: 74px; height: 90px; margin: 4px auto 8px; animation: dropFloat 3.2s ease-in-out infinite; }
+.drop-big { display: block; width: 96px; height: 104px; margin: 4px auto 8px; animation: dropFloat 3.2s ease-in-out infinite; }
 .drop-msg { display: flex; gap: 8px; align-items: flex-end; max-width: 92%; }
 .drop-msg.user { align-self: flex-end; flex-direction: row-reverse; }
 .drop-msg .bubble { padding: 9px 12px; border-radius: 14px; line-height: 1.6; font-size: 13.5px; background: #fff; border: 1px solid var(--border); word-break: break-word; }
 .drop-msg.user .bubble { background: var(--navy); color: #fff; border-color: var(--navy); }
 .drop-msg .li { display: block; padding-inline-start: 4px; }
-.drop-av { width: 26px; height: 32px; flex: none; }
+.drop-av { width: 30px; height: 32px; flex: none; }
 .drop-acts { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
 .typing { display: flex; gap: 4px; padding: 12px 14px !important; }
 .typing i { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); animation: dropDot 1s infinite; }
@@ -580,8 +597,8 @@ html { -webkit-text-size-adjust: 100%; }
 .drop-input { display: flex; gap: 8px; padding: 8px 12px; align-items: flex-end; }
 .drop-input textarea { resize: none; max-height: 120px; }
 .drop-foot { font-size: 11px; padding: 0 12px 10px; text-align: center; }
-@media (max-width: 640px) { .drop-panel { inset: 0; width: 100%; height: 100dvh; border-radius: 0; } .drop-fab { width: 54px; height: 64px; bottom: 12px; inset-inline-start: 12px; } }
-@media (prefers-reduced-motion: reduce) { .drop-fab, .drop-big, .drop-svg, .drop-panel { animation: none !important; } }
+@media (max-width: 640px) { .drop-panel { inset: 0; width: 100%; height: 100dvh; border-radius: 0; } .drop-fab { width: 58px; height: 63px; bottom: 12px; inset-inline-start: 12px; } .drop-fab .drop-hint { bottom: 68px; } .drop-fab.hint-below .drop-hint { top: 68px; } }
+@media (prefers-reduced-motion: reduce) { .drop-fab, .drop-big, .drop-svg, .drop-panel, .drop-ant, .drop-glow, .drop-arm-l, .drop-arm-r { animation: none !important; } }
 .drop-skills { display: flex; gap: 4px; padding: 8px 10px; background: #fff; border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
 .drop-skills button { flex: none; border: 1px solid var(--border); background: var(--card-soft); color: var(--text); border-radius: 999px; padding: 5px 11px; font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; white-space: nowrap; }
 .drop-skills button.on { background: var(--navy); border-color: var(--navy); color: #fff; }
@@ -1006,12 +1023,16 @@ const EN = {
   'لوحة الأداء': 'Performance', 'لوحة أداء السوشيال': 'Social performance', 'الرسائل': 'Messages', 'إكسيل': 'Excel', 'تقرير وورد': 'Word report', 'آخر 7 أيام': 'Last 7 days', 'آخر 30 يومًا': 'Last 30 days', 'هذا الشهر': 'This month', 'فترة محددة': 'Custom period', 'محادثات جديدة': 'New conversations', 'أرسلوا أرقامهم': 'Sent their number', 'من المحادثات': 'of conversations', 'تحوّلوا لعملاء': 'Became customers', 'اشتروا': 'Bought', 'متوسط أول رد من الفريق': 'Median first team reply', '{p} خلال ساعة': '{p} within an hour', 'المحادثات يومًا بيوم': 'Conversations by day', 'اختر فترة أطول لعرض الرسم': 'Choose a longer period to show the chart', 'أي إعلان يأتي بعملاء يشترون؟': 'Which ad brings customers who buy?', 'محادثات': 'Conversations', 'أرقام': 'Numbers', 'عملاء': 'Customers', 'نسبة الشراء': 'Purchase rate', 'المبيعات (ج.م)': 'Sales (EGP)', 'رسائل مباشرة (بدون إعلان)': 'Direct messages (no ad)', 'القنوات': 'Channels', 'أداء السوشيال': 'Social performance', 'تقرير أداء السوشيال': 'Social performance report', 'ماسنجر وإنستجرام': 'Messenger & Instagram', 'أداء الإعلانات': 'Ad performance', 'عدد المحادثات لكل إعلان': 'Conversations per ad', '{n} دقيقة': '{n} min', '{n} ساعة': '{n} h', '{n} يوم': '{n} days', 'تعذر تحميل البيانات: {e}': 'Could not load data: {e}', 'جارٍ تحميل البيانات...': 'Loading data...',
   'تقرير تحليل المبيعات': 'Sales analysis report', 'تم إنشاء التقرير': 'Report created', 'تاريخ التقرير': 'Report date', 'أعده': 'Prepared by', 'ميتا': 'Meta', 'عميل محتمل': 'Lead', 'شراء': 'Purchase',
   'حملات المتابعة': 'Follow-up campaigns', 'حملة جديدة': 'New campaign', 'حملة متابعة جديدة': 'New follow-up campaign', 'اسم الحملة': 'Campaign name', 'فترة الإرسال': 'Sending period', 'الرسالة': 'Message', 'معاينة لأول عميل': 'Preview for the first customer', 'إنشاء الحملة ومراجعة الرسائل': 'Create campaign and review messages', 'مسودة': 'Draft', 'بانتظار المراجعة': 'Awaiting review', 'معتمدة للإرسال': 'Approved to send', 'اكتملت': 'Completed', 'مرفوضة': 'Rejected', 'تحتاج مراجعتك': 'Needs your review', 'أُرسل': 'Sent', 'متبقي': 'Remaining', 'إرسال للمراجعة': 'Send for review', 'اعتماد الحملة': 'Approve campaign', 'رفض مع ملاحظة': 'Reject with a note', 'إنهاء الحملة': 'Finish campaign', 'إرسال واتساب': 'Send on WhatsApp', 'أُرسلت': 'Sent', 'استبعاد': 'Exclude', 'مستبعد': 'Excluded', 'بانتظار الاعتماد': 'Awaiting approval', 'رسالة واتساب': 'WhatsApp message', 'الحملات': 'Campaigns', 'فتح الحملة': 'Open campaign', 'أُرسلت الحملة للمراجعة': 'Campaign sent for review', 'اعتُمدت الحملة': 'Campaign approved', 'رفض الحملة': 'Reject campaign',
-  'قطرة': 'Qatra', 'قطرة: مساعد دلتا ووتر': 'Qatra: Delta Water assistant', 'اسألني 💧': 'Ask me 💧', 'مساعد دلتا ووتر الخاص · يعمل على {w}': 'Delta Water private assistant · runs on {w}', 'سيرفر الشركة': 'Company server', 'إعدادات قطرة': 'Qatra settings', 'محادثة جديدة': 'New chat', 'أهلًا {n}، أنا قطرة 💧': 'Hi {n}, I am Qatra 💧', 'أقرأ أرقام المبيعات وأحللها، وأكتب رسائل متابعة وردودًا للعملاء من معلومات دلتا ووتر، وأجهز تقارير وورد. اختر من الأزرار أو اكتب سؤالك.': 'I read and analyse sales numbers, write follow-up messages and customer replies from Delta Water information, and prepare Word reports. Pick a button or type your question.', 'اسأل قطرة عن المبيعات أو اطلب رسالة...': 'Ask Qatra about sales or request a message...', 'موديل مفتوح المصدر على حساب الشركة، لا يتعلم من بياناتكم. للتحليل تُرسل أرقام مجمّعة فقط بلا أسماء أو هواتف.': 'An open-source model on the company account that does not learn from your data. For analysis only aggregated numbers are sent, with no names or phones.',
-  '📊 ملخص مبيعات الشهر': '📊 This month\'s sales', '🏆 أداء رجال البيع': '🏆 Sales team performance', '🌱 أفضل المحافظات والمحاصيل': '🌱 Best regions and crops', '⚠ متابعات متأخرة وفرص ضائعة': '⚠ Late follow-ups and lost chances', '📄 تقرير وورد بقراءة قطرة': '📄 Word report with Qatra\'s reading', '📣 اكتب رسالة متابعة': '📣 Write a follow-up message', 'جهزت التقرير ونزل على جهازك ✓. هذه قراءتي للأرقام التي وضعتها في أوله:': 'The report is ready and downloaded ✓. Here is my reading of the numbers, placed at its start:', 'استخدمها في حملة جديدة': 'Use in a new campaign', 'نسخ': 'Copy', 'تم النسخ': 'Copied', 'قراءة قطرة للأرقام والتوصيات': 'Qatra\'s reading and recommendations',
-  'لم يُحدد عنوان سيرفر الشركة في إعدادات قطرة': 'The company server address is not set in Qatra settings', 'قطرة تحتاج ربط Cloudflare أولًا (رابط المستقبِل في إعدادات رسائل السوشيال)': 'Qatra needs the Cloudflare connection first (receiver URL in social settings)', 'وصلت قطرة للحد اليومي المجاني على Cloudflare، وتعود للعمل غدًا': 'Qatra reached the free daily limit on Cloudflare and will work again tomorrow', 'لم يُفعَّل Workers AI على المستقبِل بعد': 'Workers AI is not enabled on the receiver yet', 'مكان تشغيل الموديل': 'Where the model runs', 'من يرى قطرة': 'Who sees Qatra', 'كل المستخدمين': 'All users', 'الإدارة وفريق السوشيال فقط': 'Management and social team only', 'قطرة مفعّلة': 'Qatra enabled', 'اختبار قطرة': 'Test Qatra', 'عنوان السيرفر': 'Server address', 'اسم الموديل على السيرفر': 'Model name on the server', 'اكتب عنوان السيرفر بشكل صحيح': 'Enter a valid server address',
-  'محلل المبيعات': 'Sales analyst', 'مدرب المبيعات': 'Sales coach', 'خبير السوشيال ميديا': 'Social media expert', 'مستشار الإدارة': 'Management advisor', 'مهارات قطرة': 'Qatra skills', 'المحادثات المحفوظة': 'Saved chats', 'محادثاتك المحفوظة': 'Your saved chats', 'لا توجد محادثات محفوظة بعد. كل محادثة مع قطرة تُحفظ تلقائيًا هنا.': 'No saved chats yet. Every chat with Qatra is saved here automatically.', 'اختار مهارة من فوق، وبعدين اضغط زرار جاهز أو اكتب سؤالك. كل محادثة بتتحفظ وتقدر ترجعلها من 🕘.': 'Pick a skill above, then press a ready button or type your question. Every chat is saved and you can return to it from 🕘.', 'اختار العميل': 'Choose the customer', 'اكتب اسم العميل أو كوده': 'Type the customer name or code', 'حذف المحادثة': 'Delete chat', 'ستُحذف هذه المحادثة نهائيًا.': 'This chat will be deleted permanently.', 'محادثة': 'Chat', 'اسأل قطرة...': 'Ask Qatra...', 'اكتب هدف الرسالة ومن هم العملاء...': 'Write the message goal and who the customers are...', 'جهزني للمكالمة': 'Prepare me for the call', 'تحضير مكالمة: {n}': 'Call prep: {n}', '📞 جهزني لمكالمة {n}': '📞 Prepare me to call {n}',
+  'Dropy': 'Dropy', 'Dropy: مساعد دلتا ووتر': 'Dropy: Delta Water assistant', 'اسألني 💧': 'Ask me 💧', 'مساعد دلتا ووتر الخاص · يعمل على {w}': 'Delta Water private assistant · runs on {w}', 'سيرفر الشركة': 'Company server', 'إعدادات Dropy': 'Dropy settings', 'محادثة جديدة': 'New chat', 'أهلًا {n}، أنا Dropy 💧': 'Hi {n}, I am Dropy 💧', 'أقرأ أرقام المبيعات وأحللها، وأكتب رسائل متابعة وردودًا للعملاء من معلومات دلتا ووتر، وأجهز تقارير وورد. اختر من الأزرار أو اكتب سؤالك.': 'I read and analyse sales numbers, write follow-up messages and customer replies from Delta Water information, and prepare Word reports. Pick a button or type your question.', 'اسأل Dropy عن المبيعات أو اطلب رسالة...': 'Ask Dropy about sales or request a message...', 'موديل مفتوح المصدر على حساب الشركة، لا يتعلم من بياناتكم. للتحليل تُرسل أرقام مجمّعة فقط بلا أسماء أو هواتف.': 'An open-source model on the company account that does not learn from your data. For analysis only aggregated numbers are sent, with no names or phones.',
+  '📊 ملخص مبيعات الشهر': '📊 This month\'s sales', '🏆 أداء رجال البيع': '🏆 Sales team performance', '🌱 أفضل المحافظات والمحاصيل': '🌱 Best regions and crops', '⚠ متابعات متأخرة وفرص ضائعة': '⚠ Late follow-ups and lost chances', '📄 تقرير وورد بقراءة Dropy': '📄 Word report with Dropy\'s reading', '📣 اكتب رسالة متابعة': '📣 Write a follow-up message', 'جهزت التقرير ونزل على جهازك ✓. هذه قراءتي للأرقام التي وضعتها في أوله:': 'The report is ready and downloaded ✓. Here is my reading of the numbers, placed at its start:', 'استخدمها في حملة جديدة': 'Use in a new campaign', 'نسخ': 'Copy', 'تم النسخ': 'Copied', 'قراءة Dropy للأرقام والتوصيات': 'Dropy\'s reading and recommendations',
+  'لم يُحدد عنوان سيرفر الشركة في إعدادات Dropy': 'The company server address is not set in Dropy settings', 'Dropy يحتاج ربط Cloudflare أولًا (رابط المستقبِل في إعدادات رسائل السوشيال)': 'Dropy needs the Cloudflare connection first (receiver URL in social settings)', 'وصل Dropy للحد اليومي المجاني على Cloudflare، ويرجع للعمل غدًا': 'Dropy reached the free daily limit on Cloudflare and will work again tomorrow', 'لم يُفعَّل Workers AI على المستقبِل بعد': 'Workers AI is not enabled on the receiver yet', 'مكان تشغيل الموديل': 'Where the model runs', 'من يرى Dropy': 'Who sees Dropy', 'كل المستخدمين': 'All users', 'الإدارة وفريق السوشيال فقط': 'Management and social team only', 'Dropy مفعّل': 'Dropy enabled', 'اختبار Dropy': 'Test Dropy', 'عنوان السيرفر': 'Server address', 'اسم الموديل على السيرفر': 'Model name on the server', 'اكتب عنوان السيرفر بشكل صحيح': 'Enter a valid server address',
+  'محلل المبيعات': 'Sales analyst', 'مدرب المبيعات': 'Sales coach', 'خبير السوشيال ميديا': 'Social media expert', 'مستشار الإدارة': 'Management advisor', 'مهارات Dropy': 'Dropy skills', 'المحادثات المحفوظة': 'Saved chats', 'محادثاتك المحفوظة': 'Your saved chats', 'لا توجد محادثات محفوظة بعد. كل محادثة مع Dropy تُحفظ تلقائيًا هنا.': 'No saved chats yet. Every chat with Dropy is saved here automatically.', 'اختار مهارة من فوق، وبعدين اضغط زرار جاهز أو اكتب سؤالك. كل محادثة بتتحفظ وتقدر ترجعلها من 🕘.': 'Pick a skill above, then press a ready button or type your question. Every chat is saved and you can return to it from 🕘.', 'اختار العميل': 'Choose the customer', 'اكتب اسم العميل أو كوده': 'Type the customer name or code', 'حذف المحادثة': 'Delete chat', 'ستُحذف هذه المحادثة نهائيًا.': 'This chat will be deleted permanently.', 'محادثة': 'Chat', 'اسأل Dropy...': 'Ask Dropy...', 'اكتب هدف الرسالة ومن هم العملاء...': 'Write the message goal and who the customers are...', 'جهزني للمكالمة': 'Prepare me for the call', 'تحضير مكالمة: {n}': 'Call prep: {n}', '📞 جهزني لمكالمة {n}': '📞 Prepare me to call {n}',
   '📞 جهزني لمكالمة عميل': '📞 Prepare me to call a customer', '🛡 رد على "الجهاز غالي"': '🛡 Answer "too expensive"', '🤔 "مش مقتنع إنه بيشتغل"': '🤔 "Not convinced it works"', '🎯 أسئلة تأهيل عميل جديد': '🎯 Qualifying questions', '🔁 خطة متابعة 30 يومًا': '🔁 30-day follow-up plan', '📣 اكتب رسالة متابعة لحملة': '📣 Write a campaign message', '✍ 3 بوستات فيسبوك': '✍ 3 Facebook posts', '🎬 سكريبت ريلز 30 ثانية': '🎬 30-second reel script', '📣 3 نصوص إعلان رسائل': '📣 3 message-ad texts', '🗓 خطة محتوى أسبوعين': '🗓 Two-week content plan', '💬 رد على تعليق "بكام؟"': '💬 Reply to "how much?"', '📈 أي إعلان شغال؟': '📈 Which ad works?', '📈 توقع الشهر الجاي': '📈 Next month forecast', '🧾 التحصيل والمخاطر': '🧾 Collection and risks', '👥 قرارات الفريق': '👥 Team decisions',
-  'اقترح رد': 'Suggest a reply', 'قطرة تكتب...': 'Qatra is writing...', 'راجع الرد وعدّله قبل الإرسال': 'Review and edit the reply before sending', 'اكتب مع قطرة': 'Write with Qatra',
+  'اقترح رد': 'Suggest a reply', 'Dropy يكتب...': 'Dropy is writing...', 'راجع الرد وعدّله قبل الإرسال': 'Review and edit the reply before sending', 'اكتب مع Dropy': 'Write with Dropy',
+  'Dropy: مساعد دلتا ووتر. اضغط للسؤال، أو اسحبه لأي مكان': 'Dropy: Delta Water assistant. Click to ask, or drag it anywhere', 'اضغط للسؤال، أو اسحبني لأي مكان': 'Click to ask, or drag me anywhere', 'أنا Dropy 👋 اسحبني لأي مكان': "I'm Dropy 👋 drag me anywhere",
+  'مكتبة معلومات دلتا ووتر (ما يعرفه Dropy عن الشركة والمنتجات والأسئلة الشائعة)': 'Delta Water knowledge library (what Dropy knows about the company, products and FAQs)',
+  'اكتب هنا كل ما تريد أن يعرفه Dropy: عن الشركة، كل موديل ومتى يُستخدم، الأسئلة الشائعة وإجاباتها، طريقة التركيب والضمان، تجارب عملاء حقيقية... لا تكتب أسعارًا: Dropy ممنوع من ذكرها للعملاء.': 'Write everything Dropy should know: the company, each model and when to use it, FAQs and answers, installation and warranty, real customer stories... Do not write prices: Dropy must never mention them to customers.',
+  'يكتب Dropy ردًا مقترحًا من معلومات دلتا ووتر بدون أسعار، وتراجعه أنت قبل الإرسال': 'Dropy drafts a reply from Delta Water info, with no prices, for you to review before sending',
   'سؤال عن السعر': 'Asking about price', 'جاهز للشراء': 'Ready to buy', 'يريد معلومات': 'Wants information', 'شكوى أو مشكلة': 'Complaint or problem', 'يطلب اتصال': 'Asks for a call',
   'البريد الإلكتروني 1': 'Email 1', 'البريد الإلكتروني 2': 'Email 2', 'البريد الإلكتروني غير صحيح. اكتبه بالشكل name@example.com': 'The email address is not valid. Write it like name@example.com',
   'الأجهزة المطلوبة': 'Requested devices', 'الجهاز والعدد': 'device and quantity', 'إضافة جهاز آخر': 'Add another device', 'اختر مصدر المياه': 'Choose a water source', 'مصادر المياه ودرجة ملوحتها': 'Water sources and salinity', 'لكل مصدر ملوحته': 'salinity for each source', 'إضافة مصدر مياه آخر': 'Add another water source', 'اكتب اسم المحصول أو اختر من القائمة': 'Type a crop name or pick from the list',
@@ -6298,8 +6319,8 @@ async function analyticsDocx(st, a, aiSummary) {
     { heading: t('المبيعات الشهرية'), chart: { rows: a.months.map(m => [m.label, Math.round(m.value)]), fmt: v => moneyShort(v), caption: `${t('آخر 12 شهرًا')} · ${egp}` },
       table: { head: [t('الشهر'), `${t('القيمة')} (${egp})`, t('الطلبات'), t('الأجهزة')], rows: a.months.map(m => [m.label, Math.round(m.value), m.count, m.units]) } },
   ];
-  // قراءة المساعد "قطرة" للأرقام وتوصياتها، في أول التقرير بعد الملخص
-  if (aiSummary) sections.splice(1, 0, { heading: t('قراءة قطرة للأرقام والتوصيات'), text: String(aiSummary).replace(/\*\*/g, '').split(/\n+/).map(s => s.trim()).filter(Boolean) });
+  // قراءة المساعد "Dropy" للأرقام وتوصياتها، في أول التقرير بعد الملخص
+  if (aiSummary) sections.splice(1, 0, { heading: t('قراءة Dropy للأرقام والتوصيات'), text: String(aiSummary).replace(/\*\*/g, '').split(/\n+/).map(s => s.trim()).filter(Boolean) });
   if (!st.rep && a.repRows.length) sections.push({ heading: t('أداء رجال البيع'), chart: { horizontal: true, rows: a.repRows.map(x => [x.u.name, Math.round(x.sales)]), fmt: v => moneyShort(v) },
     table: { head: [t('رجل البيع'), `${t('المبيعات')} (${egp})`, t('الطلبات'), t('الأجهزة'), `${t('المحصّل')} (${egp})`, t('عدد العملاء'), t('متابعات'), t('متأخرة')], rows: a.repRows.map(x => [x.u.name, Math.round(x.sales), x.orders, x.units, Math.round(x.coll), x.cust, x.fu, x.late]) } });
   sections.push(
@@ -7556,7 +7577,7 @@ function drawSocialThread() {
       <button class="btn" id="socAddPhone">${t('إضافة رقم يدويًا')}</button>
     </div>
     <div class="soc-msgs" id="socMsgs">${msgs.length ? msgs.map(m => `<div class="soc-msg ${m.dir}"><div class="bubble">${esc(m.text || '')}${m.attach ? socialAttach(m.attach) : ''}</div><div class="muted soc-meta">${socialTime(m.at)}${m.dir === 'out' && m.by && m.by !== 'page' ? ` · ${esc(userName(m.by))}` : ''}</div></div>`).join('') : `<div class="muted" style="padding:12px">${t('لا توجد رسائل')}</div>`}</div>
-    <div class="soc-reply">${windowOpen ? `${typeof aiEnabled === 'function' && aiEnabled() ? `<button class="btn ai-btn" id="socAI" type="button" title="${t('تكتب قطرة ردًا مقترحًا من معلومات دلتا ووتر بدون أسعار، وتراجعه أنت قبل الإرسال')}">✨ ${t('اقترح رد')}</button>` : ''}${templates.length ? `<select class="inp" id="socTpl" aria-label="${t('رد جاهز')}"><option value="">${t('رد جاهز...')}</option>${templates.map((x, i) => `<option value="${i}">${esc(x.name)}</option>`).join('')}</select>` : ''}
+    <div class="soc-reply">${windowOpen ? `${typeof aiEnabled === 'function' && aiEnabled() ? `<button class="btn ai-btn" id="socAI" type="button" title="${t('يكتب Dropy ردًا مقترحًا من معلومات دلتا ووتر بدون أسعار، وتراجعه أنت قبل الإرسال')}">✨ ${t('اقترح رد')}</button>` : ''}${templates.length ? `<select class="inp" id="socTpl" aria-label="${t('رد جاهز')}"><option value="">${t('رد جاهز...')}</option>${templates.map((x, i) => `<option value="${i}">${esc(x.name)}</option>`).join('')}</select>` : ''}
       <textarea class="inp" id="socText" rows="2" placeholder="${t('اكتب ردك هنا، ويصل للعميل على {ch}', { ch: t(SOCIAL_CHANNELS[c.channel]) })}"></textarea><button class="btn primary" id="socSend">${t('إرسال')}</button>`
       : `<div class="muted">${t('مرّ أكثر من 24 ساعة على آخر رسالة من العميل، وميتا لا تسمح بالرد من النظام بعدها. يمكن الرد من تطبيق ماسنجر أو إنستجرام، أو الاتصال بالعميل على رقمه.')}</div>`}</div>`;
   const m = $('#socMsgs', box);
@@ -7586,7 +7607,7 @@ function drawSocialThread() {
   };
   const tpl = $('#socTpl', box), txt = $('#socText', box);
   on('#socAI', async () => {
-    const btn = $('#socAI', box); btn.disabled = true; btn.textContent = `✨ ${t('قطرة تكتب...')}`;
+    const btn = $('#socAI', box); btn.disabled = true; btn.textContent = `✨ ${t('Dropy يكتب...')}`;
     try { txt.value = await aiSuggestReply(c, msgs, ins); txt.focus(); toast(t('راجع الرد وعدّله قبل الإرسال'), 'ok'); }
     catch (err) { toast(err.message, 'err'); }
     btn.disabled = false; btn.textContent = `✨ ${t('اقترح رد')}`;
@@ -7926,7 +7947,7 @@ function openCampaignBuilder() {
         <div class="field"><label>${t('سُجّل إلى')}</label><input class="inp" type="date" data-cf="to" value="${f.to}"></div>
       </div>
       <div class="soc-note" id="cpCount"></div>
-      <div class="section-bar">${t('الرسالة')}${typeof aiEnabled === 'function' && aiEnabled() ? ` <button type="button" class="btn sm ai-btn" id="cpAI">✨ ${t('اكتب مع قطرة')}</button>` : ''}</div>
+      <div class="section-bar">${t('الرسالة')}${typeof aiEnabled === 'function' && aiEnabled() ? ` <button type="button" class="btn sm ai-btn" id="cpAI">✨ ${t('اكتب مع Dropy')}</button>` : ''}</div>
       <div class="field"><textarea class="inp" id="cpTpl" rows="5" placeholder="${t('أهلًا {الاسم}، معك {اسمي} من دلتا ووتر. حابين نطمن على {المحصول} ...')}"></textarea>
       <small class="muted">${t('متغيرات تُستبدل لكل عميل: {الاسم} {الاسم_كامل} {المحصول} {الجهاز} {المحافظة} {رجل_البيع} {اسمي}. لا تكتب أسعارًا في رسائل المتابعة الجماعية.')}</small></div>
       <div class="field"><label>${t('معاينة لأول عميل')}</label><div class="card" id="cpPrev" style="white-space:pre-wrap;background:var(--card-soft)"></div></div>`,
@@ -7940,15 +7961,15 @@ function openCampaignBuilder() {
     return list;
   };
   $$('[data-cf]', m.el).forEach(el => el.addEventListener('change', recount));
-  // قطرة تكتب قالب الرسالة من اسم الحملة ووصف العملاء المختارين
+  // Dropy تكتب قالب الرسالة من اسم الحملة ووصف العملاء المختارين
   const aiBtn = $('#cpAI', m.el);
   if (aiBtn) aiBtn.onclick = async () => {
     const f = campFilter, who = [f.market && (f.market === 'egypt' ? 'عملاء مصر' : 'عملاء الخارج'), f.gov && `في ${govLabel(f.gov)}`, f.country && `في ${f.country}`, f.crop && `يزرعون ${tv(f.crop)}`, f.bought === 'no' && 'لم يشتروا بعد', f.bought === 'yes' && 'اشتروا جهازًا (متابعة ما بعد البيع)', f.idle && `لم نتواصل معهم منذ أكثر من ${f.idle} يومًا`, f.rating && `تقييمهم ${f.rating}`].filter(Boolean).join('، ');
     const goal = `${$('#cpName', m.el).value.trim() || 'رسالة متابعة'}${who ? ` — العملاء: ${who}` : ''}`;
-    aiBtn.disabled = true; aiBtn.textContent = `✨ ${t('قطرة تكتب...')}`;
+    aiBtn.disabled = true; aiBtn.textContent = `✨ ${t('Dropy يكتب...')}`;
     try { const ta = $('#cpTpl', m.el); ta.value = await aiFollowupTemplate(goal); recount(); }
     catch (err) { toast(err.message, 'err'); }
-    aiBtn.disabled = false; aiBtn.textContent = `✨ ${t('اكتب مع قطرة')}`;
+    aiBtn.disabled = false; aiBtn.textContent = `✨ ${t('اكتب مع Dropy')}`;
   };
   $('#cpTpl', m.el).oninput = recount;
   recount();
@@ -8042,7 +8063,7 @@ function viewCampaign(root, cp) {
 
 </script>
 <script>
-// ------- "قطرة": المساعد الخاص بدلتا ووتر داخل الـ CRM -------
+// ------- "Dropy": المساعد الخاص بدلتا ووتر داخل الـ CRM -------
 // موديل مفتوح المصدر (ليس مرتبطًا بأي شركة ذكاء اصطناعي) يعمل الآن على Cloudflare Workers AI بحساب الشركة،
 // ويمكن نقله لاحقًا إلى سيرفر الشركة (Ollama أو أي خادم متوافق مع OpenAI) بتغيير "مكان التشغيل" فقط من الإعدادات.
 // أربع مهارات: محلل مبيعات، مدرب مبيعات، خبير سوشيال ميديا، مستشار للإدارة. ومحادثات كل مستخدم تُحفظ ليرجع إليها من أي جهاز.
@@ -8058,7 +8079,7 @@ async function aiAsk(messages, { maxTokens = 900, temperature = 0.4 } = {}) {
   const cfg = aiCfg();
   if (cfg.provider === 'server') {
     const base = String(cfg.serverUrl || '').replace(/\/+$/, '');
-    if (!base) throw new Error(t('لم يُحدد عنوان سيرفر الشركة في إعدادات قطرة'));
+    if (!base) throw new Error(t('لم يُحدد عنوان سيرفر الشركة في إعدادات Dropy'));
     const res = await fetch(`${base}/v1/chat/completions`, {
       method: 'POST', headers: { 'Content-Type': 'application/json', ...(cfg.serverKey ? { Authorization: `Bearer ${cfg.serverKey}` } : {}) },
       body: JSON.stringify({ model: cfg.serverModel || 'qwen2.5:14b', messages, temperature, max_tokens: maxTokens, stream: false }),
@@ -8068,18 +8089,18 @@ async function aiAsk(messages, { maxTokens = 900, temperature = 0.4 } = {}) {
     if (!res.ok || !text) throw new Error(out.error?.message || out.error || `HTTP ${res.status}`);
     return String(text).trim();
   }
-  if (!socialCfg().url) throw new Error(t('قطرة تحتاج ربط Cloudflare أولًا (رابط المستقبِل في إعدادات رسائل السوشيال)'));
+  if (!socialCfg().url) throw new Error(t('Dropy يحتاج ربط Cloudflare أولًا (رابط المستقبِل في إعدادات رسائل السوشيال)'));
   try {
     const out = await socialApi('ai', { method: 'POST', body: { messages, maxTokens, temperature } });
     return out.text;
   } catch (err) {
-    if (err.code === 'daily limit') throw new Error(t('وصلت قطرة للحد اليومي المجاني على Cloudflare، وتعود للعمل غدًا'));
+    if (err.code === 'daily limit') throw new Error(t('وصل Dropy للحد اليومي المجاني على Cloudflare، ويرجع للعمل غدًا'));
     if (err.code === 'ai not configured') throw new Error(t('لم يُفعَّل Workers AI على المستقبِل بعد'));
     throw err;
   }
 }
 
-// ------- مكتبة معلومات دلتا ووتر: ما تعرفه قطرة عن الشركة والمنتجات (بلا أسعار) -------
+// ------- مكتبة معلومات دلتا ووتر: ما يعرفه Dropy عن الشركة والمنتجات (بلا أسعار) -------
 function defaultKnowledge() {
   const models = [...new Map(activeProducts().filter(p => MODEL_RX.test(p.type)).map(p => { const m = p.type.match(MODEL_RX); return [`X${m[1]}`, +m[2]]; })).entries()].sort();
   const sizes = [...new Set(activeProducts().map(p => p.size).filter(Boolean))].sort((a, b) => inchOf(a) - inchOf(b));
@@ -8095,7 +8116,7 @@ function defaultKnowledge() {
 const knowledge = () => (aiCfg().kb || defaultKnowledge()).slice(0, 8000);
 
 const AI_RULES = [
-  'أنت "قطرة"، المساعد الذكي الخاص بشركة دلتا ووتر داخل نظام إدارة العملاء، وتساعد الإدارة ومدير المبيعات ورجال البيع وفريق السوشيال.',
+  'أنت "Dropy"، المساعد الذكي الخاص بشركة دلتا ووتر داخل نظام إدارة العملاء، وتساعد الإدارة ومدير المبيعات ورجال البيع وفريق السوشيال.',
   'اكتب بالعربية الواضحة (فصحى مبسطة، أو عامية مصرية مهذبة حين يُطلب نص يُقال للعميل)، باختصار ونقاط مرتبة. استخدم **للتأكيد** وقوائم بشرطة "-".',
   'لا تخترع أرقامًا أبدًا: استخدم فقط الأرقام الموجودة في البيانات المرفقة، وإذا لم تكفِ البيانات قل ذلك بوضوح واقترح ما يلزم.',
   'ممنوع ذكر أي أسعار أو خصومات في أي نص موجه لعميل. إذا سأل العميل عن السعر: مهندس مختص سيتواصل معه لترشيح الموديل المناسب بعد معرفة ملوحة المياه والمساحة.',
@@ -8113,7 +8134,7 @@ const SKILLS = {
       ['🌱 أفضل المحافظات والمحاصيل', 'ما أفضل المحافظات والمحاصيل والموديلات مبيعًا في آخر 12 شهرًا؟ وأين توجد فرص يجب التركيز عليها؟'],
       ['🏆 أداء رجال البيع', 'قارن أداء رجال البيع هذا الشهر: من الأفضل في المبيعات والمتابعة، ومن يحتاج دعمًا ولماذا، مع توصية لكل واحد.'],
       ['⚠ متابعات متأخرة وفرص ضائعة', 'ما المخاطر في الأرقام الحالية (متابعات متأخرة، طلبات ملغاة أو مؤجلة، تحصيل)؟ وما الإجراءات المقترحة هذا الأسبوع؟'],
-      ['📄 تقرير وورد بقراءة قطرة', '@report'],
+      ['📄 تقرير وورد بقراءة Dropy', '@report'],
     ],
   },
   coach: {
@@ -8166,7 +8187,7 @@ const SKILLS = {
       ['📈 توقع الشهر الجاي', 'بناءً على المبيعات الشهرية المرفقة، ما توقعك للشهر القادم (نطاق منخفض ومتوقع ومرتفع)؟ وضّح الافتراضات وما الذي يرفع النتيجة.'],
       ['🧾 التحصيل والمخاطر', 'حلّل التحصيل والمتبقي والإلغاءات والمتابعات المتأخرة، ورتّب المخاطر حسب الأولوية مع إجراء لكل خطر.'],
       ['👥 قرارات الفريق', 'من أرقام الفريق والمناطق: كيف نعيد توزيع الجهد والعملاء لنرفع المبيعات الشهر القادم؟ قرارات محددة ومرتبة.'],
-      ['📄 تقرير وورد بقراءة قطرة', '@report'],
+      ['📄 تقرير وورد بقراءة Dropy', '@report'],
     ],
   },
 };
@@ -8260,24 +8281,109 @@ async function deleteChat(id) {
 }
 function newChat(skill) { Object.assign(aiState, { msgs: [], chatId: '', title: '', view: 'chat', pick: false, mode: '', ...(skill ? { skill } : {}) }); drawAssistant(); }
 
-// ------- الواجهة: القطرة العائمة ونافذة المحادثة -------
+// ------- الواجهة: Dropy العائم ونافذة المحادثة -------
 let dropSeq = 0;
-// كل قطرة لها تدرج لوني باسم مختلف، لأن التدرج المشترك يختفي إذا كانت القطرة الأولى مخفية
-const dropSvg = (cls = '') => { const gid = `dropG${++dropSeq}`; return `<svg class="drop-svg ${cls}" viewBox="0 0 64 80" aria-hidden="true"><defs><linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2FC2F0"/><stop offset=".55" stop-color="#0D74A7"/><stop offset="1" stop-color="#0D1A4D"/></linearGradient></defs>
-  <path d="M32 3 C32 3 6 33 6 51 a26 26 0 0 0 52 0 C58 33 32 3 32 3 Z" fill="url(#${gid})"/><path d="M18 46 C18 38 24 30 27 26" stroke="#fff" stroke-opacity=".55" stroke-width="4" fill="none" stroke-linecap="round"/>
-  <g class="drop-eyes"><ellipse cx="24" cy="52" rx="4.2" ry="5.2" fill="#fff"/><ellipse cx="40" cy="52" rx="4.2" ry="5.2" fill="#fff"/><circle class="drop-pupil" cx="24.6" cy="53" r="2.3" fill="#0D1A4D"/><circle class="drop-pupil" cx="40.6" cy="53" r="2.3" fill="#0D1A4D"/></g>
-  <ellipse cx="18" cy="61" rx="3.2" ry="1.8" fill="#FF8FB1" opacity=".55"/><ellipse cx="46" cy="61" rx="3.2" ry="1.8" fill="#FF8FB1" opacity=".55"/>
-  <path class="drop-mouth" d="M27 63 Q32 67.5 37 63" stroke="#0D1A4D" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>`; };
+// كل رسمة Dropy لها تدرجات بأسماء مختلفة، لأن التدرج المشترك يختفي إذا كانت الرسمة الأولى مخفية
+// Dropy: روبوت صغير أبيض لامع، بطنه لبني، عيونه كبيرة لامعة، وفي طرف الهوائي قطرة مياه (هوية دلتا ووتر)
+const dropSvg = (cls = '') => { const g = `dpy${++dropSeq}`; const eye = x => `<g class="drop-pupil"><ellipse cx="${x}" cy="44" rx="6.3" ry="7.3" fill="url(#${g}e)"/><ellipse cx="${x + 1.8}" cy="41" rx="2.3" ry="2.6" fill="#fff"/><circle cx="${x - 2}" cy="47.6" r="1.2" fill="#fff" opacity=".85"/></g>`;
+  return `<svg class="drop-svg ${cls}" viewBox="0 0 80 86" aria-hidden="true"><defs>
+  <radialGradient id="${g}b" cx=".36" cy=".28" r=".85"><stop offset="0" stop-color="#fff"/><stop offset=".6" stop-color="#F3F7FB"/><stop offset="1" stop-color="#D3E0EC"/></radialGradient>
+  <linearGradient id="${g}l" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A9DBFA"/><stop offset="1" stop-color="#5FB4EA"/></linearGradient>
+  <radialGradient id="${g}e" cx=".5" cy=".75" r=".75"><stop offset="0" stop-color="#3FC3FF"/><stop offset=".45" stop-color="#0E6FB8"/><stop offset="1" stop-color="#0B1A45"/></radialGradient>
+  <radialGradient id="${g}w" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#C8F1FF"/><stop offset=".6" stop-color="#43C7FF"/><stop offset="1" stop-color="#43C7FF" stop-opacity="0"/></radialGradient>
+  <linearGradient id="${g}d" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7FE0FF"/><stop offset="1" stop-color="#1C8FD6"/></linearGradient>
+  <clipPath id="${g}c"><ellipse cx="40" cy="47" rx="27" ry="26"/></clipPath></defs>
+  <g class="drop-ant"><path d="M47 22 Q49 13 53 9" stroke="#B9C9D8" stroke-width="2.2" fill="none" stroke-linecap="round"/><circle class="drop-glow" cx="54" cy="7" r="6" fill="url(#${g}w)" opacity=".7"/><path d="M54 1.5 C54 1.5 50.4 5.8 50.4 8 a3.6 3.6 0 0 0 7.2 0 C57.6 5.8 54 1.5 54 1.5 Z" fill="url(#${g}d)"/><circle cx="52.8" cy="7.4" r=".9" fill="#fff" opacity=".9"/></g>
+  <ellipse cx="31" cy="76" rx="7.5" ry="5.5" fill="url(#${g}l)"/><ellipse cx="49" cy="76" rx="7.5" ry="5.5" fill="url(#${g}l)"/><ellipse cx="31" cy="74" rx="6" ry="3" fill="#fff" opacity=".7"/><ellipse cx="49" cy="74" rx="6" ry="3" fill="#fff" opacity=".7"/>
+  <g class="drop-arm-l"><ellipse cx="11.5" cy="62" rx="4.4" ry="7.6" transform="rotate(40 11.5 62)" fill="url(#${g}b)" stroke="#C9D7E4"/></g>
+  <g class="drop-arm-r"><ellipse cx="68.5" cy="62" rx="4.4" ry="7.6" transform="rotate(-40 68.5 62)" fill="url(#${g}b)" stroke="#C9D7E4"/></g>
+  <ellipse cx="40" cy="47" rx="27" ry="26" fill="url(#${g}b)" stroke="#CBD9E6" stroke-width=".8"/>
+  <g clip-path="url(#${g}c)"><path d="M10 58 Q40 66 70 58 V80 H10 Z" fill="url(#${g}l)"/><path d="M10 58 Q40 66 70 58" stroke="#fff" stroke-width="1.6" fill="none" opacity=".8"/></g>
+  <ellipse cx="29" cy="27" rx="9" ry="4.2" transform="rotate(-18 29 27)" fill="#fff" opacity=".9"/>
+  <ellipse cx="14" cy="46" rx="3.8" ry="7.4" fill="#fff" stroke="#43C7FF" stroke-width="2"/><ellipse class="drop-glow" cx="14" cy="46" rx="1.8" ry="4.6" fill="url(#${g}w)"/>
+  <ellipse cx="66" cy="46" rx="3.8" ry="7.4" fill="#fff" stroke="#43C7FF" stroke-width="2"/><ellipse class="drop-glow" cx="66" cy="46" rx="1.8" ry="4.6" fill="url(#${g}w)"/>
+  <rect x="19.5" y="29.5" width="41" height="30" rx="15" fill="#fff" stroke="#DCE6F0" stroke-width="1.6"/>
+  <g class="drop-eyes">${eye(32)}${eye(48)}</g>
+  <ellipse cx="24.5" cy="53" rx="3" ry="1.7" fill="#FF9BBB" opacity=".55"/><ellipse cx="55.5" cy="53" rx="3" ry="1.7" fill="#FF9BBB" opacity=".55"/>
+  <path class="drop-mouth" d="M36.5 53 Q40 56.2 43.5 53" stroke="#0B1A45" stroke-width="1.9" fill="none" stroke-linecap="round"/>
+  <circle cx="40" cy="66" r="2.6" fill="#fff" stroke="#8CC8EE" stroke-width="1.2"/></svg>`; };
+
+// ------- Dropy يتحرك: يُسحب لأي مكان في الشاشة (ماوس أو لمس أو أسهم الكيبورد) ويتذكر مكانه لكل مستخدم -------
+const fabPosKey = () => `dw_dropy_pos_${ME?.id || ''}`;
+function placeFab(fab, x, y) {
+  const w = fab.offsetWidth || 70, h = fab.offsetHeight || 76;
+  x = Math.max(6, Math.min(innerWidth - w - 6, x)); y = Math.max(6, Math.min(innerHeight - h - 6, y));
+  Object.assign(fab.style, { left: `${x}px`, top: `${y}px`, right: 'auto', bottom: 'auto' });
+  fab.classList.toggle('hint-below', y < 70);
+  fab.classList.toggle('hint-end', x + w / 2 > innerWidth / 2);
+}
+function saveFabPos(fab) { const r = fab.getBoundingClientRect(); try { localStorage.setItem(fabPosKey(), JSON.stringify({ fx: r.left / innerWidth, fy: r.top / innerHeight })); } catch {} }
+function restoreFabPos(fab) {
+  let p = null; try { p = JSON.parse(localStorage.getItem(fabPosKey()) || 'null'); } catch {}
+  if (p && Number.isFinite(p.fx) && Number.isFinite(p.fy)) placeFab(fab, p.fx * innerWidth, p.fy * innerHeight);
+}
+function makeFabDraggable(fab) {
+  fab.addEventListener('pointerdown', e => {
+    if (e.button !== 0) return;
+    const r = fab.getBoundingClientRect(), ox = e.clientX - r.left, oy = e.clientY - r.top, sx = e.clientX, sy = e.clientY;
+    let moved = false;
+    try { fab.setPointerCapture(e.pointerId); } catch {}
+    const move = ev => {
+      if (!moved && Math.hypot(ev.clientX - sx, ev.clientY - sy) < 6) return;
+      if (!moved) { moved = true; fab.classList.add('dragging'); }
+      placeFab(fab, ev.clientX - ox, ev.clientY - oy);
+    };
+    const up = () => {
+      fab.removeEventListener('pointermove', move); fab.removeEventListener('pointerup', up); fab.removeEventListener('pointercancel', up);
+      // الضغطة اللي بتيجي بعد السحب مباشرة متفتحش الشات، وبعدها أي ضغطة عادية تفتحه
+      if (moved) { fab.classList.remove('dragging'); fab.dataset.dragged = '1'; setTimeout(() => { delete fab.dataset.dragged; }, 80); saveFabPos(fab); setDropMood('happy'); }
+    };
+    fab.addEventListener('pointermove', move); fab.addEventListener('pointerup', up); fab.addEventListener('pointercancel', up);
+  });
+  fab.addEventListener('keydown', e => {
+    const d = { ArrowLeft: [-24, 0], ArrowRight: [24, 0], ArrowUp: [0, -24], ArrowDown: [0, 24] }[e.key];
+    if (!d) return;
+    e.preventDefault();
+    const r = fab.getBoundingClientRect(); placeFab(fab, r.left + d[0], r.top + d[1]); saveFabPos(fab);
+  });
+  addEventListener('resize', () => { const f = document.getElementById('drop-fab'); if (f && f.style.left) restoreFabPos(f); });
+}
+// النافذة تفتح جنب Dropy في مكانه، وتتسحب من الشريط العلوي
+function placePanel(panel, anchor) {
+  if (innerWidth <= 640 || !anchor) { Object.assign(panel.style, { left: '', top: '', right: '', bottom: '' }); return; }
+  const pw = panel.offsetWidth, ph = panel.offsetHeight;
+  let x = anchor.left + anchor.width / 2 < innerWidth / 2 ? anchor.left : anchor.right - pw;
+  let y = anchor.top + anchor.height / 2 < innerHeight / 2 ? anchor.top : anchor.bottom - ph;
+  x = Math.max(12, Math.min(innerWidth - pw - 12, x)); y = Math.max(12, Math.min(innerHeight - ph - 12, y));
+  Object.assign(panel.style, { left: `${x}px`, top: `${y}px`, right: 'auto', bottom: 'auto' });
+}
+function makePanelDraggable(panel) {
+  panel.addEventListener('pointerdown', e => {
+    if (e.button !== 0 || innerWidth <= 640 || !e.target.closest('.drop-head') || e.target.closest('button')) return;
+    const r = panel.getBoundingClientRect(), ox = e.clientX - r.left, oy = e.clientY - r.top;
+    try { panel.setPointerCapture(e.pointerId); } catch {}
+    panel.classList.add('dragging');
+    const move = ev => {
+      const x = Math.max(6, Math.min(innerWidth - r.width - 6, ev.clientX - ox)), y = Math.max(6, Math.min(innerHeight - r.height - 6, ev.clientY - oy));
+      Object.assign(panel.style, { left: `${x}px`, top: `${y}px`, right: 'auto', bottom: 'auto' });
+    };
+    const up = () => { panel.classList.remove('dragging'); panel.removeEventListener('pointermove', move); panel.removeEventListener('pointerup', up); panel.removeEventListener('pointercancel', up); };
+    panel.addEventListener('pointermove', move); panel.addEventListener('pointerup', up); panel.addEventListener('pointercancel', up);
+  });
+}
 function mountAssistant() {
   let fab = document.getElementById('drop-fab');
   if (!aiEnabled()) { fab?.remove(); document.getElementById('drop-panel')?.remove(); return; }
   if (fab) return;
   fab = document.createElement('button');
   fab.id = 'drop-fab'; fab.className = 'drop-fab idle';
-  fab.setAttribute('aria-label', t('قطرة: مساعد دلتا ووتر'));
-  fab.innerHTML = `${dropSvg()}<span class="drop-hint">${t('اسألني 💧')}</span>`;
+  fab.setAttribute('aria-label', t('Dropy: مساعد دلتا ووتر. اضغط للسؤال، أو اسحبه لأي مكان'));
+  fab.title = t('اضغط للسؤال، أو اسحبني لأي مكان');
+  fab.innerHTML = `${dropSvg()}<span class="drop-hint">${t('أنا Dropy 👋 اسحبني لأي مكان')}</span>`;
   document.body.appendChild(fab);
-  fab.onclick = () => toggleAssistant(true);
+  restoreFabPos(fab);
+  makeFabDraggable(fab);
+  fab.onclick = () => { if (fab.dataset.dragged) { delete fab.dataset.dragged; return; } toggleAssistant(true); };
   document.addEventListener('mousemove', e => {
     const f = document.getElementById('drop-fab'); if (!f) return;
     const r = f.getBoundingClientRect(), dx = Math.max(-1, Math.min(1, (e.clientX - r.left - r.width / 2) / 300)), dy = Math.max(-1, Math.min(1, (e.clientY - r.top - r.height / 2) / 300));
@@ -8292,14 +8398,18 @@ function toggleAssistant(open) {
   let panel = document.getElementById('drop-panel');
   const fab = document.getElementById('drop-fab');
   if (!open) { panel?.remove(); fab?.classList.remove('hidden'); return; }
+  const anchor = fab && fab.style.left && !fab.classList.contains('hidden') ? fab.getBoundingClientRect() : null;
   fab?.classList.add('hidden');
+  const fresh = !panel;
   if (!panel) {
     panel = document.createElement('section');
     panel.id = 'drop-panel'; panel.className = 'drop-panel';
-    panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-label', t('قطرة: مساعد دلتا ووتر'));
+    panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-label', t('Dropy: مساعد دلتا ووتر'));
     document.body.appendChild(panel);
+    makePanelDraggable(panel);
   }
   drawAssistant();
+  if (fresh) placePanel(panel, anchor);
 }
 const mdLite = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/^#{1,4} (.+)$/gm, '<b>$1</b>').replace(/^\s*[-•*] (.+)$/gm, '<span class="li">• $1</span>').replace(/^\s*(\d+)[.)] (.+)$/gm, '<span class="li">$1. $2</span>').replace(/<\/span>\n/g, '</span>').replace(/\n{2,}/g, '\n').replace(/\n/g, '<br>');
 const msgActions = m => m.kind === 'template' ? `<div class="drop-acts"><button class="btn sm primary" data-act="campaign" data-text="${encodeURIComponent(m.content)}">📣 ${t('استخدمها في حملة جديدة')}</button><button class="btn sm" data-act="copy" data-text="${encodeURIComponent(m.content)}">⧉ ${t('نسخ')}</button></div>`
@@ -8310,17 +8420,17 @@ function drawAssistant() {
   const where = aiCfg().provider === 'server' ? t('سيرفر الشركة') : 'Cloudflare';
   const sk = SKILLS[aiState.skill];
   const history = aiState.view === 'history';
-  panel.innerHTML = `<header class="drop-head"><span class="drop-mini ${aiState.busy ? 'thinking' : ''}">${dropSvg()}</span><div><b>${t('قطرة')}</b><div class="muted">${t('مساعد دلتا ووتر الخاص · يعمل على {w}', { w: where })}</div></div><span class="spacer"></span>
+  panel.innerHTML = `<header class="drop-head"><span class="drop-mini ${aiState.busy ? 'thinking' : ''}">${dropSvg()}</span><div><b>${t('Dropy')}</b><div class="muted">${t('مساعد دلتا ووتر الخاص · يعمل على {w}', { w: where })}</div></div><span class="spacer"></span>
       <button class="drop-ic ${history ? 'on' : ''}" id="dpHist" aria-label="${t('المحادثات المحفوظة')}" title="${t('المحادثات المحفوظة')}">🕘</button>
-      ${canManageAI() ? `<button class="drop-ic" id="dpSet" aria-label="${t('إعدادات قطرة')}" title="${t('إعدادات قطرة')}">⚙</button>` : ''}<button class="drop-ic" id="dpNew" aria-label="${t('محادثة جديدة')}" title="${t('محادثة جديدة')}">＋</button><button class="drop-ic" id="dpClose" aria-label="${t('إغلاق')}">×</button></header>
-    <nav class="drop-skills" aria-label="${t('مهارات قطرة')}">${Object.entries(SKILLS).map(([k, s]) => `<button class="${aiState.skill === k && !history ? 'on' : ''}" data-skill="${k}" ${aiState.busy ? 'disabled' : ''}>${s.icon} ${esc(t(s.name))}</button>`).join('')}</nav>
-    ${history ? `<div class="drop-body"><b>${t('محادثاتك المحفوظة')}</b>${aiState.history.length ? `<div class="drop-hist">${aiState.history.map(h => `<div class="drop-hrow"><button class="drop-hopen" data-open="${esc(h.id)}"><span>${SKILLS[h.skill]?.icon || '💧'}</span><span class="t">${esc(h.title || t('محادثة'))}</span><span class="muted">${fmtDT(new Date(h.updated_at).toISOString())}</span></button><button class="drop-hdel" data-del="${esc(h.id)}" aria-label="${t('حذف')}">🗑</button></div>`).join('')}</div>` : `<p class="muted">${t('لا توجد محادثات محفوظة بعد. كل محادثة مع قطرة تُحفظ تلقائيًا هنا.')}</p>`}</div>`
+      ${canManageAI() ? `<button class="drop-ic" id="dpSet" aria-label="${t('إعدادات Dropy')}" title="${t('إعدادات Dropy')}">⚙</button>` : ''}<button class="drop-ic" id="dpNew" aria-label="${t('محادثة جديدة')}" title="${t('محادثة جديدة')}">＋</button><button class="drop-ic" id="dpClose" aria-label="${t('إغلاق')}">×</button></header>
+    <nav class="drop-skills" aria-label="${t('مهارات Dropy')}">${Object.entries(SKILLS).map(([k, s]) => `<button class="${aiState.skill === k && !history ? 'on' : ''}" data-skill="${k}" ${aiState.busy ? 'disabled' : ''}>${s.icon} ${esc(t(s.name))}</button>`).join('')}</nav>
+    ${history ? `<div class="drop-body"><b>${t('محادثاتك المحفوظة')}</b>${aiState.history.length ? `<div class="drop-hist">${aiState.history.map(h => `<div class="drop-hrow"><button class="drop-hopen" data-open="${esc(h.id)}"><span>${SKILLS[h.skill]?.icon || '💧'}</span><span class="t">${esc(h.title || t('محادثة'))}</span><span class="muted">${fmtDT(new Date(h.updated_at).toISOString())}</span></button><button class="drop-hdel" data-del="${esc(h.id)}" aria-label="${t('حذف')}">🗑</button></div>`).join('')}</div>` : `<p class="muted">${t('لا توجد محادثات محفوظة بعد. كل محادثة مع Dropy تُحفظ تلقائيًا هنا.')}</p>`}</div>`
     : `<div class="drop-body" id="dpBody">${aiState.msgs.length ? aiState.msgs.map(m => `<div class="drop-msg ${m.role}">${m.role === 'assistant' ? `<span class="drop-av">${dropSvg()}</span>` : ''}<div class="bubble">${m.role === 'assistant' ? mdLite(m.content) : esc(m.content)}${msgActions(m)}</div></div>`).join('')
-      : `<div class="drop-welcome"><span class="drop-big">${dropSvg()}</span><b>${t('أهلًا {n}، أنا قطرة 💧', { n: firstName(ME.name) })}</b><p class="muted">${t('اختار مهارة من فوق، وبعدين اضغط زرار جاهز أو اكتب سؤالك. كل محادثة بتتحفظ وتقدر ترجعلها من 🕘.')}</p><div class="drop-skillcard">${sk.icon} <b>${esc(t(sk.name))}</b></div></div>`}
+      : `<div class="drop-welcome"><span class="drop-big">${dropSvg()}</span><b>${t('أهلًا {n}، أنا Dropy 💧', { n: firstName(ME.name) })}</b><p class="muted">${t('اختار مهارة من فوق، وبعدين اضغط زرار جاهز أو اكتب سؤالك. كل محادثة بتتحفظ وتقدر ترجعلها من 🕘.')}</p><div class="drop-skillcard">${sk.icon} <b>${esc(t(sk.name))}</b></div></div>`}
       ${aiState.pick ? customerPickerHtml() : ''}
       ${aiState.busy ? `<div class="drop-msg assistant"><span class="drop-av">${dropSvg('thinking')}</span><div class="bubble typing"><i></i><i></i><i></i></div></div>` : ''}</div>
     <div class="drop-quick">${sk.quick.map(([l], i) => `<button class="chip" data-q="${i}" ${aiState.busy ? 'disabled' : ''}>${esc(t(l))}</button>`).join('')}</div>
-    <form class="drop-input" id="dpForm"><textarea class="inp" id="dpText" rows="1" placeholder="${t(aiState.mode === 'template' ? 'اكتب هدف الرسالة ومن هم العملاء...' : 'اسأل قطرة...')}" ${aiState.busy ? 'disabled' : ''}></textarea><button class="btn primary" ${aiState.busy ? 'disabled' : ''} aria-label="${t('إرسال')}">➤</button></form>`}
+    <form class="drop-input" id="dpForm"><textarea class="inp" id="dpText" rows="1" placeholder="${t(aiState.mode === 'template' ? 'اكتب هدف الرسالة ومن هم العملاء...' : 'اسأل Dropy...')}" ${aiState.busy ? 'disabled' : ''}></textarea><button class="btn primary" ${aiState.busy ? 'disabled' : ''} aria-label="${t('إرسال')}">➤</button></form>`}
     <div class="drop-foot muted">${t('موديل مفتوح المصدر على حساب الشركة، لا يتعلم من بياناتكم. للتحليل تُرسل أرقام مجمّعة فقط بلا أسماء أو هواتف.')}</div>`;
   const body = $('#dpBody', panel); if (body) body.scrollTop = body.scrollHeight;
   $('#dpClose', panel).onclick = () => toggleAssistant(false);
@@ -8406,9 +8516,9 @@ async function writeTemplate(goal) {
   } catch (err) { aiState.msgs.push({ role: 'assistant', content: `⚠ ${err.message}`, at: Date.now() }); setDropMood('sad'); }
   aiState.busy = false; drawAssistant();
 }
-// تقرير وورد كامل: نفس تحليل المبيعات + قراءة قطرة للأرقام وتوصياتها في أول التقرير
+// تقرير وورد كامل: نفس تحليل المبيعات + قراءة Dropy للأرقام وتوصياتها في أول التقرير
 async function aiReport() {
-  aiState.msgs.push({ role: 'user', content: t('📄 تقرير وورد بقراءة قطرة'), at: Date.now() });
+  aiState.msgs.push({ role: 'user', content: t('📄 تقرير وورد بقراءة Dropy'), at: Date.now() });
   aiState.busy = true; aiState.view = 'chat'; drawAssistant(); setDropMood('thinking');
   try {
     const st = { ...dashState, rep: can('analytics.team') ? dashState.rep : ME.id };
@@ -8448,17 +8558,17 @@ async function aiSuggestReply(conv, msgs, ins) {
 function openAISettings() {
   const cfg = aiCfg();
   const m = openModal({
-    title: t('إعدادات قطرة'), wide: true,
+    title: t('إعدادات Dropy'), wide: true,
     body: `<div class="field"><label>${t('مكان تشغيل الموديل')}</label><div class="chips" id="aiProv">
         <button type="button" class="chip ${cfg.provider !== 'server' ? 'on' : ''}" data-p="cloudflare">☁ Cloudflare Workers AI</button>
         <button type="button" class="chip ${cfg.provider === 'server' ? 'on' : ''}" data-p="server">🖥 ${t('سيرفر الشركة')}</button></div>
         <small class="muted">${t('الآن: Cloudflare بحساب الشركة. عند تجهيز سيرفر الشركة (Ollama أو أي خادم متوافق مع OpenAI) اختره واكتب عنوانه، ويعمل كل شيء كما هو.')}</small></div>
       <div class="grid2" id="aiSrv" ${cfg.provider === 'server' ? '' : 'hidden'}><div class="field"><label>${t('عنوان السيرفر')}</label><input class="inp" dir="ltr" id="aiUrl" value="${esc(cfg.serverUrl || '')}" placeholder="https://ai.deltawater.example"></div><div class="field"><label>${t('اسم الموديل على السيرفر')}</label><input class="inp" dir="ltr" id="aiModel" value="${esc(cfg.serverModel || '')}" placeholder="qwen2.5:14b"></div></div>
-      <div class="field"><label>${t('من يرى قطرة')}</label><select class="inp" id="aiWho">${optsT([['all', 'كل المستخدمين'], ['team', 'الإدارة وفريق السوشيال فقط']], cfg.who || 'all')}</select></div>
-      <label class="chk"><input type="checkbox" id="aiOn" ${cfg.enabled === false ? '' : 'checked'}> ${t('قطرة مفعّلة')}</label>
-      <div class="field mt"><label>${t('مكتبة معلومات دلتا ووتر (ما تعرفه قطرة عن الشركة والمنتجات والأسئلة الشائعة)')}</label><textarea class="inp" id="aiKb" rows="12">${esc(cfg.kb || defaultKnowledge())}</textarea>
-      <small class="muted">${t('اكتب هنا كل ما تريد أن تعرفه قطرة: عن الشركة، كل موديل ومتى يُستخدم، الأسئلة الشائعة وإجاباتها، طريقة التركيب والضمان، تجارب عملاء حقيقية... لا تكتب أسعارًا: قطرة ممنوعة من ذكرها للعملاء.')}</small></div>
-      <div class="mt"><button class="btn" id="aiTest">${t('اختبار قطرة')}</button> <span class="muted" id="aiMsg"></span></div>`,
+      <div class="field"><label>${t('من يرى Dropy')}</label><select class="inp" id="aiWho">${optsT([['all', 'كل المستخدمين'], ['team', 'الإدارة وفريق السوشيال فقط']], cfg.who || 'all')}</select></div>
+      <label class="chk"><input type="checkbox" id="aiOn" ${cfg.enabled === false ? '' : 'checked'}> ${t('Dropy مفعّل')}</label>
+      <div class="field mt"><label>${t('مكتبة معلومات دلتا ووتر (ما يعرفه Dropy عن الشركة والمنتجات والأسئلة الشائعة)')}</label><textarea class="inp" id="aiKb" rows="12">${esc(cfg.kb || defaultKnowledge())}</textarea>
+      <small class="muted">${t('اكتب هنا كل ما تريد أن يعرفه Dropy: عن الشركة، كل موديل ومتى يُستخدم، الأسئلة الشائعة وإجاباتها، طريقة التركيب والضمان، تجارب عملاء حقيقية... لا تكتب أسعارًا: Dropy ممنوع من ذكرها للعملاء.')}</small></div>
+      <div class="mt"><button class="btn" id="aiTest">${t('اختبار Dropy')}</button> <span class="muted" id="aiMsg"></span></div>`,
     footer: `<button class="btn primary" id="aiSave">${t('حفظ')}</button>`,
   });
   $$('#aiProv .chip', m.el).forEach(b => b.onclick = () => { $$('#aiProv .chip', m.el).forEach(x => x.classList.toggle('on', x === b)); $('#aiSrv', m.el).hidden = b.dataset.p !== 'server'; });
@@ -8475,7 +8585,7 @@ function openAISettings() {
     const v = read();
     if (v.provider === 'server' && !/^https?:\/\/[\w.-]+(:\d+)?(\/[\w./-]*)?$/.test(v.serverUrl)) { toast(t('اكتب عنوان السيرفر بشكل صحيح'), 'err'); return; }
     DB.settings.ai = v;
-    audit('settings', 'settings', null, 'تعديل إعدادات قطرة', null, [{ field: 'مكان التشغيل', from: '', to: v.provider === 'server' ? v.serverUrl : 'Cloudflare' }]);
+    audit('settings', 'settings', null, 'تعديل إعدادات Dropy', null, [{ field: 'مكان التشغيل', from: '', to: v.provider === 'server' ? v.serverUrl : 'Cloudflare' }]);
     m.close(); toast(t('تم الحفظ'), 'ok');
     document.getElementById('drop-fab')?.remove(); document.getElementById('drop-panel')?.remove(); mountAssistant();
   };
