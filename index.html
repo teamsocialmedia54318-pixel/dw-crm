@@ -545,6 +545,7 @@ html { -webkit-text-size-adjust: 100%; }
 .blink .drop-eyes { transform: scaleY(.1); }
 .drop-pupil { transition: transform .15s; }
 .drop-ant { transform-origin: 47px 22px; animation: dropAnt 2.8s ease-in-out infinite; }
+.drop-ant2 { transform-origin: 33px 22px; animation: dropAnt 2.8s ease-in-out -1.4s infinite reverse; }
 .drop-glow { animation: dropGlow 2.2s ease-in-out infinite; }
 .drop-arm-l { transform-origin: 16px 57px; }
 .drop-arm-r { transform-origin: 64px 57px; }
@@ -598,7 +599,7 @@ html { -webkit-text-size-adjust: 100%; }
 .drop-input textarea { resize: none; max-height: 120px; }
 .drop-foot { font-size: 11px; padding: 0 12px 10px; text-align: center; }
 @media (max-width: 640px) { .drop-panel { inset: 0; width: 100%; height: 100dvh; border-radius: 0; } .drop-fab { width: 58px; height: 63px; bottom: 12px; inset-inline-start: 12px; } .drop-fab .drop-hint { bottom: 68px; } .drop-fab.hint-below .drop-hint { top: 68px; } }
-@media (prefers-reduced-motion: reduce) { .drop-fab, .drop-big, .drop-svg, .drop-panel, .drop-ant, .drop-glow, .drop-arm-l, .drop-arm-r { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { .drop-fab, .drop-big, .drop-svg, .drop-panel, .drop-ant, .drop-ant2, .drop-glow, .drop-arm-l, .drop-arm-r { animation: none !important; } }
 .drop-skills { display: flex; gap: 4px; padding: 8px 10px; background: #fff; border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
 .drop-skills button { flex: none; border: 1px solid var(--border); background: var(--card-soft); color: var(--text); border-radius: 999px; padding: 5px 11px; font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; white-space: nowrap; }
 .drop-skills button.on { background: var(--navy); border-color: var(--navy); color: #fff; }
@@ -8294,6 +8295,7 @@ const dropSvg = (cls = '') => { const g = `dpy${++dropSeq}`; const eye = x => `<
   <linearGradient id="${g}d" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7FE0FF"/><stop offset="1" stop-color="#1C8FD6"/></linearGradient>
   <clipPath id="${g}c"><ellipse cx="40" cy="47" rx="27" ry="26"/></clipPath></defs>
   <g class="drop-ant"><path d="M47 22 Q49 13 53 9" stroke="#B9C9D8" stroke-width="2.2" fill="none" stroke-linecap="round"/><circle class="drop-glow" cx="54" cy="7" r="6" fill="url(#${g}w)" opacity=".7"/><path d="M54 1.5 C54 1.5 50.4 5.8 50.4 8 a3.6 3.6 0 0 0 7.2 0 C57.6 5.8 54 1.5 54 1.5 Z" fill="url(#${g}d)"/><circle cx="52.8" cy="7.4" r=".9" fill="#fff" opacity=".9"/></g>
+  <g class="drop-ant2"><path d="M33 22 Q31 13 27 9" stroke="#B9C9D8" stroke-width="2.2" fill="none" stroke-linecap="round"/><circle class="drop-glow" cx="26" cy="7" r="6" fill="url(#${g}w)" opacity=".7"/><path d="M26 1.5 C26 1.5 22.4 5.8 22.4 8 a3.6 3.6 0 0 0 7.2 0 C29.6 5.8 26 1.5 26 1.5 Z" fill="url(#${g}d)"/><circle cx="24.8" cy="7.4" r=".9" fill="#fff" opacity=".9"/></g>
   <ellipse cx="31" cy="76" rx="7.5" ry="5.5" fill="url(#${g}l)"/><ellipse cx="49" cy="76" rx="7.5" ry="5.5" fill="url(#${g}l)"/><ellipse cx="31" cy="74" rx="6" ry="3" fill="#fff" opacity=".7"/><ellipse cx="49" cy="74" rx="6" ry="3" fill="#fff" opacity=".7"/>
   <g class="drop-arm-l"><ellipse cx="11.5" cy="62" rx="4.4" ry="7.6" transform="rotate(40 11.5 62)" fill="url(#${g}b)" stroke="#C9D7E4"/></g>
   <g class="drop-arm-r"><ellipse cx="68.5" cy="62" rx="4.4" ry="7.6" transform="rotate(-40 68.5 62)" fill="url(#${g}b)" stroke="#C9D7E4"/></g>
