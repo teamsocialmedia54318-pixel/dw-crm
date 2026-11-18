@@ -534,7 +534,7 @@ html { -webkit-text-size-adjust: 100%; }
   .social-list { max-height: none; }
 }
 /* "Dropy": روبوت المساعد العائم، يتسحب لأي مكان */
-.drop-fab { position: fixed; bottom: 18px; inset-inline-start: 18px; z-index: 150; width: 70px; height: 76px; border: 0; background: none; padding: 0; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; filter: drop-shadow(0 8px 12px rgba(13,26,77,.25)); animation: dropFloat 3.2s ease-in-out infinite; }
+.drop-fab { position: fixed; bottom: 18px; inset-inline-start: 18px; z-index: 95; width: 70px; height: 76px; border: 0; background: none; padding: 0; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; filter: drop-shadow(0 8px 12px rgba(13,26,77,.25)); animation: dropFloat 3.2s ease-in-out infinite; }
 .drop-fab.hidden { display: none; }
 .drop-fab:hover:not(.dragging) { animation: dropJelly .7s ease; }
 .drop-fab.dragging { cursor: grabbing; animation: none; transform: scale(1.1) rotate(-4deg); filter: drop-shadow(0 16px 18px rgba(13,26,77,.32)); transition: transform .15s; }
@@ -561,6 +561,13 @@ html { -webkit-text-size-adjust: 100%; }
 @keyframes dropArm { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-38deg); } }
 @keyframes dropArmL { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(38deg); } }
 .drop-panel.dragging { user-select: none; opacity: .96; }
+/* فحص الربط مع ميتا */
+.meta-check { border: 1px solid var(--border); border-radius: 12px; padding: 6px 12px; background: var(--card-soft); }
+.meta-row { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.meta-row:last-of-type { border-bottom: 0; }
+.meta-row > span { font-size: 16px; line-height: 1.4; }
+.meta-row .muted { font-size: 12.5px; word-break: break-word; }
+.meta-row.bad b { color: var(--red); }
 .drop-head { cursor: move; touch-action: none; }
 .drop-head button { cursor: pointer; }
 .thinking .drop-svg { animation: dropThink .9s ease-in-out infinite; }
@@ -571,7 +578,7 @@ html { -webkit-text-size-adjust: 100%; }
 @keyframes dropThink { 0%, 100% { transform: translateY(0) rotate(0); } 25% { transform: translateY(-4px) rotate(-6deg); } 75% { transform: translateY(-4px) rotate(6deg); } }
 @keyframes dropWave { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(-10deg); } 40% { transform: rotate(8deg); } 60% { transform: rotate(-5deg); } }
 @keyframes dropShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
-.drop-panel { position: fixed; bottom: 18px; inset-inline-start: 18px; z-index: 160; width: min(400px, calc(100vw - 24px)); height: min(620px, calc(100dvh - 36px)); background: var(--card); border-radius: 18px; box-shadow: 0 18px 50px rgba(13,26,77,.28); display: flex; flex-direction: column; overflow: hidden; animation: dropOpen .28s cubic-bezier(.2,.9,.3,1.3); transform-origin: bottom left; }
+.drop-panel { position: fixed; bottom: 18px; inset-inline-start: 18px; z-index: 96; width: min(400px, calc(100vw - 24px)); height: min(620px, calc(100dvh - 36px)); background: var(--card); border-radius: 18px; box-shadow: 0 18px 50px rgba(13,26,77,.28); display: flex; flex-direction: column; overflow: hidden; animation: dropOpen .28s cubic-bezier(.2,.9,.3,1.3); transform-origin: bottom left; }
 [dir="rtl"] .drop-panel { transform-origin: bottom right; }
 @keyframes dropOpen { from { transform: scale(.4) translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
 .drop-head { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: linear-gradient(135deg, #0D1A4D, #0D74A7); color: #fff; }
@@ -1030,6 +1037,15 @@ const EN = {
   'محلل المبيعات': 'Sales analyst', 'مدرب المبيعات': 'Sales coach', 'خبير السوشيال ميديا': 'Social media expert', 'مستشار الإدارة': 'Management advisor', 'مهارات Dropy': 'Dropy skills', 'المحادثات المحفوظة': 'Saved chats', 'محادثاتك المحفوظة': 'Your saved chats', 'لا توجد محادثات محفوظة بعد. كل محادثة مع Dropy تُحفظ تلقائيًا هنا.': 'No saved chats yet. Every chat with Dropy is saved here automatically.', 'اختار مهارة من فوق، وبعدين اضغط زرار جاهز أو اكتب سؤالك. كل محادثة بتتحفظ وتقدر ترجعلها من 🕘.': 'Pick a skill above, then press a ready button or type your question. Every chat is saved and you can return to it from 🕘.', 'اختار العميل': 'Choose the customer', 'اكتب اسم العميل أو كوده': 'Type the customer name or code', 'حذف المحادثة': 'Delete chat', 'ستُحذف هذه المحادثة نهائيًا.': 'This chat will be deleted permanently.', 'محادثة': 'Chat', 'اسأل Dropy...': 'Ask Dropy...', 'اكتب هدف الرسالة ومن هم العملاء...': 'Write the message goal and who the customers are...', 'جهزني للمكالمة': 'Prepare me for the call', 'تحضير مكالمة: {n}': 'Call prep: {n}', '📞 جهزني لمكالمة {n}': '📞 Prepare me to call {n}',
   '📞 جهزني لمكالمة عميل': '📞 Prepare me to call a customer', '🛡 رد على "الجهاز غالي"': '🛡 Answer "too expensive"', '🤔 "مش مقتنع إنه بيشتغل"': '🤔 "Not convinced it works"', '🎯 أسئلة تأهيل عميل جديد': '🎯 Qualifying questions', '🔁 خطة متابعة 30 يومًا': '🔁 30-day follow-up plan', '📣 اكتب رسالة متابعة لحملة': '📣 Write a campaign message', '✍ 3 بوستات فيسبوك': '✍ 3 Facebook posts', '🎬 سكريبت ريلز 30 ثانية': '🎬 30-second reel script', '📣 3 نصوص إعلان رسائل': '📣 3 message-ad texts', '🗓 خطة محتوى أسبوعين': '🗓 Two-week content plan', '💬 رد على تعليق "بكام؟"': '💬 Reply to "how much?"', '📈 أي إعلان شغال؟': '📈 Which ad works?', '📈 توقع الشهر الجاي': '📈 Next month forecast', '🧾 التحصيل والمخاطر': '🧾 Collection and risks', '👥 قرارات الفريق': '👥 Team decisions',
   'اقترح رد': 'Suggest a reply', 'Dropy يكتب...': 'Dropy is writing...', 'راجع الرد وعدّله قبل الإرسال': 'Review and edit the reply before sending', 'اكتب مع Dropy': 'Write with Dropy',
+  'فحص الربط مع ميتا': 'Check Meta connection', 'جارٍ سؤال ميتا عن كل مفتاح...': 'Asking Meta about each key...', 'المستقبِل على Cloudflare يحتاج تحديث الكود أولًا': 'The Cloudflare receiver needs a code update first',
+  'رمز التحقق (META_VERIFY_TOKEN)': 'Verify token (META_VERIFY_TOKEN)', 'متسجل': 'Set', 'ناقص: أضفه في Cloudflare بنفس الرمز المكتوب في ميتا': 'Missing: add it in Cloudflare with the same value entered in Meta',
+  'توكن الصفحة (PAGE_TOKEN)': 'Page token (PAGE_TOKEN)', 'شغال، وتابع لصفحة: {n}': 'Working, belongs to page: {n}', 'ناقص: أضفه في Cloudflare كـ Secret': 'Missing: add it in Cloudflare as a Secret', 'غلط أو انتهى: اعمل Generate token جديد وحطه مكانه': 'Wrong or expired: generate a new token and replace it', 'ميتا رفضته': 'Meta rejected it',
+  'سر التطبيق (META_APP_SECRET)': 'App secret (META_APP_SECRET)', 'صحيح، وميتا قبلته': 'Correct, accepted by Meta', 'ناقص: من غيره السيرفر يرفض كل الرسايل': 'Missing: without it the server rejects every message', 'غلط: انسخه تاني من App settings ← Basic ← App secret': 'Wrong: copy it again from App settings → Basic → App secret', 'مش متأكد منه لأن التوكن مش شغال، صلّح التوكن الأول': 'Cannot be checked until the token works; fix the token first',
+  'رقم الصفحة (PAGE_ID)': 'Page ID (PAGE_ID)', 'مطابق للصفحة: {n}': 'Matches page: {n}', 'ناقص: ضيف PAGE_ID = {id}': 'Missing: add PAGE_ID = {id}', 'مش مطابق: التوكن تبع صفحة {n} ({a}) لكن PAGE_ID = {e}': 'Mismatch: the token is for page {n} ({a}) but PAGE_ID = {e}',
+  'اشتراك الصفحة في الرسايل (Webhook)': 'Page message subscription (Webhook)', 'مشترك': 'Subscribed', 'ليدز الفورم (leadgen) مش مفعّلة': 'Lead form leads (leadgen) not enabled', 'ميتا رفضت السؤال': 'Meta refused the request', 'التطبيق مش مشترك في messages على الصفحة: فعّلها من Webhooks ← الصفحة ← Edit': 'The app is not subscribed to messages on the page: enable it in Webhooks → page → Edit',
+  'إنستجرام (IG_ID)': 'Instagram (IG_ID)', 'مربوط: @{u}': 'Linked: @{u}', 'مفيش حساب إنستجرام بيزنس مربوط بالصفحة': 'No Instagram business account is linked to the page', 'ميتا رفضت السؤال عن إنستجرام (ممكن صلاحية instagram_basic ناقصة)': 'Meta refused the Instagram request (instagram_basic may be missing)', 'IG_ID مش مطابق: الصح {id} (@{u})': 'IG_ID mismatch: the correct one is {id} (@{u})', 'ناقص: ضيف IG_ID = {id} (@{u})': 'Missing: add IG_ID = {id} (@{u})',
+  'آخر رسالة وصلت من ميتا': 'Last message received from Meta', 'لسه مفيش رسايل وصلت. ابعت رسالة تجربة للصفحة (ولو التطبيق Development لازم من حساب ليه دور في التطبيق)': 'No messages yet. Send a test message to the page (in Development mode it must come from an account with a role on the app)',
+  'فيه {n} حاجة محتاجة تتصلح قبل ما الرسايل تشتغل': '{n} item(s) need fixing before messages work', 'الربط سليم ✓': 'Connection is healthy ✓',
   'Dropy: مساعد دلتا ووتر. اضغط للسؤال، أو اسحبه لأي مكان': 'Dropy: Delta Water assistant. Click to ask, or drag it anywhere', 'اضغط للسؤال، أو اسحبني لأي مكان': 'Click to ask, or drag me anywhere', 'أنا Dropy 👋 اسحبني لأي مكان': "I'm Dropy 👋 drag me anywhere",
   'مكتبة معلومات دلتا ووتر (ما يعرفه Dropy عن الشركة والمنتجات والأسئلة الشائعة)': 'Delta Water knowledge library (what Dropy knows about the company, products and FAQs)',
   'اكتب هنا كل ما تريد أن يعرفه Dropy: عن الشركة، كل موديل ومتى يُستخدم، الأسئلة الشائعة وإجاباتها، طريقة التركيب والضمان، تجارب عملاء حقيقية... لا تكتب أسعارًا: Dropy ممنوع من ذكرها للعملاء.': 'Write everything Dropy should know: the company, each model and when to use it, FAQs and answers, installation and warranty, real customer stories... Do not write prices: Dropy must never mention them to customers.',
@@ -7823,6 +7839,27 @@ async function socialDashDocx(s, period) {
   audit('export', 'social', null, 'تقرير وورد لأداء السوشيال');
 }
 
+// ------- نتيجة فحص الربط مع ميتا: سطر لكل مفتاح، بلا أي قيمة سرية -------
+function metaCheckHtml(checks) {
+  const icon = { ok: '✅', warn: '⚠️', bad: '❌' };
+  const d = c => c.detail || {};
+  const lines = {
+    verify: c => [t('رمز التحقق (META_VERIFY_TOKEN)'), c.status === 'ok' ? t('متسجل') : t('ناقص: أضفه في Cloudflare بنفس الرمز المكتوب في ميتا')],
+    token: c => [t('توكن الصفحة (PAGE_TOKEN)'), c.status === 'ok' ? t('شغال، وتابع لصفحة: {n}', { n: d(c).page?.name || d(c).page?.id || '' })
+      : d(c).reason === 'missing' ? t('ناقص: أضفه في Cloudflare كـ Secret') : d(c).reason === 'invalid' ? t('غلط أو انتهى: اعمل Generate token جديد وحطه مكانه') : `${t('ميتا رفضته')}: ${d(c).message || ''}`],
+    secret: c => [t('سر التطبيق (META_APP_SECRET)'), c.status === 'ok' ? t('صحيح، وميتا قبلته') : d(c).reason === 'missing' ? t('ناقص: من غيره السيرفر يرفض كل الرسايل') : d(c).reason === 'wrong' ? t('غلط: انسخه تاني من App settings ← Basic ← App secret') : t('مش متأكد منه لأن التوكن مش شغال، صلّح التوكن الأول')],
+    page: c => [t('رقم الصفحة (PAGE_ID)'), c.status === 'ok' ? t('مطابق للصفحة: {n}', { n: d(c).name }) : c.status === 'warn' ? t('ناقص: ضيف PAGE_ID = {id}', { id: d(c).actual }) : t('مش مطابق: التوكن تبع صفحة {n} ({a}) لكن PAGE_ID = {e}', { n: d(c).name, a: d(c).actual, e: d(c).expected })],
+    webhook: c => [t('اشتراك الصفحة في الرسايل (Webhook)'), c.status === 'ok' ? `${t('مشترك')}${d(c).fields?.length ? `: ${d(c).fields.join(', ')}` : ''}${d(c).leadgen ? '' : ` · ${t('ليدز الفورم (leadgen) مش مفعّلة')}`}`
+      : d(c).reason === 'error' ? `${t('ميتا رفضت السؤال')}: ${d(c).message || ''}` : t('التطبيق مش مشترك في messages على الصفحة: فعّلها من Webhooks ← الصفحة ← Edit')],
+    instagram: c => [t('إنستجرام (IG_ID)'), c.status === 'ok' ? t('مربوط: @{u}', { u: d(c).username }) : d(c).reason === 'not linked' ? t('مفيش حساب إنستجرام بيزنس مربوط بالصفحة') : d(c).reason === 'error' ? t('ميتا رفضت السؤال عن إنستجرام (ممكن صلاحية instagram_basic ناقصة)')
+      : d(c).configured ? t('IG_ID مش مطابق: الصح {id} (@{u})', { id: d(c).id, u: d(c).username }) : t('ناقص: ضيف IG_ID = {id} (@{u})', { id: d(c).id, u: d(c).username })],
+    received: c => [t('آخر رسالة وصلت من ميتا'), c.status === 'ok' ? fmtDT(new Date(d(c).at).toISOString()) : t('لسه مفيش رسايل وصلت. ابعت رسالة تجربة للصفحة (ولو التطبيق Development لازم من حساب ليه دور في التطبيق)')],
+  };
+  const bad = checks.filter(c => c.status === 'bad').length;
+  return `<div class="meta-check mt">${checks.map(c => { const [label, text] = (lines[c.id] || (x => [x.id, '']))(c); return `<div class="meta-row ${c.status}"><span>${icon[c.status] || '•'}</span><div><b>${esc(label)}</b><div class="muted">${esc(text)}</div></div></div>`; }).join('')}
+    <p class="mt"><b>${bad ? t('فيه {n} حاجة محتاجة تتصلح قبل ما الرسايل تشتغل', { n: bad }) : t('الربط سليم ✓')}</b></p></div>`;
+}
+
 // ------- إعدادات الربط والفريق (للإدارة) -------
 function openSocialSettings() {
   const cfg = socialCfg();
@@ -7837,7 +7874,8 @@ function openSocialSettings() {
       <label class="chk"><input type="checkbox" id="ssCapi" ${cfg.capi ? 'checked' : ''}> ${t('إبلاغ ميتا تلقائيًا بعملاء الرسائل: عند تسجيلهم (عميل محتمل) وعند شرائهم بقيمة الشراء، فتجلب الإعلانات عملاء يشبهونهم')}</label>
       <small class="muted">${t('يعمل بعد إضافة DATASET_ID و PAGE_ID و IG_ID في Cloudflare (ملف الإعداد). الرقم والإيميل يُرسلان مشفّرين.')}</small>
       <div class="field mt"><label>${t('الردود الجاهزة')}</label><textarea class="inp" id="ssTpl" rows="6" placeholder="${t('سطر لكل رد: اسم الرد | نص الرد. يمكن استخدام {الاسم} لاسم العميل و{اسمي} لاسمك')}">${esc(tpls)}</textarea></div>
-      <div class="mt"><button class="btn" id="ssTest">${t('اختبار الاتصال')}</button> <span id="ssMsg" class="muted"></span></div>`,
+      <div class="mt"><button class="btn" id="ssTest">${t('اختبار الاتصال')}</button> <button class="btn" id="ssMeta">🔍 ${t('فحص الربط مع ميتا')}</button> <span id="ssMsg" class="muted"></span></div>
+      <div id="ssMetaOut"></div>`,
     footer: `<button class="btn primary" id="ssSave">${t('حفظ')}</button>`,
   });
   $$('#ssMem .chip, #ssRev .chip', m.el).forEach(b => b.onclick = () => b.classList.toggle('on'));
@@ -7850,6 +7888,18 @@ function openSocialSettings() {
       const out = await r.json();
       msg.textContent = out.ok ? `✓ ${t('الاتصال يعمل')}` : `✗ ${out.error === 'unauthorized' ? t('الكود في Cloudflare لا يطابق كود الاتصال') : out.error}`;
     } catch (err) { msg.textContent = `✗ ${t('تعذر الوصول إلى الرابط')}`; }
+  };
+  $('#ssMeta', m.el).onclick = async () => {
+    const box = $('#ssMetaOut', m.el), btn = $('#ssMeta', m.el);
+    const url = $('#ssUrl', m.el).value.trim().replace(/\/+$/, '');
+    btn.disabled = true; box.innerHTML = `<p class="muted mt">${t('جارٍ سؤال ميتا عن كل مفتاح...')}</p>`;
+    try {
+      const r = await fetch(`${url}/api/metacheck`, { headers: { 'X-CRM-Key': localStorage.getItem(CLOUD_KEY_STORE) || '' }, cache: 'no-store' });
+      const out = await r.json().catch(() => ({ ok: false, error: `HTTP ${r.status}` }));
+      if (!out.ok) throw new Error(out.error === 'unauthorized' ? t('الكود في Cloudflare لا يطابق كود الاتصال') : out.error === 'not found' || r.status === 404 ? t('المستقبِل على Cloudflare يحتاج تحديث الكود أولًا') : out.error);
+      box.innerHTML = metaCheckHtml(out.checks);
+    } catch (err) { box.innerHTML = `<p class="mt" style="color:var(--red)">✗ ${esc(err.message || t('تعذر الوصول إلى الرابط'))}</p>`; }
+    btn.disabled = false;
   };
   $('#ssSave', m.el).onclick = () => {
     const url = $('#ssUrl', m.el).value.trim().replace(/\/+$/, '');
