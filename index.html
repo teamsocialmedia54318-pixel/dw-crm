@@ -567,7 +567,7 @@ html { -webkit-text-size-adjust: 100%; }
 .meta-row { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border); }
 .meta-row:last-of-type { border-bottom: 0; }
 .meta-row > span { font-size: 16px; line-height: 1.4; }
-.meta-row .muted { font-size: 12.5px; word-break: break-word; }
+.meta-row .muted { font-size: 12.5px; word-break: break-word; white-space: pre-line; }
 .meta-row.bad b { color: var(--red); }
 .drop-head { cursor: move; touch-action: none; }
 .drop-head button { cursor: pointer; }
@@ -1045,6 +1045,7 @@ const EN = {
   'واتساب (WA_TOKEN و WA_PHONE_ID)': 'WhatsApp (WA_TOKEN and WA_PHONE_ID)', 'مربوط برقم {n} ({v})': 'Connected to number {n} ({v})', 'جودة الرقم': 'Number quality',
   'لسه ما اتربطش: ضيف WA_TOKEN (Secret) و WA_PHONE_ID (Text) في Cloudflare بعد إعداد واتساب في تطبيق ميتا': 'Not connected yet: add WA_TOKEN (Secret) and WA_PHONE_ID (Text) in Cloudflare after setting up WhatsApp in the Meta app',
   'توكن واتساب غلط أو انتهى: اعمل توكن System User جديد وحطه مكان WA_TOKEN': 'WhatsApp token is wrong or expired: create a new System User token and replace WA_TOKEN', 'ميتا رفضت': 'Meta refused',
+  'توكن System User دائم': 'permanent System User token', 'صلاحيات التوكن': 'Token permissions', 'ناقص منه': 'Missing',
   'أسماء العملاء في المحادثات': 'Customer names in conversations', 'اتجاب اسم {n} محادثة دلوقتي': 'Fetched the name for {n} conversation(s) now', 'كل المحادثات ليها أسماء': 'All conversations have names',
   'ميتا رافضة تدي الاسم: التطبيق ناقصه صلاحية {p}. بعد ما تتضاف اعمل Generate token جديد وحطه مكان القديم': 'Meta refuses to return names: the app is missing permission {p}. After adding it, generate a new token and replace the old one',
   'ميتا رافضة تدي الاسم ({n} محادثة من غير اسم)': 'Meta refuses to return names ({n} conversation(s) without a name)',
@@ -7861,7 +7862,7 @@ function metaCheckHtml(checks) {
   const d = c => c.detail || {};
   const lines = {
     verify: c => [t('رمز التحقق (META_VERIFY_TOKEN)'), c.status === 'ok' ? t('متسجل') : t('ناقص: أضفه في Cloudflare بنفس الرمز المكتوب في ميتا')],
-    token: c => [t('توكن الصفحة (PAGE_TOKEN)'), c.status === 'ok' ? t('شغال، وتابع لصفحة: {n}', { n: d(c).page?.name || d(c).page?.id || '' })
+    token: c => [t('توكن الصفحة (PAGE_TOKEN)'), c.status === 'ok' ? t('شغال، وتابع لصفحة: {n}', { n: d(c).page?.name || d(c).page?.id || '' }) + (d(c).systemUser ? ` · ${t('توكن System User دائم')}` : '')
       : d(c).reason === 'missing' ? t('ناقص: أضفه في Cloudflare كـ Secret') : d(c).reason === 'invalid' ? t('غلط أو انتهى: اعمل Generate token جديد وحطه مكانه')
       : d(c).reason === 'permission' ? t('التوكن سليم، لكن التطبيق ناقصه صلاحية: {p}. ضيفها من App Review ← Permissions and features، وبعدها اعمل Generate token جديد وحطه مكان القديم', { p: d(c).perms.join(', ') }) : `${t('ميتا رفضته')}: ${d(c).message || ''}`],
     secret: c => [t('سر التطبيق (META_APP_SECRET)'), c.status === 'ok' ? t('صحيح، وميتا قبلته') : d(c).reason === 'missing' ? t('ناقص: من غيره السيرفر يرفض كل الرسايل') : d(c).reason === 'wrong' ? t('غلط: انسخه تاني من App settings ← Basic ← App secret') : t('مش متأكد منه لأن التوكن مش شغال، صلّح التوكن الأول')],
@@ -7879,6 +7880,13 @@ function metaCheckHtml(checks) {
       : `${t('ميتا رافضة تدي الاسم ({n} محادثة من غير اسم)', { n: d(c).missing })}: ${d(c).message || ''}`],
     received: c => [t('آخر رسالة وصلت من ميتا'), c.status === 'ok' ? fmtDT(new Date(d(c).at).toISOString()) : t('لسه مفيش رسايل وصلت. ابعت رسالة تجربة للصفحة (ولو التطبيق Development لازم من حساب ليه دور في التطبيق)')],
   };
+  // سطر إضافي تحت التوكن: الصلاحيات اللي فيه فعلًا والناقص منها
+  const tok = checks.find(c => c.id === 'token');
+  if (tok?.detail?.scopes) {
+    const base = lines.token;
+    lines.token = c => { const [l, txt] = base(c); const s = d(c);
+      return [l, `${txt}\n${t('صلاحيات التوكن')}: ${s.scopes.join(', ') || '—'}${s.lacking?.length ? `\n${t('ناقص منه')}: ${s.lacking.join(', ')}` : ''}`]; };
+  }
   const bad = checks.filter(c => c.status === 'bad').length;
   return `<div class="meta-check mt">${checks.map(c => { const [label, text] = (lines[c.id] || (x => [x.id, '']))(c); return `<div class="meta-row ${c.status}"><span>${icon[c.status] || '•'}</span><div><b>${esc(label)}</b><div class="muted">${esc(text)}</div></div></div>`; }).join('')}
     <p class="mt"><b>${bad ? t('فيه {n} حاجة محتاجة تتصلح قبل ما الرسايل تشتغل', { n: bad }) : t('الربط سليم ✓')}</b></p></div>`;
