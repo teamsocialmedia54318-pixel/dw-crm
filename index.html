@@ -501,6 +501,7 @@ html { -webkit-text-size-adjust: 100%; }
 .soc-ch { flex: none; width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 13px; }
 .soc-fb { background: #1877F2; }
 .soc-ig { background: linear-gradient(45deg, #F58529, #DD2A7B 55%, #8134AF); font-size: 11px; }
+.soc-wa { background: #25D366; }
 .social-thread { padding: 0; display: flex; flex-direction: column; min-height: 420px; }
 .social-thread:empty { display: none; }
 .soc-head { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--border); }
@@ -1041,6 +1042,9 @@ const EN = {
   'مش قادر أتأكد: التطبيق ناقصه صلاحية {p}': 'Cannot check: the app is missing permission {p}', 'ناقص: ضيف PAGE_ID في Cloudflare (رقم الصفحة)': 'Missing: add PAGE_ID in Cloudflare (the page ID)',
   'اختياري لو لسه ما اتكلمتش مع العميل': "optional if you haven't talked to the customer yet",
   '{n} محادثة إنستجرام من غير اسم: العميل بعت ستوري أو ريلز أو تفاعل بس من غير ما يكتب، وميتا مش بتدي الاسم في الحالة دي. الاسم هيظهر لوحده أول ما يكتب رسالة': '{n} Instagram conversation(s) without a name: the customer only sent a story, reel or reaction without typing, and Meta does not share the name in that case. The name appears automatically once they type a message',
+  'واتساب (WA_TOKEN و WA_PHONE_ID)': 'WhatsApp (WA_TOKEN and WA_PHONE_ID)', 'مربوط برقم {n} ({v})': 'Connected to number {n} ({v})', 'جودة الرقم': 'Number quality',
+  'لسه ما اتربطش: ضيف WA_TOKEN (Secret) و WA_PHONE_ID (Text) في Cloudflare بعد إعداد واتساب في تطبيق ميتا': 'Not connected yet: add WA_TOKEN (Secret) and WA_PHONE_ID (Text) in Cloudflare after setting up WhatsApp in the Meta app',
+  'توكن واتساب غلط أو انتهى: اعمل توكن System User جديد وحطه مكان WA_TOKEN': 'WhatsApp token is wrong or expired: create a new System User token and replace WA_TOKEN', 'ميتا رفضت': 'Meta refused',
   'أسماء العملاء في المحادثات': 'Customer names in conversations', 'اتجاب اسم {n} محادثة دلوقتي': 'Fetched the name for {n} conversation(s) now', 'كل المحادثات ليها أسماء': 'All conversations have names',
   'ميتا رافضة تدي الاسم: التطبيق ناقصه صلاحية {p}. بعد ما تتضاف اعمل Generate token جديد وحطه مكان القديم': 'Meta refuses to return names: the app is missing permission {p}. After adding it, generate a new token and replace the old one',
   'ميتا رافضة تدي الاسم ({n} محادثة من غير اسم)': 'Meta refuses to return names ({n} conversation(s) without a name)',
@@ -4527,7 +4531,7 @@ function openCustomer(id, tab = 'journey') {
         ${c.buyerClass ? kv(t('تصنيف العميل المشتري'), buyerClassPill(c.buyerClass)) : ''}${kv(t('تصنيف العميل'), c.category ?`${categoryPill(c.category)}${c.partnerId ? ` <span class="muted">${t('مسجل في قائمة الموزعين')}</span>` : ''}` : '')}${kv(t('عن طريق الوكيل أو الموزع'), esc(distName(c.viaDistributorId)))}${c.market === 'intl' ? kv(t('وكيل الدولة'), esc(territoryPartners(c).map(d => d.name).join('، '))) : ''}
         ${kv(t('رقم الهاتف 1'), phoneLink(c.phone1))}${kv(t('رقم الهاتف 2'), phoneLink(c.phone2))}
         ${kv(t('البريد الإلكتروني'), [c.email1, c.email2].filter(Boolean).map(emailLink).join('<br>'))}
-        ${c.social ? kv(t('جاء من السوشيال'), `${esc(t(c.social.channel === 'ig' ? 'إنستجرام' : 'ماسنجر'))}${c.social.adTitle ? ` · ${t('إعلان')}: <b>${esc(c.social.adTitle)}</b>` : ` · ${t('رسالة مباشرة')}`}${c.social.convId && canSocial() ? ` · <a href="#/social/${encodeURIComponent(c.social.convId)}">${t('فتح المحادثة')}</a>` : ''}`) : ''}
+        ${c.social ? kv(t('جاء من السوشيال'), `${esc(t(SOCIAL_CHANNELS[c.social.channel] || 'ماسنجر'))}${c.social.adTitle ? ` · ${t('إعلان')}: <b>${esc(c.social.adTitle)}</b>` : ` · ${t('رسالة مباشرة')}`}${c.social.convId && canSocial() ? ` · <a href="#/social/${encodeURIComponent(c.social.convId)}">${t('فتح المحادثة')}</a>` : ''}`) : ''}
         ${kv(t('العنوان'), esc(custAddress(c)))}${kv(t('موقع المزرعة'), mapLinkHtml(c.mapLink))}${kv(t('كود المنطقة'), c.subCode || c.govCode ? `<span class="code-tag">${esc(c.subCode || c.govCode)}</span>` : '')}
         ${activeDomains().length > 1 ? kv(t('المجال'), esc(label(DB.domains.find(x => x.id === c.domainId)))) : ''}${kv(t('المرحلة'), stagePill(c))}
         ${kv(t('المساحة'), c.area === '' ? '' : `${esc(c.area)} ${t('فدان')}`)}${kv(t('نوع الري'), esc(tv(c.irrigation)))}
@@ -7296,9 +7300,9 @@ function openLeaderPick(tm, userId, onDone) {
 // الصفحة لفريق السوشيال (د. محمود جمعة افتراضيًا، والإدارة تضيف غيره)، والإدارة ترى كل شيء وتضبط الربط.
 // كل التحليل هنا بقواعد ثابتة (أرقام، إيميلات، محافظات، محاصيل، ملوحة، مساحة، كلمات مفتاحية): مجاني ولا يعتمد على ذكاء اصطناعي.
 
-const SOCIAL_CHANNELS = { fb: 'ماسنجر', ig: 'إنستجرام' };
+const SOCIAL_CHANNELS = { fb: 'ماسنجر', ig: 'إنستجرام', wa: 'واتساب' };
 const SOCIAL_STATUS = { new: 'جديدة', open: 'مفتوحة', converted: 'تحوّلت لعميل', ignored: 'متجاهلة' };
-const SOCIAL_SOURCE = { fb: 'فيسبوك', ig: 'إنستجرام' };
+const SOCIAL_SOURCE = { fb: 'فيسبوك', ig: 'إنستجرام', wa: 'واتساب' };
 const socialCfg = () => DB.settings.social || {};
 // د. محمود جمعة هو المسؤول الافتراضي عن رسائل السوشيال حتى تحدد الإدارة غيره
 const socialMembers = () => {
@@ -7487,7 +7491,7 @@ function viewSocial(root, sub) {
     : !cloudMode ? `<div class="card empty">${t('رسائل السوشيال تعمل من الرابط المنشور للنظام فقط.')}</div>`
     : `<div id="socialStats"></div>
     <div class="filters mt"><div class="tabs" id="socTabs">${[['active', 'الجديدة والمفتوحة'], ['new', 'الجديدة'], ['mine', 'المحوّلة إليّ'], ['converted', 'تحوّلت لعملاء'], ['ignored', 'المتجاهلة'], ['all', 'الكل']].map(([k, l]) => `<button class="tab ${socialState.tab === k ? 'on' : ''}" data-st="${k}">${t(l)}</button>`).join('')}</div>
-      <select class="inp" id="socCh" aria-label="${t('القناة')}">${opts([['', t('كل القنوات')], ['fb', t('ماسنجر')], ['ig', t('إنستجرام')]], socialState.channel)}</select>
+      <select class="inp" id="socCh" aria-label="${t('القناة')}">${opts([['', t('كل القنوات')], ['fb', t('ماسنجر')], ['ig', t('إنستجرام')], ['wa', t('واتساب')]], socialState.channel)}</select>
       <input class="inp" id="socQ" type="search" placeholder="${t('بحث بالاسم أو الرقم أو الإعلان')}" value="${esc(socialState.q)}"></div>
     <div class="social-wrap mt"><div class="social-list card" id="socialList"><div class="muted" style="padding:12px">${t('جارٍ تحميل المحادثات...')}</div></div><div class="social-thread card" id="socialThread"></div></div>`}`;
   const set = $('#socSet', root);
@@ -7528,7 +7532,7 @@ const socialMatches = c => {
   if (q && ![c.name, c.username, c.ad_title, c.last_text, ...(c.phones || []).map(p => p.p), ...(c.emails || [])].some(v => normHeader(v || '').includes(q))) return false;
   return true;
 };
-const channelBadge = ch => `<span class="soc-ch soc-${ch}" title="${esc(t(SOCIAL_CHANNELS[ch]))}">${ch === 'ig' ? 'IG' : 'f'}</span>`;
+const channelBadge = ch => `<span class="soc-ch soc-${ch}" title="${esc(t(SOCIAL_CHANNELS[ch]))}">${ch === 'ig' ? 'IG' : ch === 'wa' ? '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="#fff" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3a.5.5 0 0 0 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5 5 0 0 0 1.1 2.7 11.5 11.5 0 0 0 4.4 3.9c1.6.7 2.3.8 3.1.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg>' : 'f'}</span>`;
 const socialTime = ms => { if (!ms) return ''; const d = new Date(ms); return localDay(d.toISOString()) === today() ? `${pad(d.getHours())}:${pad(d.getMinutes())}` : fmtDT(d.toISOString()); };
 function drawSocialList() {
   const box = $('#socialList');
@@ -7760,7 +7764,7 @@ function socialDashCompute(data, period) {
   const revenue = c => c ? sales(c).reduce((s, o) => s + orderValue(o), 0) : 0;
   const days = {};
   for (let ms = period.from; ms < period.to; ms += 86400000) days[localDay(new Date(ms).toISOString())] = { convs: 0, phones: 0 };
-  const countries = {}, ads = {}, channels = { fb: 0, ig: 0 };
+  const countries = {}, ads = {}, channels = { fb: 0, ig: 0, wa: 0 };
   let withPhone = 0, customers = 0, buyers = 0, value = 0;
   convs.forEach(cv => {
     const day = localDay(new Date(cv.first_at).toISOString());
@@ -7819,7 +7823,7 @@ function drawSocialDash(box, s, period) {
       <tbody>${s.ads.length ? s.ads.map(a => `<tr><td class="wrap">${esc(a.title)}</td><td>${a.convs}</td><td>${a.phones}</td><td>${a.customers}</td><td><b>${a.buyers}</b></td><td>${pct(a.buyers, a.convs)}</td><td>${money(a.value)}</td></tr>`).join('') : `<tr><td colspan="7" class="muted">${t('لا توجد محادثات في هذه الفترة')}</td></tr>`}</tbody></table></div></div>
     <div class="grid2 mt">
       <div class="card"><b>${t('الأرقام حسب الدولة')}</b>${hbars(Object.entries(s.countries).sort((a, b) => b[1] - a[1]).map(([k, n]) => [k ? countryLabel(k) : t('دولة غير محددة'), n, String(n)]), { fmt: String, h1: t('الدولة'), h2: t('الأرقام') })}</div>
-      <div class="card"><b>${t('القنوات')}</b>${s.total ? stackBar([[t('ماسنجر'), s.channels.fb || 0], [t('إنستجرام'), s.channels.ig || 0]], String) : `<div class="empty">${t('لا توجد بيانات في هذه الفترة')}</div>`}</div>
+      <div class="card"><b>${t('القنوات')}</b>${s.total ? stackBar([[t('ماسنجر'), s.channels.fb || 0], [t('إنستجرام'), s.channels.ig || 0], [t('واتساب'), s.channels.wa || 0]], String) : `<div class="empty">${t('لا توجد بيانات في هذه الفترة')}</div>`}</div>
     </div>`;
 }
 function exportSocialDash(s, period) {
@@ -7866,6 +7870,9 @@ function metaCheckHtml(checks) {
       : d(c).reason === 'error' ? (d(c).perms?.length ? t('مش قادر أتأكد: التطبيق ناقصه صلاحية {p}', { p: d(c).perms.join(', ') }) : `${t('ميتا رفضت السؤال')}: ${d(c).message || ''}`) : t('التطبيق مش مشترك في messages على الصفحة: فعّلها من Webhooks ← الصفحة ← Edit')],
     instagram: c => [t('إنستجرام (IG_ID)'), c.status === 'ok' ? t('مربوط: @{u}', { u: d(c).username }) : d(c).reason === 'not linked' ? t('مفيش حساب إنستجرام بيزنس مربوط بالصفحة') : d(c).reason === 'error' ? (d(c).perms?.length ? t('مش قادر أتأكد: التطبيق ناقصه صلاحية {p}', { p: d(c).perms.join(', ') }) : t('ميتا رفضت السؤال عن إنستجرام (ممكن صلاحية instagram_basic ناقصة)'))
       : d(c).configured ? t('IG_ID مش مطابق: الصح {id} (@{u})', { id: d(c).id, u: d(c).username }) : t('ناقص: ضيف IG_ID = {id} (@{u})', { id: d(c).id, u: d(c).username })],
+    whatsapp: c => [t('واتساب (WA_TOKEN و WA_PHONE_ID)'), c.status === 'ok' ? t('مربوط برقم {n} ({v})', { n: d(c).number, v: d(c).name }) + (d(c).quality ? ` · ${t('جودة الرقم')}: ${d(c).quality}` : '')
+      : d(c).reason === 'not set' ? t('لسه ما اتربطش: ضيف WA_TOKEN (Secret) و WA_PHONE_ID (Text) في Cloudflare بعد إعداد واتساب في تطبيق ميتا')
+      : d(c).reason === 'invalid' ? t('توكن واتساب غلط أو انتهى: اعمل توكن System User جديد وحطه مكان WA_TOKEN') : `${t('ميتا رفضت')}: ${d(c).message || ''}`],
     names: c => [t('أسماء العملاء في المحادثات'), c.status === 'ok' ? (d(c).fixed ? t('اتجاب اسم {n} محادثة دلوقتي', { n: d(c).fixed }) : t('كل المحادثات ليها أسماء'))
       : d(c).reason === 'consent' ? t('{n} محادثة إنستجرام من غير اسم: العميل بعت ستوري أو ريلز أو تفاعل بس من غير ما يكتب، وميتا مش بتدي الاسم في الحالة دي. الاسم هيظهر لوحده أول ما يكتب رسالة', { n: d(c).missing })
       : d(c).perms?.length ? t('ميتا رافضة تدي الاسم: التطبيق ناقصه صلاحية {p}. بعد ما تتضاف اعمل Generate token جديد وحطه مكان القديم', { p: d(c).perms.join(', ') })
@@ -8618,7 +8625,7 @@ async function aiSuggestReply(conv, msgs, ins) {
   const chat = msgs.slice(-14).map(m => `${m.dir === 'in' ? 'العميل' : 'دلتا ووتر'}: ${m.text || ''}`).join('\n');
   const known = [ins.gov && `المكان: ${ins.gov}`, ins.country && `الدولة: ${ins.country}`, ins.crops.length && `المحصول: ${ins.crops.join('، ')}`, ins.salinity && `الملوحة: ${ins.salinity}`, ins.area && `المساحة: ${ins.area} فدان`, (conv.phones || []).length && 'أرسل رقمه بالفعل'].filter(Boolean).join(' · ');
   return aiAsk([
-    { role: 'system', content: `${AI_RULES}\n\n${SKILLS.social.prompt}\n\nاكتب ردًا واحدًا مقترحًا (حتى 70 كلمة) على آخر رسالة للعميل في شات ${conv.channel === 'ig' ? 'إنستجرام' : 'ماسنجر'} باسم فريق دلتا ووتر، بنفس لغة العميل ولهجته. أجب على سؤاله من معلومات الشركة فقط. إذا كان ينقصنا رقم هاتفه أو مكانه أو المحصول أو ملوحة المياه فاطلب واحدًا أو اثنين منها بلطف. اكتب نص الرد فقط.\n\nمعلومات دلتا ووتر:\n${knowledge()}` },
+    { role: 'system', content: `${AI_RULES}\n\n${SKILLS.social.prompt}\n\nاكتب ردًا واحدًا مقترحًا (حتى 70 كلمة) على آخر رسالة للعميل في شات ${SOCIAL_CHANNELS[conv.channel] || 'ماسنجر'} باسم فريق دلتا ووتر، بنفس لغة العميل ولهجته. أجب على سؤاله من معلومات الشركة فقط. إذا كان ينقصنا رقم هاتفه أو مكانه أو المحصول أو ملوحة المياه فاطلب واحدًا أو اثنين منها بلطف. اكتب نص الرد فقط.\n\nمعلومات دلتا ووتر:\n${knowledge()}` },
     { role: 'user', content: `المعروف عن العميل: ${known || 'لا شيء بعد'}\n\nالشات:\n${chat}` },
   ], { maxTokens: 350, temperature: 0.5 });
 }
