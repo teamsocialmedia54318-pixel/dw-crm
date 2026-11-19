@@ -1039,6 +1039,7 @@ const EN = {
   'اقترح رد': 'Suggest a reply', 'Dropy يكتب...': 'Dropy is writing...', 'راجع الرد وعدّله قبل الإرسال': 'Review and edit the reply before sending', 'اكتب مع Dropy': 'Write with Dropy',
   'التوكن سليم، لكن التطبيق ناقصه صلاحية: {p}. ضيفها من App Review ← Permissions and features، وبعدها اعمل Generate token جديد وحطه مكان القديم': 'The token is valid but the app is missing permission: {p}. Add it under App Review → Permissions and features, then generate a new token and replace the old one',
   'مش قادر أتأكد: التطبيق ناقصه صلاحية {p}': 'Cannot check: the app is missing permission {p}', 'ناقص: ضيف PAGE_ID في Cloudflare (رقم الصفحة)': 'Missing: add PAGE_ID in Cloudflare (the page ID)',
+  'اختياري لو لسه ما اتكلمتش مع العميل': "optional if you haven't talked to the customer yet",
   'فحص الربط مع ميتا': 'Check Meta connection', 'جارٍ سؤال ميتا عن كل مفتاح...': 'Asking Meta about each key...', 'المستقبِل على Cloudflare يحتاج تحديث الكود أولًا': 'The Cloudflare receiver needs a code update first',
   'رمز التحقق (META_VERIFY_TOKEN)': 'Verify token (META_VERIFY_TOKEN)', 'متسجل': 'Set', 'ناقص: أضفه في Cloudflare بنفس الرمز المكتوب في ميتا': 'Missing: add it in Cloudflare with the same value entered in Meta',
   'توكن الصفحة (PAGE_TOKEN)': 'Page token (PAGE_TOKEN)', 'شغال، وتابع لصفحة: {n}': 'Working, belongs to page: {n}', 'ناقص: أضفه في Cloudflare كـ Secret': 'Missing: add it in Cloudflare as a Secret', 'غلط أو انتهى: اعمل Generate token جديد وحطه مكانه': 'Wrong or expired: generate a new token and replace it', 'ميتا رفضته': 'Meta rejected it',
@@ -2035,7 +2036,8 @@ const inUserScope = (c, u) => {
   const s = u?.scope;
   if (!s) return true;
   if (s.market && s.market !== 'all' && c.market !== s.market) return false;
-  if (c.market === 'egypt' && s.govCodes?.length && !s.govCodes.includes(c.govCode)) return false;
+  // العميل اللي لسه محافظته ما اتعرفتش (رقم مش متاح أو مشغول) ما يتخباش بسبب قيد المحافظات؛ باقي قواعد الرؤية زي ما هي
+  if (c.market === 'egypt' && s.govCodes?.length && c.govCode && !s.govCodes.includes(c.govCode)) return false;
   return true;
 };
 // يرى المستخدم عملاءه، وعملاء الزميل الذي يساعده، والعملاء المعيّنين له أو الذين عيّنهم لغيره
@@ -4049,7 +4051,7 @@ function viewPipeline(root) {
 
 // ------- إدخال عميل جديد على خطوات -------
 function locationFields(prefix, d) {
-  return `<div class="grid2"><div class="field"><label>${t('المحافظة')} <span class="req">*</span></label><select class="inp" id="${prefix}gov">${opts(REGIONS.map(r => [r.code, regionLabel(r)]), d.govCode, t('اختر'))}</select></div>
+  return `<div class="grid2"><div class="field"><label>${t('المحافظة')}</label><select class="inp" id="${prefix}gov">${opts(REGIONS.map(r => [r.code, regionLabel(r)]), d.govCode, t('اختر'))}</select></div>
   <div class="field"><label>${t('المنطقة الفرعية')}</label><select class="inp" id="${prefix}sub"></select></div></div>`;
 }
 function bindLocation(root, prefix, d) {
@@ -4297,11 +4299,10 @@ function openWizard(market = 'egypt', preset = {}, opts = {}) {
       if (emailError(d.email1, d.email2)) return emailError(d.email1, d.email2);
     }
     if (step === 1) {
-      if (d.market === 'egypt' && !d.govCode) return t('يرجى اختيار المحافظة');
+      // المحافظة والمحصول والجهاز اختيارية: أحيانًا الرقم مش متاح أو مشغول وما نعرفش التفاصيل لسه، فتتكمّل بعدين من تعديل العميل
       if (d.market === 'intl' && !d.country) return t('يرجى اختيار الدولة');
       if (mapError(d.mapLink)) return mapError(d.mapLink);
     }
-    if (step === 2 && !d.crops.length) return t('يرجى اختيار محصول واحد على الأقل، فهو ما يربط العميل بموسمه');
     if (step === 3 && !d.rating) return t('يرجى اختيار تقييم العميل');
     if (step === 3) {
       const v = readVia(box, d.source);
@@ -4331,7 +4332,7 @@ function openWizard(market = 'egypt', preset = {}, opts = {}) {
       () => `<div class="grid2"><div class="field"><label>${t('المساحة (فدان)')}</label><input class="inp" type="number" min="0" data-f="area" value="${esc(d.area)}"></div>
         <div class="field"><label>${t('نوع الري')}</label><select class="inp" data-f="irrigation">${optsT(DB.lists.irrigation, d.irrigation, t('اختر'))}</select></div></div>
         ${waterFields(d)}
-        <div class="field"><label>${t('نوع المحصول')} <span class="req">*</span></label>${cropPicker()}</div>
+        <div class="field"><label>${t('نوع المحصول')} <small class="muted">(${t('اختياري لو لسه ما اتكلمتش مع العميل')})</small></label>${cropPicker()}</div>
         <div class="field"><label>${t('تحليل المياه أو التربة (اختياري)')}</label><div class="grid2">${fileKindSelect('wkind')}<input class="inp" type="file" id="wfile" accept="${FILE_ACCEPT}" multiple></div><div class="chips mt" id="wfiles"></div><small class="muted">${t('صورة أو ملف PDF، ويمكن إضافته لاحقًا من ملف العميل')}</small></div>
         <div class="grid2">${customFieldInputs('land', d)}</div>`,
       () => `${deviceFields(d)}<div class="grid2"><div class="field"><label>${t('مصدر المعرفة')}</label><select class="inp" data-f="source">${optsT(DB.lists.source, d.source, t('اختر'))}</select></div>${viaField(d)}</div>
