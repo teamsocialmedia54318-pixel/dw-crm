@@ -523,6 +523,10 @@ html { -webkit-text-size-adjust: 100%; }
 .soc-meta { font-size: 11.5px; margin-top: 2px; }
 .soc-img { display: block; margin-top: 4px; }
 .soc-img img { max-width: 220px; max-height: 220px; border-radius: 10px; display: block; object-fit: cover; }
+.soc-audio { display: block; margin-top: 4px; width: 260px; max-width: 100%; height: 40px; }
+.soc-video { display: block; margin-top: 4px; max-width: 260px; max-height: 260px; border-radius: 10px; background: #000; }
+.soc-file { display: inline-block; margin-top: 4px; padding: 6px 10px; border-radius: 8px; background: var(--card-soft); border: 1px solid var(--border); text-decoration: none; }
+.soc-media { margin-top: 4px; font-size: 12.5px; }
 .soc-reply { display: flex; gap: 8px; align-items: flex-end; padding: 10px 14px; flex-wrap: wrap; }
 .soc-reply textarea { flex: 1 1 260px; }
 .soc-reply select { width: auto; }
@@ -1019,7 +1023,7 @@ const EN = {
   'خطة متابعة ما بعد البيع': 'After-sales follow-up plan', 'عند تسليم أي طلب تُنشأ هذه المتابعات تلقائيًا لرجل البيع المسؤول، ولا يتأثر ما أُنشئ سابقًا.': 'When an order is delivered, these follow-ups are created for the responsible rep. Existing ones are not affected.', 'بعد التسليم بعدد أيام': 'Days after delivery', 'إضافة متابعة': 'Add follow-up', 'حفظ الخطة': 'Save plan', 'متابعة جديدة': 'New follow-up', 'تم الحفظ': 'Saved', 'سعر الدولار (ج.م)': 'USD rate (EGP)', 'موعد بريد الصباح': 'Morning email time', 'يجب أن يكون سعر الدولار أكبر من صفر': 'The USD rate must be greater than zero',
   'رسائل السوشيال': 'Social messages', 'ماسنجر': 'Messenger', 'إنستجرام': 'Instagram', 'جديدة': 'New', 'مفتوحة': 'Open', 'تحوّلت لعميل': 'Converted', 'متجاهلة': 'Ignored', 'لم يتم ربط رسائل السوشيال بعد': 'Social messages are not connected yet', '{name} بعت رقمه على {ch}: {p}': '{name} sent a phone number on {ch}: {p}', 'عميل': 'Customer',
   'محادثات جديدة لم تُفتح': 'New, unopened conversations', 'محادثات بدأت اليوم': 'Conversations started today', 'أرقام وصلت اليوم': 'Phone numbers received today', 'عملاء سُجلوا اليوم من السوشيال': 'Customers added today from social', 'منهم {n} من إعلانات': '{n} of them from ads', 'أرقام اليوم حسب الدولة': "Today's numbers by country", 'دولة غير محددة': 'Country not identified', 'لا توجد أرقام اليوم حتى الآن': 'No numbers yet today', 'محادثات اليوم حسب الإعلان': "Today's conversations by ad", 'إعلان': 'Ad', 'لا توجد محادثات من إعلانات اليوم': 'No conversations from ads today',
-  'إعدادات الربط والفريق': 'Connection & team settings', 'تحديث': 'Refresh', 'رسائل ماسنجر وإنستجرام (بدون التعليقات) في سلة واحدة: من أي إعلان جاء العميل، ورقمه وإيميله إذا كتبهما، والشات كاملًا. فريق السوشيال: {m}': 'Messenger and Instagram messages (no comments) in one inbox: which ad the customer came from, their phone and email if they wrote them, and the full chat. Social team: {m}',
+  'إعدادات الربط والفريق': 'Connection & team settings', 'تحديث': 'Refresh', 'رسائل ماسنجر وإنستجرام وواتساب (بدون التعليقات) في سلة واحدة: من أي إعلان جاء العميل، ورقمه وإيميله، والشات كاملًا بالصور والفويس. فريق السوشيال: {m}': 'Messenger, Instagram and WhatsApp messages (no comments) in one inbox: which ad the customer came from, their phone and email, and the full chat with photos and voice notes. Social team: {m}',
   'الجديدة والمفتوحة': 'New & open', 'الجديدة': 'New', 'المحوّلة إليّ': 'Assigned to me', 'تحوّلت لعملاء': 'Converted', 'المتجاهلة': 'Ignored', 'كل القنوات': 'All channels', 'بحث بالاسم أو الرقم أو الإعلان': 'Search by name, number or ad', 'جارٍ تحميل المحادثات...': 'Loading conversations...', 'لا توجد محادثات هنا': 'No conversations here', 'عميل بدون اسم': 'Unnamed customer', 'أنت': 'You', 'جارٍ تحميل المحادثة...': 'Loading conversation...',
   'تعذر الوصول إلى رسائل السوشيال: {e}': 'Could not reach social messages: {e}', 'جاء من': 'Came from', 'رسالة مباشرة (ليست من إعلان)': 'Direct message (not from an ad)', 'أول رسالة': 'First message', 'أرقام الهاتف': 'Phone numbers', 'الموقع من الشات': 'Location from chat', 'المحاصيل': 'Crops', 'درجة الملوحة': 'Salinity', 'اهتمام العميل': 'Customer interest', 'المسؤول عن المحادثة': 'Conversation owner',
   'مرتبطة بالعميل': 'Linked to customer', 'فتح ملف العميل': 'Open customer file', 'ربط المحادثة بهذا العميل': 'Link conversation to this customer', 'تحويل لعميل في النظام': 'Convert to customer', 'تحويل لزميل...': 'Transfer to colleague...', 'تحويل لزميل في فريق السوشيال': 'Transfer to a social team colleague', 'إعادة فتح': 'Reopen', 'تجاهل': 'Ignore', 'إضافة رقم يدويًا': 'Add number manually', 'لا توجد رسائل': 'No messages', 'رد جاهز...': 'Quick reply...', 'رد جاهز': 'Quick reply', 'اكتب ردك هنا، ويصل للعميل على {ch}': 'Type your reply; it reaches the customer on {ch}', 'إرسال': 'Send',
@@ -1045,6 +1049,7 @@ const EN = {
   'واتساب (WA_TOKEN و WA_PHONE_ID)': 'WhatsApp (WA_TOKEN and WA_PHONE_ID)', 'مربوط برقم {n} ({v})': 'Connected to number {n} ({v})', 'جودة الرقم': 'Number quality',
   'لسه ما اتربطش: ضيف WA_TOKEN (Secret) و WA_PHONE_ID (Text) في Cloudflare بعد إعداد واتساب في تطبيق ميتا': 'Not connected yet: add WA_TOKEN (Secret) and WA_PHONE_ID (Text) in Cloudflare after setting up WhatsApp in the Meta app',
   'توكن واتساب غلط أو انتهى: اعمل توكن System User جديد وحطه مكان WA_TOKEN': 'WhatsApp token is wrong or expired: create a new System User token and replace WA_TOKEN', 'ميتا رفضت': 'Meta refused',
+  'جارٍ تحميل المرفق...': 'Loading attachment...', 'تعذر تحميل المرفق': 'Could not load the attachment', 'واتساب مش مربوط في Cloudflare': 'WhatsApp is not connected in Cloudflare', 'فتح الملف': 'Open file',
   'توكن System User دائم': 'permanent System User token', 'صلاحيات التوكن': 'Token permissions', 'ناقص منه': 'Missing',
   'أسماء العملاء في المحادثات': 'Customer names in conversations', 'اتجاب اسم {n} محادثة دلوقتي': 'Fetched the name for {n} conversation(s) now', 'كل المحادثات ليها أسماء': 'All conversations have names',
   'ميتا رافضة تدي الاسم: التطبيق ناقصه صلاحية {p}. بعد ما تتضاف اعمل Generate token جديد وحطه مكان القديم': 'Meta refuses to return names: the app is missing permission {p}. After adding it, generate a new token and replace the old one',
@@ -7487,7 +7492,7 @@ function viewSocial(root, sub) {
       ${cfg.url && cloudMode ? `<button class="btn" id="socDash">📊 ${t('لوحة الأداء')}</button>` : ''}
       ${canManageSocial() ? `<button class="btn" id="socSet">⚙ ${t('إعدادات الربط والفريق')}</button>` : ''}
       ${cfg.url ? `<button class="btn" id="socRe">⟳ ${t('تحديث')}</button>` : ''}
-      <div class="hint">${t('رسائل ماسنجر وإنستجرام (بدون التعليقات) في سلة واحدة: من أي إعلان جاء العميل، ورقمه وإيميله إذا كتبهما، والشات كاملًا. فريق السوشيال: {m}', { m: socialMembers().map(userName).join('، ') || '—' })}</div></div>
+      <div class="hint">${t('رسائل ماسنجر وإنستجرام وواتساب (بدون التعليقات) في سلة واحدة: من أي إعلان جاء العميل، ورقمه وإيميله، والشات كاملًا بالصور والفويس. فريق السوشيال: {m}', { m: socialMembers().map(userName).join('، ') || '—' })}</div></div>
     ${!cfg.url ? `<div class="card empty">${canManageSocial() ? t('لم يتم ربط ميتا بعد. اضغط "إعدادات الربط والفريق" وأدخل رابط المستقبِل على Cloudflare بعد إعداده (الخطوات في ملف الإعداد).') : t('لم يتم ربط رسائل السوشيال بعد. تواصل مع الإدارة.')}</div>`
     : !cloudMode ? `<div class="card empty">${t('رسائل السوشيال تعمل من الرابط المنشور للنظام فقط.')}</div>`
     : `<div id="socialStats"></div>
@@ -7610,12 +7615,13 @@ function drawSocialThread() {
       ${c.status === 'ignored' ? `<button class="btn" id="socReopen">${t('إعادة فتح')}</button>` : `<button class="btn" id="socIgnore">${t('تجاهل')}</button>`}
       <button class="btn" id="socAddPhone">${t('إضافة رقم يدويًا')}</button>
     </div>
-    <div class="soc-msgs" id="socMsgs">${msgs.length ? msgs.map(m => `<div class="soc-msg ${m.dir}"><div class="bubble">${esc(m.text || '')}${m.attach ? socialAttach(m.attach) : ''}</div><div class="muted soc-meta">${socialTime(m.at)}${m.dir === 'out' && m.by && m.by !== 'page' ? ` · ${esc(userName(m.by))}` : ''}</div></div>`).join('') : `<div class="muted" style="padding:12px">${t('لا توجد رسائل')}</div>`}</div>
+    <div class="soc-msgs" id="socMsgs">${msgs.length ? msgs.map(m => `<div class="soc-msg ${m.dir}"><div class="bubble">${esc(msgText(m))}${m.attach ? socialAttach(m.attach) : ''}</div><div class="muted soc-meta">${socialTime(m.at)}${m.dir === 'out' && m.by && m.by !== 'page' ? ` · ${esc(userName(m.by))}` : ''}</div></div>`).join('') : `<div class="muted" style="padding:12px">${t('لا توجد رسائل')}</div>`}</div>
     <div class="soc-reply">${windowOpen ? `${typeof aiEnabled === 'function' && aiEnabled() ? `<button class="btn ai-btn" id="socAI" type="button" title="${t('يكتب Dropy ردًا مقترحًا من معلومات دلتا ووتر بدون أسعار، وتراجعه أنت قبل الإرسال')}">✨ ${t('اقترح رد')}</button>` : ''}${templates.length ? `<select class="inp" id="socTpl" aria-label="${t('رد جاهز')}"><option value="">${t('رد جاهز...')}</option>${templates.map((x, i) => `<option value="${i}">${esc(x.name)}</option>`).join('')}</select>` : ''}
       <textarea class="inp" id="socText" rows="2" placeholder="${t('اكتب ردك هنا، ويصل للعميل على {ch}', { ch: t(SOCIAL_CHANNELS[c.channel]) })}"></textarea><button class="btn primary" id="socSend">${t('إرسال')}</button>`
       : `<div class="muted">${t('مرّ أكثر من 24 ساعة على آخر رسالة من العميل، وميتا لا تسمح بالرد من النظام بعدها. يمكن الرد من تطبيق ماسنجر أو إنستجرام، أو الاتصال بالعميل على رقمه.')}</div>`}</div>`;
   const m = $('#socMsgs', box);
   m.scrollTop = m.scrollHeight;
+  hydrateWaMedia(m);
   // اختيار دولة الرقم بالكتابة (الصفحة ليست نافذة، فيُطبَّق البحث هنا مباشرة)
   comboizeIn(box);
   const on = (sel, fn) => { const el = $(sel, box); if (el) el.onclick = fn; };
@@ -7664,10 +7670,43 @@ function drawSocialThread() {
   });
 }
 const parseAttach = raw => { try { return JSON.parse(raw || '[]'); } catch { return []; } };
-// الصور تظهر مصغرة داخل الشات، والضغط عليها يفتحها كاملة
-const socialAttach = raw => parseAttach(raw).filter(a => a.url && a.type === 'image').map(a => `<a href="${esc(a.url)}" target="_blank" rel="noopener noreferrer" class="soc-img"><img src="${esc(a.url)}" alt="${esc(t('صورة من العميل'))}" loading="lazy" referrerpolicy="no-referrer"></a>`).join('');
+// المرفقات داخل الشات: الصور مصغرة (والضغط يفتحها كاملة)، والفويس والفيديو بمشغل، والملفات برابط.
+// ماسنجر وإنستجرام بيبعتوا رابط مباشر، وواتساب بيبعت رقم ملف (waMedia) بنزّله من المستقبِل بعد ما الشات يظهر
+const MEDIA_PLACEHOLDER = /\[(صورة|فيديو|رسالة صوتية|ملف|ملصق|مرفق)\]/g;
+const playable = a => !!(a.url || a.waMedia);
+const msgText = m => { const txt = m.text || ''; return m.attach && parseAttach(m.attach).some(playable) ? txt.replace(MEDIA_PLACEHOLDER, '').trim() : txt; };
+const mediaHtml = (type, src, name = '') => type === 'image' || type === 'sticker'
+  ? `<a href="${esc(src)}" target="_blank" rel="noopener noreferrer" class="soc-img"><img src="${esc(src)}" alt="${esc(t('صورة من العميل'))}" loading="lazy" referrerpolicy="no-referrer"></a>`
+  : type === 'audio' ? `<audio class="soc-audio" controls preload="metadata" src="${esc(src)}"></audio>`
+  : type === 'video' ? `<video class="soc-video" controls preload="metadata" src="${esc(src)}"></video>`
+  : `<a href="${esc(src)}" target="_blank" rel="noopener noreferrer" ${name ? `download="${esc(name)}"` : ''} class="soc-file">📎 ${esc(name || t('فتح الملف'))}</a>`;
+const socialAttach = raw => parseAttach(raw).filter(playable).map(a => a.waMedia
+  ? `<div class="soc-media" data-wam="${esc(a.waMedia)}" data-type="${esc(a.type)}" data-name="${esc(a.name || '')}"><span class="muted">⏳ ${t('جارٍ تحميل المرفق...')}</span></div>`
+  : mediaHtml(a.type, a.url, a.name)).join('');
+// تنزيل وسائط واتساب من المستقبِل (محتاج كود الاتصال)، واحدة واحدة، والنتيجة بتتحفظ في الذاكرة علشان ما تتنزلش تاني
+const waMediaCache = new Map();
+async function waMediaUrl(id) {
+  if (waMediaCache.has(id)) return waMediaCache.get(id);
+  const base = String(socialCfg().url || '').replace(/\/+$/, '');
+  const res = await fetch(`${base}/api/wamedia/${encodeURIComponent(id)}`, { headers: { 'X-CRM-Key': localStorage.getItem(CLOUD_KEY_STORE) || '' } });
+  if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || `HTTP ${res.status}`);
+  const url = URL.createObjectURL(await res.blob());
+  waMediaCache.set(id, url);
+  return url;
+}
+async function hydrateWaMedia(root) {
+  for (const el of $$('.soc-media[data-wam]', root)) {
+    try {
+      const url = await waMediaUrl(el.dataset.wam);
+      if (!el.isConnected) continue;
+      el.outerHTML = mediaHtml(el.dataset.type, url, el.dataset.name);
+    } catch (err) {
+      if (el.isConnected) el.innerHTML = `<span class="muted">⚠ ${t('تعذر تحميل المرفق')}: ${esc(err.message === 'whatsapp not configured' ? t('واتساب مش مربوط في Cloudflare') : err.message)}</span>`;
+    }
+  }
+}
 // صور العميل في الشات (صور الزرع غالبًا)، وما حُفظ منها في ملفه يُعرف برقم الرسالة
-const chatImages = msgs => msgs.filter(m => m.dir === 'in' && m.attach).flatMap(m => parseAttach(m.attach).filter(a => a.type === 'image' && a.url).map((a, i) => ({ key: `${m.mid}#${i}`, url: a.url, at: m.at })));
+const chatImages = msgs => msgs.filter(m => m.dir === 'in' && m.attach).flatMap(m => parseAttach(m.attach).filter(a => a.type === 'image' && (a.url || a.waMedia)).map((a, i) => ({ key: `${m.mid}#${i}`, url: a.url || '', wam: a.waMedia || '', at: m.at })));
 async function saveChatImages(cust, conv, images, quiet) {
   const saved = new Set(cust.social?.savedMedia || []);
   const todo = images.filter(im => !saved.has(im.key));
@@ -7677,9 +7716,13 @@ async function saveChatImages(cust, conv, images, quiet) {
   for (const im of todo) {
     try {
       // سيرفرات ميتا لا تسمح للمتصفح بتنزيل الصورة مباشرة، فتمر عبر المستقبِل
-      const res = await fetch(`${base}/api/media?url=${encodeURIComponent(im.url)}`, { headers: { 'X-CRM-Key': localStorage.getItem(CLOUD_KEY_STORE) || '' } });
-      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || `HTTP ${res.status}`);
-      const blob = await res.blob();
+      let blob;
+      if (im.wam) blob = await (await fetch(await waMediaUrl(im.wam))).blob(); // صورة واتساب
+      else {
+        const res = await fetch(`${base}/api/media?url=${encodeURIComponent(im.url)}`, { headers: { 'X-CRM-Key': localStorage.getItem(CLOUD_KEY_STORE) || '' } });
+        if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || `HTTP ${res.status}`);
+        blob = await res.blob();
+      }
       const ext = (blob.type.split('/')[1] || 'jpg').replace('jpeg', 'jpg');
       const file = new File([blob], `chat-${conv.channel}-${localDay(new Date(im.at).toISOString())}-${ok + 1}.${ext}`, { type: blob.type });
       await addCustomerFile(cust.id, file, 'plant', t('صورة أرسلها العميل على {ch} في {d}', { ch: t(SOCIAL_CHANNELS[conv.channel]), d: fmtDT(new Date(im.at).toISOString()) }));
