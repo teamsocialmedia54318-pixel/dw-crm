@@ -667,6 +667,8 @@ button.kpi:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; 
 <script>
 // رابط خدمة جوجل التي تحفظ البيانات. ولو كان فارغًا تُحفظ البيانات في مجلد data على هذا الجهاز
 window.DW_CLOUD_URL = 'https://script.google.com/macros/s/AKfycbyIOpurIGt-kqZ5dawmn9iWS2vQBjT7oqsfmFUrNObgbsNiMHwVGXFfjfLVefUfVvdN/exec';
+// ممر احتياطي على Cloudflare لو الشبكة قافلة script.google.com (يقبل بكود الاتصال نفسه بس)
+window.DW_RELAY_URL = 'https://delta-social.teamsocialmedia318.workers.dev/gas';
 
 </script>
 <script>
@@ -1582,6 +1584,23 @@ const cloudMode = !!window.DW_CLOUD_URL;
 const cloudApi = (action, extra = '') => `${window.DW_CLOUD_URL}?key=${encodeURIComponent(localStorage.getItem(CLOUD_KEY_STORE) || '')}&action=${action}${extra}`;
 // صفحة رابط جوجل تتصل بالخدمة مباشرة عبر google.script.run، والملف يتصل عبر الإنترنت بالرابط نفسه
 const CLOUD_POST = ['save', 'send', 'test', 'upload', 'delfile', 'subscribe'];
+// بعض الشبكات (راوتر أو شركة نت) بتقفل script.google.com: ساعتها الطلب بيروح من ممر على Cloudflare (DW_RELAY_URL)
+// ويفضل يستخدمه 30 دقيقة من غير ما يجرب جوجل الأول. كود الاتصال بيتبعت في هيدر، مش في الرابط
+const RELAY_FLAG = 'dw_cloud_relay_until';
+const relayActive = () => { try { return +sessionStorage.getItem(RELAY_FLAG) > Date.now(); } catch { return false; } };
+async function cloudFetch(action, extra, post, body, key) {
+  const relayUrl = window.DW_RELAY_URL;
+  const direct = () => fetch(cloudApi(action, extra), post ? { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: body ?? '{}' } : { cache: 'no-store' });
+  const relay = () => fetch(`${relayUrl}?action=${action}${extra}`, { method: post ? 'POST' : 'GET', cache: 'no-store', headers: { 'X-CRM-Key': key, ...(post ? { 'Content-Type': 'text/plain;charset=utf-8' } : {}) }, body: post ? (body ?? '{}') : undefined });
+  if (relayUrl && relayActive()) return relay();
+  try { return await direct(); }
+  catch (err) {
+    // فشل في الشبكة نفسها (مش رد من جوجل): نجرب الممر
+    if (!relayUrl) throw err;
+    try { sessionStorage.setItem(RELAY_FLAG, String(Date.now() + 30 * 60 * 1000)); } catch {}
+    return relay();
+  }
+}
 function cloudCall(action, { base, rev, body, id } = {}) {
   const key = localStorage.getItem(CLOUD_KEY_STORE) || '';
   const call = window.google?.script?.run
@@ -1589,7 +1608,7 @@ function cloudCall(action, { base, rev, body, id } = {}) {
     : (async () => {
       const extra = action === 'save' ? `&base=${base}&rev=${rev}` : id ? `&id=${encodeURIComponent(id)}` : '';
       const post = CLOUD_POST.includes(action);
-      const res = await fetch(cloudApi(action, extra), post ? { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: body ?? '{}' } : { cache: 'no-store' });
+      const res = await cloudFetch(action, extra, post, body, key);
       return res.json();
     })();
   // رفع الملفات وتنزيلها يحتاج وقتًا أطول على الإنترنت البطيء
