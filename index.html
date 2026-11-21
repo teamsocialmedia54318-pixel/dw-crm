@@ -527,13 +527,19 @@ html { -webkit-text-size-adjust: 100%; }
 .soc-video { display: block; margin-top: 4px; max-width: 260px; max-height: 260px; border-radius: 10px; background: #000; }
 .soc-file { display: inline-block; margin-top: 4px; padding: 6px 10px; border-radius: 8px; background: var(--card-soft); border: 1px solid var(--border); text-decoration: none; }
 .soc-media { margin-top: 4px; font-size: 12.5px; }
+/* جدول الأقساط القابل للتعديل في الطلب الجديد */
+.inst-head { margin: 8px 0 6px; }
+.inst-tbl td { padding: 4px 6px; vertical-align: middle; }
+.inst-tbl .inp { min-width: 0; }
+.inst-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.inst-sum { margin-top: 8px; font-size: 13px; line-height: 2; }
 .soc-reply { display: flex; gap: 8px; align-items: flex-end; padding: 10px 14px; flex-wrap: wrap; }
 .soc-reply textarea { flex: 1 1 260px; }
 .soc-reply select { width: auto; }
 @media (max-width: 900px) {
   .social-wrap { grid-template-columns: 1fr; }
   .social-thread { display: none; }
-  .social-thread.open { display: flex; position: fixed; inset: 0; z-index: 120; border-radius: 0; margin: 0; min-height: 0; }
+  .social-thread.open { display: flex; position: fixed; inset: 0; z-index: 85; border-radius: 0; margin: 0; min-height: 0; }
   .social-thread.open .soc-msgs { max-height: none; }
   .soc-back { display: inline-flex; }
   .social-list { max-height: none; }
@@ -1051,6 +1057,13 @@ const EN = {
   'واتساب (WA_TOKEN و WA_PHONE_ID)': 'WhatsApp (WA_TOKEN and WA_PHONE_ID)', 'مربوط برقم {n} ({v})': 'Connected to number {n} ({v})', 'جودة الرقم': 'Number quality',
   'لسه ما اتربطش: ضيف WA_TOKEN (Secret) و WA_PHONE_ID (Text) في Cloudflare بعد إعداد واتساب في تطبيق ميتا': 'Not connected yet: add WA_TOKEN (Secret) and WA_PHONE_ID (Text) in Cloudflare after setting up WhatsApp in the Meta app',
   'توكن واتساب غلط أو انتهى: اعمل توكن System User جديد وحطه مكان WA_TOKEN': 'WhatsApp token is wrong or expired: create a new System User token and replace WA_TOKEN', 'ميتا رفضت': 'Meta refused',
+  'المتبقي بعد المقدم': 'Remaining after deposit', 'مجموع الأقساط': 'Installments total', 'مطابق': 'Matches', 'ناقص {n}': 'Short by {n}', 'زيادة {n}': 'Over by {n}',
+  'جدول الأقساط': 'Installment schedule', 'عدّل تاريخ ومبلغ أي قسط، الأقساط مش لازم تكون متساوية': 'Edit the date and amount of any installment; they do not have to be equal',
+  'تاريخ الاستحقاق': 'Due date', 'حذف القسط': 'Remove installment', 'قسط آخر': 'Another installment', 'توزيع بالتساوي': 'Split equally', 'ضع الفرق على آخر قسط': 'Put the difference on the last installment',
+  'أضف قسط واحد على الأقل': 'Add at least one installment', 'حدد تاريخ كل قسط': 'Set a date for every installment', 'كل قسط لازم يكون مبلغه أكبر من صفر': 'Every installment must be more than zero',
+  'مجموع الأقساط ({s}) لا يساوي المتبقي بعد المقدم ({r})': 'Installments total ({s}) does not equal the remaining after deposit ({r})',
+  'درجة ملوحة التربة': 'Soil salinity', 'مثال: 4 dS/m أو 2500 ppm': 'e.g. 4 dS/m or 2500 ppm', 'حالة المزرعة': 'Farm condition',
+  'اكتب أو سجّل صوتيًا: حالة الزرع والأرض، المشاكل اللي العميل شايفها، أي ملاحظات': 'Type or record by voice: crop and soil condition, problems the customer sees, any notes',
   'جارٍ تحميل المرفق...': 'Loading attachment...', 'تعذر تحميل المرفق': 'Could not load the attachment', 'واتساب مش مربوط في Cloudflare': 'WhatsApp is not connected in Cloudflare', 'فتح الملف': 'Open file',
   'توكن System User دائم': 'permanent System User token', 'صلاحيات التوكن': 'Token permissions', 'ناقص منه': 'Missing',
   'أسماء العملاء في المحادثات': 'Customer names in conversations', 'اتجاب اسم {n} محادثة دلوقتي': 'Fetched the name for {n} conversation(s) now', 'كل المحادثات ليها أسماء': 'All conversations have names',
@@ -1522,7 +1535,7 @@ const OUTCOMES = ['تم الرد', 'لم يرد', 'مشغول', 'غير متاح
 const curLabel = o => t(o.currency === 'USD' ? 'دولار' : 'ج.م');
 
 const FIELD_LABELS = {
-  name: 'الاسم', mapLink: 'موقع المزرعة', category: 'تصنيف العميل',buyerClass: 'تصنيف العميل المشتري', viaDistributorId: 'عن طريق الوكيل أو الموزع', phone1: 'رقم الهاتف 1', phone2: 'رقم الهاتف 2', address: 'العنوان', govCode: 'كود المحافظة', subCode: 'كود المنطقة الفرعية', country: 'الدولة', area: 'المساحة', irrigation: 'نوع الري', crops: 'نوع المحصول', salinity: 'درجة ملوحة المياه', waterSource: 'مصدر المياه', deviceType: 'نوع الجهاز المطلوب', deviceSize: 'مقاس الجهاز المطلوب', source: 'مصدر المعرفة', rating: 'تقييم العميل', contactDate: 'تاريخ الاتصال', followupDate: 'تاريخ المتابعة', ownerId: 'رجل البيع', payType: 'حالة الشراء', deposit: 'قيمة المقدم', payDate: 'تاريخ السداد', domainId: 'المجال', assistantIds: 'الزملاء المساعدون', asNextDate: 'موعد متابعة ما بعد البيع', asLastDate: 'آخر متابعة بعد البيع', purchased: 'عميل مشترٍ', purchaseDate: 'تاريخ الشراء', waters: 'مصادر المياه ودرجة ملوحتها', devices: 'الأجهزة المطلوبة', email1: 'البريد الإلكتروني 1', email2: 'البريد الإلكتروني 2',
+  name: 'الاسم', mapLink: 'موقع المزرعة', category: 'تصنيف العميل',buyerClass: 'تصنيف العميل المشتري', viaDistributorId: 'عن طريق الوكيل أو الموزع', phone1: 'رقم الهاتف 1', phone2: 'رقم الهاتف 2', address: 'العنوان', govCode: 'كود المحافظة', subCode: 'كود المنطقة الفرعية', country: 'الدولة', area: 'المساحة', irrigation: 'نوع الري', crops: 'نوع المحصول', salinity: 'درجة ملوحة المياه', soilSalinity: 'درجة ملوحة التربة', farmState: 'حالة المزرعة', waterSource: 'مصدر المياه', deviceType: 'نوع الجهاز المطلوب', deviceSize: 'مقاس الجهاز المطلوب', source: 'مصدر المعرفة', rating: 'تقييم العميل', contactDate: 'تاريخ الاتصال', followupDate: 'تاريخ المتابعة', ownerId: 'رجل البيع', payType: 'حالة الشراء', deposit: 'قيمة المقدم', payDate: 'تاريخ السداد', domainId: 'المجال', assistantIds: 'الزملاء المساعدون', asNextDate: 'موعد متابعة ما بعد البيع', asLastDate: 'آخر متابعة بعد البيع', purchased: 'عميل مشترٍ', purchaseDate: 'تاريخ الشراء', waters: 'مصادر المياه ودرجة ملوحتها', devices: 'الأجهزة المطلوبة', email1: 'البريد الإلكتروني 1', email2: 'البريد الإلكتروني 2',
 };
 // البريد الإلكتروني للعميل اختياري (بريد واحد أو اثنان)، ويُقبل فقط بصيغة صحيحة
 const EMAIL_RX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -2216,7 +2229,7 @@ const nextCustomerCode = () => {
 };
 function createCustomer(data, opts = {}) {
   const c = {
-    id: uid(), code: nextCustomerCode(), market: 'egypt', country: '', govCode: '', subCode: '', name: '', category: '', viaDistributorId: '', files: [], phone1: '', phone2: '', email1: '', email2: '', address: '', mapLink: '', area: '', irrigation: '', crops: [], salinity: '', waterSource: '', deviceType: '', deviceSize: '', source: '', rating: 'جيد', contactDate: today(), followupDate: '', payType: '', deposit: '', payDate: '', ownerId: ME?.id, createdAt: nowStamp(), archived: false, domainId: DB.domains[0]?.id, custom: {}, assistantIds: [], shares: [], stageId: '', stageHistory: [], ...data,
+    id: uid(), code: nextCustomerCode(), market: 'egypt', country: '', govCode: '', subCode: '', name: '', category: '', viaDistributorId: '', files: [], phone1: '', phone2: '', email1: '', email2: '', address: '', mapLink: '', area: '', irrigation: '', crops: [], salinity: '', soilSalinity: '', farmState: '', waterSource: '', deviceType: '', deviceSize: '', source: '', rating: 'جيد', contactDate: today(), followupDate: '', payType: '', deposit: '', payDate: '', ownerId: ME?.id, createdAt: nowStamp(), archived: false, domainId: DB.domains[0]?.id, custom: {}, assistantIds: [], shares: [], stageId: '', stageHistory: [], ...data,
   };
   if (!c.stageId) c.stageId = stagesFor(c)[0]?.id || '';
   c.stageHistory = [{ stageId: c.stageId, at: nowStamp(), userId: ME?.id || c.ownerId, note: '' }];
@@ -2733,7 +2746,9 @@ const BASE_COLUMNS = [
   ['irrigation', 'نوع الري', c => tv(c.irrigation)],
   ['crops', 'نوع المحصول', c => (c.crops || []).map(tv).join(LANG === 'en' ? ', ' : '، ')],
   ['salinity', 'درجة ملوحة المياه', c => c.salinity],
+  ['soilSalinity', 'درجة ملوحة التربة', c => c.soilSalinity || ''],
   ['waterSource', 'مصدر المياه', c => custWaters(c).map(w => tv(w.source)).filter(Boolean).join(' + ')],
+  ['farmState', 'حالة المزرعة', c => c.farmState || ''],
   ['deviceType', 'نوع الجهاز المطلوب', c => tv(c.deviceType)],
   ['deviceSize', 'مقاس الجهاز المطلوب', c => tv(c.deviceSize)],
   ['devices', 'الأجهزة المطلوبة', c => devicesText(c)],
@@ -2817,6 +2832,8 @@ const IMPORT_HEADERS = {
   irrigation: ['نوع الري', 'irrigation'],
   crops: ['نوع المحصول', 'المحصول', 'المحاصيل', 'نوع الزراعات', 'الزراعات', 'نوع الزراعة', 'crop', 'crops'],
   salinity: ['درجة ملوحة المياه', 'الملوحة', 'ملوحة المياه', 'درجة الملوحة', 'salinity'],
+  soilSalinity: ['درجة ملوحة التربة', 'ملوحة التربة', 'ملوحة الارض', 'ملوحة الأرض', 'soil salinity'],
+  farmState: ['حالة المزرعة', 'حالة الارض', 'حالة الأرض', 'farm condition', 'farm state'],
   waterSource: ['مصدر المياه', 'water source'],
   deviceType: ['نوع الجهاز المطلوب', 'نوع الجهاز', 'الجهاز', 'القطر والموديل', 'الموديل', 'device', 'device type'],
   deviceSize: ['مقاس الجهاز المطلوب', 'مقاس الجهاز', 'المقاس', 'القطر', 'size', 'device size'],
@@ -2870,7 +2887,7 @@ function matchUser(v) {
   if (!k) return null;
   return DB.users.find(u => u.active && personKey(u.name) === k) || (k.length >= 6 && DB.users.find(u => u.active && personKey(u.name).length >= 6 && (personKey(u.name).includes(k) || k.includes(personKey(u.name))))) || null;
 }
-const IMPORT_TEMPLATE = () => [...['الاسم', 'رقم الهاتف 1', 'رقم الهاتف 2', 'تصنيف العميل', 'الدولة', 'المحافظة', 'كود المنطقة', 'العنوان', 'المساحة', 'نوع الري', 'نوع المحصول', 'درجة ملوحة المياه', 'مصدر المياه', 'نوع الجهاز المطلوب', 'مقاس الجهاز المطلوب', 'مصدر المعرفة', 'تقييم العميل', 'تاريخ الاتصال', 'تاريخ المتابعة', 'حالة الشراء', 'قيمة المقدم', 'تاريخ السداد'].map(x => t(x)), ...activeFields().map(f => label(f))];
+const IMPORT_TEMPLATE = () => [...['الاسم', 'رقم الهاتف 1', 'رقم الهاتف 2', 'تصنيف العميل', 'الدولة', 'المحافظة', 'كود المنطقة', 'العنوان', 'المساحة', 'نوع الري', 'نوع المحصول', 'درجة ملوحة المياه', 'درجة ملوحة التربة', 'مصدر المياه', 'حالة المزرعة', 'نوع الجهاز المطلوب', 'مقاس الجهاز المطلوب', 'مصدر المعرفة', 'تقييم العميل', 'تاريخ الاتصال', 'تاريخ المتابعة', 'حالة الشراء', 'قيمة المقدم', 'تاريخ السداد'].map(x => t(x)), ...activeFields().map(f => label(f))];
 const normHeader = s => String(s ?? '').trim().toLowerCase().replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/\s+/g, ' ');
 function parseDateCell(v) {
   if (v === '' || v === null || v === undefined) return '';
@@ -2975,7 +2992,7 @@ function analyzeImport(rows, ownerId) {
     Object.entries(fieldIdx).forEach(([id, i]) => { custom[id] = r[i] ?? ''; });
     const contactDate = parseDateCell(raw.contactDate) || today();
     const item = {
-      ownerId: rowOwner, name, category, phone1: p1, phone2: p2, email1: importEmail(raw.email1), email2: importEmail(raw.email2), market, country, ...loc, address: cleanCell(raw.address), area: raw.area === '' || raw.area === undefined ? '' : (parseFloat(raw.area) || ''), irrigation: cleanCell(raw.irrigation), crops, salinity: cleanCell(raw.salinity), waterSource: cleanCell(raw.waterSource), ...parsedDev, source: cleanCell(raw.source), rating, contactDate, followupDate: parseDateCell(raw.followupDate), payType, deposit: raw.deposit ? (parseFloat(raw.deposit) || '') : '', payDate: parseDateCell(raw.payDate), custom,
+      ownerId: rowOwner, name, category, phone1: p1, phone2: p2, email1: importEmail(raw.email1), email2: importEmail(raw.email2), market, country, ...loc, address: cleanCell(raw.address), area: raw.area === '' || raw.area === undefined ? '' : (parseFloat(raw.area) || ''), irrigation: cleanCell(raw.irrigation), crops, salinity: cleanCell(raw.salinity), soilSalinity: cleanCell(raw.soilSalinity), farmState: cleanCell(raw.farmState), waterSource: cleanCell(raw.waterSource), ...parsedDev, source: cleanCell(raw.source), rating, contactDate, followupDate: parseDateCell(raw.followupDate), payType, deposit: raw.deposit ? (parseFloat(raw.deposit) || '') : '', payDate: parseDateCell(raw.payDate), custom,
     };
     if (buyer) Object.assign(item, { purchased: true, purchaseDate: contactDate, stageId: stageById('st_after') ? 'st_after' : '' });
     else if (status && stageById(status)) item.stageId = status;
@@ -4220,6 +4237,11 @@ function bindWaters(root) {
   };
   bindDel();
 }
+// ملوحة التربة (بعد مصادر المياه) وحالة المزرعة (كتابة أو تسجيل صوتي بالميكروفون)
+const soilField = d => `<div class="field"><label>${t('درجة ملوحة التربة')}</label><input class="inp" dir="ltr" data-f="soilSalinity" value="${esc(d.soilSalinity || '')}" placeholder="${t('مثال: 4 dS/m أو 2500 ppm')}"></div>`;
+const farmStateField = (d, p) => `<div class="field"><label>${t('حالة المزرعة')}</label>
+  <div class="mic-box mic-inline"><button type="button" class="mic" id="${p}farmMic" aria-label="${t('تسجيل صوتي')}">🎙</button><div class="mic-status" id="${p}farmSt"></div></div>
+  <textarea class="inp" data-f="farmState" id="${p}farmTxt" rows="3" placeholder="${t('اكتب أو سجّل صوتيًا: حالة الزرع والأرض، المشاكل اللي العميل شايفها، أي ملاحظات')}">${esc(d.farmState || '')}</textarea></div>`;
 const readWaters = root => $$('#wrows .multi-row', root).map(r => ({ source: $('[data-ws]', r).value, salinity: $('[data-wsal]', r).value.trim() })).filter(w => w.source || w.salinity);
 // رفع تحليل المياه أو التربة: صورة أو PDF
 const fileKindSelect = (id, sel = 'water') => `<select class="inp" id="${id}">${optsT(Object.entries(FILE_KINDS), sel)}</select>`;
@@ -4306,7 +4328,7 @@ function openWizard(market = 'egypt', preset = {}, opts = {}) {
   // عضو سمح له مسؤول الفريق بتسجيل العملاء الجدد باسمه: يُسجَّل العميل باسم المسؤول دون أن يُشارَك مع من أدخله
   const forLeader = myMembership()?.addForLeader ? myTeam().leaderId : '';
   const defOwner = forLeader || (userCan(ME, 'customers.hold') ? ME.id : (sellers()[0]?.id || ME.id));
-  const d = { market, category: '', viaDistributorId: '', country: '', govCode: '', subCode: '', name: '', phone1: '', phone2: '', email1: '', email2: '', address: '', area: '', irrigation: '', crops: [], salinity: '', waterSource: '', deviceType: '', deviceSize: '', waters: [], devices: [], source: '', rating: 'جيد', contactDate: today(), followupDate: addDays(today(), 3), firstNote: '', ownerId: defOwner, domainId: activeDomains()[0]?.id, custom: {}, ...preset };
+  const d = { market, category: '', viaDistributorId: '', country: '', govCode: '', subCode: '', name: '', phone1: '', phone2: '', email1: '', email2: '', address: '', area: '', irrigation: '', crops: [], salinity: '', soilSalinity: '', farmState: '', waterSource: '', deviceType: '', deviceSize: '', waters: [], devices: [], source: '', rating: 'جيد', contactDate: today(), followupDate: addDays(today(), 3), firstNote: '', ownerId: defOwner, domainId: activeDomains()[0]?.id, custom: {}, ...preset };
   const STEPS = ['بيانات الاتصال', 'الموقع', 'الأرض والمياه', 'الطلب والتقييم', 'المتابعة'];
   let step = 0, via = { id: '', newName: '' };
   // ملفات التحاليل المختارة أثناء الإدخال، وتُرفع بعد حفظ العميل
@@ -4364,8 +4386,9 @@ function openWizard(market = 'egypt', preset = {}, opts = {}) {
         : `<div class="field"><label>${t('الدولة')} <span class="req">*</span></label><select class="inp" data-f="country">${countryOptions(d.country)}</select></div><div class="field"><label>${t('العنوان')}</label><input class="inp" data-f="address" value="${esc(d.address)}"></div>${mapField(d)}`,
       () => `<div class="grid2"><div class="field"><label>${t('المساحة (فدان)')}</label><input class="inp" type="number" min="0" data-f="area" value="${esc(d.area)}"></div>
         <div class="field"><label>${t('نوع الري')}</label><select class="inp" data-f="irrigation">${optsT(DB.lists.irrigation, d.irrigation, t('اختر'))}</select></div></div>
-        ${waterFields(d)}
+        ${waterFields(d)}${soilField(d)}
         <div class="field"><label>${t('نوع المحصول')} <small class="muted">(${t('اختياري لو لسه ما اتكلمتش مع العميل')})</small></label>${cropPicker()}</div>
+        ${farmStateField(d, 'w')}
         <div class="field"><label>${t('تحليل المياه أو التربة (اختياري)')}</label><div class="grid2">${fileKindSelect('wkind')}<input class="inp" type="file" id="wfile" accept="${FILE_ACCEPT}" multiple></div><div class="chips mt" id="wfiles"></div><small class="muted">${t('صورة أو ملف PDF، ويمكن إضافته لاحقًا من ملف العميل')}</small></div>
         <div class="grid2">${customFieldInputs('land', d)}</div>`,
       () => `${deviceFields(d)}<div class="grid2"><div class="field"><label>${t('مصدر المعرفة')}</label><select class="inp" data-f="source">${optsT(DB.lists.source, d.source, t('اختر'))}</select></div>${viaField(d)}</div>
@@ -4395,6 +4418,7 @@ function openWizard(market = 'egypt', preset = {}, opts = {}) {
     if (step === 1) bindMap(box);
     if (step === 4) stopNoteMic = bindMic(box, { mic: '#fmic', status: '#fms', input: '#fnote1' });
     if (step === 2) {
+      stopNoteMic = bindMic(box, { mic: '#wfarmMic', status: '#wfarmSt', input: '#wfarmTxt' });
       bindCropPicker(box, d);
       bindWaters(box);
       const drawFiles = () => {
@@ -4561,6 +4585,7 @@ function openCustomer(id, tab = 'journey') {
         ${activeDomains().length > 1 ? kv(t('المجال'), esc(label(DB.domains.find(x => x.id === c.domainId)))) : ''}${kv(t('المرحلة'), stagePill(c))}
         ${kv(t('المساحة'), c.area === '' ? '' : `${esc(c.area)} ${t('فدان')}`)}${kv(t('نوع الري'), esc(tv(c.irrigation)))}
         ${kv(t('نوع المحصول'), esc(c.crops.map(tv).join(LANG === 'en' ? ', ' : '، ')))}${kv(t('مصادر المياه ودرجة ملوحتها'), watersHtml(c))}
+        ${kv(t('درجة ملوحة التربة'), c.soilSalinity ? `<span dir="ltr">${esc(c.soilSalinity)}</span>` : '')}${kv(t('حالة المزرعة'), c.farmState ? esc(c.farmState).replace(/\n/g, '<br>') : '')}
         ${kv(t('الأجهزة المطلوبة'), devicesHtml(c))}
         ${kv(t('مصدر المعرفة'), esc(tv(c.source)))}
         ${kv(t('تقييم العميل'), ratingPill(c.rating))}${kv(t('تاريخ الاتصال'), fmtDate(c.contactDate))}
@@ -4662,8 +4687,9 @@ function openEditCustomer(id, onDone) {
       <div class="field"><label>${t('العنوان')}</label><input class="inp" data-f="address" value="${esc(c.address)}"></div>
       ${mapField(c)}
       <div class="grid3"><div class="field"><label>${t('المساحة (فدان)')}</label><input class="inp" type="number" data-f="area" value="${esc(c.area)}"></div><div class="field"><label>${t('نوع الري')}</label><select class="inp" data-f="irrigation">${optsT(DB.lists.irrigation, c.irrigation, t('اختر'))}</select></div><div></div></div>
-      ${waterFields(c)}
+      ${waterFields(c)}${soilField(c)}
       <div class="field"><label>${t('نوع المحصول')}</label>${cropPicker()}</div>
+      ${farmStateField(c, 'e')}
       ${deviceFields(c)}
       <div class="grid3"><div class="field"><label>${t('مصدر المعرفة')}</label><select class="inp" data-f="source">${optsT(DB.lists.source, c.source, t('اختر'))}</select></div><div class="field"><label>${t('التقييم')}</label><select class="inp" data-f="rating">${optsT(RATINGS, c.rating)}</select></div><div class="field"><label>${t('تاريخ المتابعة')}</label><input class="inp" type="date" data-f="followupDate" value="${c.followupDate}"></div></div>
       ${viaField(d)}
@@ -4679,8 +4705,10 @@ function openEditCustomer(id, onDone) {
   bindWaters(m.el);
   bindCategory(m.el, d);
   bindVia(m.el);
+  const stopFarmMic = bindMic(m.el, { mic: '#efarmMic', status: '#efarmSt', input: '#efarmTxt' });
   $$('#asst .chip', m.el).forEach(b => b.onclick = () => b.classList.toggle('on'));
   $('#sv', m.el).onclick = () => {
+    stopFarmMic();
     const patch = { crops: d.crops, category: d.category, custom: readCustomFields(m.el, c.custom) };
     $$('[data-f]', m.el).forEach(el => { patch[el.dataset.f] = el.value.trim(); });
     const via = readVia(m.el, patch.source);
@@ -5264,26 +5292,64 @@ function openOrderForm(customerId) {
   let payType = 'cash';
   const cur = () => $('#cur', m.el).value;
   const total = () => Math.max(0, items.reduce((s, i) => s + (+i.qty || 0) * (+i.price || 0), 0) - (+$('#disc', m.el).value || 0));
-  const schedule = () => {
-    const dep = +($('#dep', m.el)?.value) || 0, rest = Math.max(0, total() - dep);
-    if (payType === 'cash') return [];
-    if (payType === 'deposit') return [{ id: uid(), due: $('#first', m.el).value, amount: rest, paid: false, paidAt: '' }];
-    const n = Math.max(1, +$('#cnt', m.el).value || 1), each = Math.floor(rest / n), first = $('#first', m.el).value;
-    return Array.from({ length: n }, (_, k) => ({ id: uid(), due: addMonths(first, k), amount: k === n - 1 ? rest - each * (n - 1) : each, paid: false, paidAt: '' }));
+  // جدول الأقساط: رجل البيع يحدد العدد، والنظام يقترح توزيعًا متساويًا شهريًا، وبعدها يعدّل تاريخ ومبلغ كل قسط بحرية
+  // (أقساط غير متساوية، مواعيد مختلفة، يضيف أو يحذف قسط). الحفظ ما بيتمش غير لو مجموع الأقساط = المتبقي بعد المقدم
+  let plan = [], planEdited = false;
+  const rest = () => Math.max(0, total() - (+($('#dep', m.el)?.value) || 0));
+  const equalPlan = () => {
+    const n = Math.max(1, Math.min(60, +($('#cnt', m.el)?.value) || 1)), first = $('#first', m.el)?.value || addMonths(today(), 1), r = rest(), each = Math.floor(r / n);
+    plan = Array.from({ length: n }, (_, k) => ({ id: uid(), due: addMonths(first, k), amount: k === n - 1 ? r - each * (n - 1) : each, paid: false, paidAt: '' }));
+    planEdited = false;
   };
-  const planPreview = () => {
-    const list = schedule();
-    return list.length ? `<div class="muted">${t('جدول السداد:')}</div><div class="chips">${list.map(i => `<span class="pill p-gray">${fmtDate(i.due)}: ${money(i.amount)}</span>`).join('')}</div>` : '';
+  const planSum = () => plan.reduce((s, p) => s + (+p.amount || 0), 0);
+  const schedule = () => {
+    if (payType === 'cash') return [];
+    if (payType === 'deposit') return [{ id: uid(), due: $('#first', m.el).value, amount: rest(), paid: false, paidAt: '' }];
+    return plan.map(p => ({ ...p, amount: +p.amount || 0 })).sort((a, b) => a.due.localeCompare(b.due));
+  };
+  const planSummary = () => {
+    const r = rest(), s = planSum(), diff = Math.round((r - s) * 100) / 100;
+    return `${t('المتبقي بعد المقدم')}: <b>${money(r)}</b> · ${t('مجموع الأقساط')}: <b>${money(s)}</b> · ${diff === 0 ? `<span class="pill p-green">✓ ${t('مطابق')}</span>` : `<span class="pill p-red">${diff > 0 ? t('ناقص {n}', { n: money(diff) }) : t('زيادة {n}', { n: money(-diff) })}</span>`}`;
+  };
+  const drawPlan = () => {
+    const box = $('#plan', m.el);
+    if (!box) return;
+    if (payType === 'deposit') {
+      const list = schedule();
+      box.innerHTML = list.length ? `<div class="muted">${t('جدول السداد:')}</div><div class="chips">${list.map(i => `<span class="pill p-gray">${fmtDate(i.due)}: ${money(i.amount)}</span>`).join('')}</div>` : '';
+      return;
+    }
+    box.innerHTML = `<div class="inst-head"><b>${t('جدول الأقساط')}</b> <small class="muted">${t('عدّل تاريخ ومبلغ أي قسط، الأقساط مش لازم تكون متساوية')}</small></div>
+      <div class="tbl-wrap"><table class="tbl inst-tbl"><thead><tr><th>#</th><th>${t('تاريخ الاستحقاق')}</th><th>${t('المبلغ')}</th><th></th></tr></thead><tbody>
+      ${plan.map((p, i) => `<tr><td>${i + 1}</td><td><input class="inp" type="date" data-pi="${i}" data-pk="due" value="${esc(p.due)}"></td><td><input class="inp" type="number" min="0" step="any" data-pi="${i}" data-pk="amount" value="${esc(p.amount)}"></td><td>${plan.length > 1 ? `<button type="button" class="btn sm x-btn" data-prm="${i}" aria-label="${t('حذف القسط')}">×</button>` : ''}</td></tr>`).join('')}
+      </tbody></table></div>
+      <div class="inst-actions"><button type="button" class="btn sm" id="pAdd">+ ${t('قسط آخر')}</button><button type="button" class="btn sm" id="pEq">⚖ ${t('توزيع بالتساوي')}</button><button type="button" class="btn sm" id="pFix">${t('ضع الفرق على آخر قسط')}</button></div>
+      <div class="inst-sum" id="pSum">${planSummary()}</div>`;
+    $$('[data-pi]', box).forEach(el => el.oninput = () => { plan[+el.dataset.pi][el.dataset.pk] = el.value; planEdited = true; $('#pSum', m.el).innerHTML = planSummary(); });
+    $$('[data-prm]', box).forEach(b => b.onclick = () => { plan.splice(+b.dataset.prm, 1); planEdited = true; $('#cnt', m.el).value = plan.length; drawPlan(); });
+    $('#pAdd', box).onclick = () => {
+      const last = plan[plan.length - 1], diff = Math.max(0, rest() - planSum());
+      plan.push({ id: uid(), due: last?.due ? addMonths(last.due, 1) : addMonths(today(), 1), amount: diff, paid: false, paidAt: '' });
+      planEdited = true; $('#cnt', m.el).value = plan.length; drawPlan();
+    };
+    $('#pEq', box).onclick = () => { equalPlan(); drawPlan(); };
+    $('#pFix', box).onclick = () => { const last = plan[plan.length - 1]; if (!last) return; last.amount = Math.max(0, Math.round(((+last.amount || 0) + rest() - planSum()) * 100) / 100); planEdited = true; drawPlan(); };
   };
   const upd = () => {
     $('#tot', m.el).textContent = money(total());
-    const plan = $('#plan', m.el);
-    if (plan) plan.innerHTML = planPreview();
+    // لو رجل البيع لسه ما عدّلش الجدول، يتوزع تاني بالتساوي مع أي تغيير في الإجمالي أو المقدم؛ ولو عدّل، يتحدث الملخص بس
+    if (payType === 'installment') { if (!planEdited) { equalPlan(); drawPlan(); } else { const s = $('#pSum', m.el); if (s) s.innerHTML = planSummary(); } }
+    else drawPlan();
   };
   const drawPay = () => {
     const box = $('#payBox', m.el);
-    box.innerHTML = payType === 'cash' ? '' : `<div class="grid3"><div class="field"><label>${t('قيمة المقدم')}</label><input class="inp" type="number" min="0" id="dep" value="0"></div>${payType === 'installment' ? `<div class="field"><label>${t('عدد الأقساط')}</label><input class="inp" type="number" min="1" id="cnt" value="3"></div>` : ''}<div class="field"><label>${t(payType === 'installment' ? 'تاريخ أول قسط' : 'تاريخ سداد المتبقي')}</label><input class="inp" type="date" id="first" value="${addMonths(today(), 1)}"></div></div><div id="plan"></div>`;
-    $$('input', box).forEach(i => i.oninput = upd);
+    box.innerHTML = payType === 'cash' ? '' : `<div class="grid3"><div class="field"><label>${t('قيمة المقدم')}</label><input class="inp" type="number" min="0" id="dep" value="0"></div>${payType === 'installment' ? `<div class="field"><label>${t('عدد الأقساط')}</label><input class="inp" type="number" min="1" max="60" id="cnt" value="3"></div>` : ''}<div class="field"><label>${t(payType === 'installment' ? 'تاريخ أول قسط' : 'تاريخ سداد المتبقي')}</label><input class="inp" type="date" id="first" value="${addMonths(today(), 1)}"></div></div><div id="plan"></div>`;
+    const dep = $('#dep', box), cnt = $('#cnt', box), first = $('#first', box);
+    if (dep) dep.oninput = upd;
+    // تغيير العدد أو تاريخ أول قسط = جدول جديد متساوي يبدأ منه
+    if (cnt) cnt.oninput = () => { equalPlan(); drawPlan(); };
+    if (first) first.oninput = () => { if (payType === 'installment') { equalPlan(); drawPlan(); } else drawPlan(); };
+    if (payType === 'installment') equalPlan();
     upd();
   };
   const drawItems = () => {
@@ -5318,6 +5384,13 @@ function openOrderForm(customerId) {
     const deposit = +($('#dep', m.el)?.value) || 0;
     if (deposit > tot) { toast(t('المقدم أكبر من إجمالي الطلب'), 'err'); return; }
     if (deposit >= tot && payType === 'deposit') { toast(t('عند سداد المبلغ كاملًا يرجى اختيار نقدًا'), 'err'); return; }
+    if (payType === 'installment') {
+      if (!plan.length) { toast(t('أضف قسط واحد على الأقل'), 'err'); return; }
+      if (plan.some(p => !p.due)) { toast(t('حدد تاريخ كل قسط'), 'err'); return; }
+      if (plan.some(p => !(+p.amount > 0))) { toast(t('كل قسط لازم يكون مبلغه أكبر من صفر'), 'err'); return; }
+      const diff = Math.round((rest() - planSum()) * 100) / 100;
+      if (diff !== 0) { toast(t('مجموع الأقساط ({s}) لا يساوي المتبقي بعد المقدم ({r})', { s: money(planSum()), r: money(rest()) }), 'err'); return; }
+    }
     const orderItems = items.map(i => {
       const p = DB.products.find(x => x.id === i.productId);
       return { productId: p.id, type: p.type, size: p.size, qty: +i.qty, price: +i.price };
@@ -8378,7 +8451,7 @@ function customerBrief(c) {
   const fus = followupsOf(c.id).slice(0, 6).map(f => ({ التاريخ: String(f.at).slice(0, 10), النتيجة: f.outcome || '', الملاحظة: String(f.text || '').slice(0, 300) }));
   return {
     الاسم_الأول: firstName(c.name), السوق: c.market === 'egypt' ? 'مصر' : 'خارج مصر', المكان: c.market === 'egypt' ? custLocation(c) : c.country,
-    التصنيف: c.category || '', المحصول: c.crops || [], المساحة_فدان: c.area, مصادر_المياه_والملوحة: custWaters(c), نوع_الري: c.irrigation || '',
+    التصنيف: c.category || '', المحصول: c.crops || [], المساحة_فدان: c.area, مصادر_المياه_والملوحة: custWaters(c), ملوحة_التربة: c.soilSalinity || '', حالة_المزرعة: String(c.farmState || '').slice(0, 600), نوع_الري: c.irrigation || '',
     الأجهزة_المطلوبة: devicesText(c), المرحلة: label(stageById(c.stageId)), التقييم: c.rating, مصدر_المعرفة: c.source || '',
     اشترى_قبل_ذلك: buyerIds().has(c.id), المتابعة_القادمة: c.followupDate || '', آخر_المتابعات: fus,
     ...(c.social ? { جاء_من: `${SOCIAL_CHANNELS[c.social.channel] || ''}${c.social.adTitle ? ` - إعلان ${c.social.adTitle}` : ''}` } : {}),
@@ -8755,7 +8828,7 @@ const NAV = [
   { path: 'season', label: 'مواسم المحاصيل', ic: '🌱', view: viewSeason },
   { path: 'regions', label: 'أكواد المناطق', ic: '📍', view: viewRegions },
   { group: 'المبيعات' },
-  { path: 'orders', label: 'الطلبات والأقساط', ic: '🧾', view: viewOrders },
+  { path: 'orders', label: 'الطلبات', ic: '🧾', view: viewOrders },
   { path: 'agents', label: 'الوكلاء', ic: '🌐', view: viewAgents, show: () => can('distributors.view') },
   { path: 'distributors', label: 'الموزعون', ic: '🏪', view: viewDistributors, show: () => can('distributors.view') },
   { group: 'ما بعد البيع', show: () => can('aftersales.view') || can('support.view') },
