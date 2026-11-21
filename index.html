@@ -154,6 +154,15 @@ textarea.inp { resize: vertical; min-height: 80px; }
 .p-red { background: var(--red-bg); color: var(--red); }
 .p-blue { background: var(--blue-bg); color: var(--blue); }
 .p-gray { background: #eef1f7; color: var(--muted); }
+.p-purple { background: #f0e9fb; color: #5b3a96; }
+.pill.sm { font-size: 11px; padding: 1px 7px; }
+.inst-note { border-inline-start: 3px solid var(--teal, #0d74a7); background: var(--card-soft); padding: 6px 10px; border-radius: 6px; margin-top: 6px; }
+.inst-row.click:hover { background: var(--card-soft); cursor: pointer; }
+.fin-sum { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.fin-sum > div { flex: 1 1 140px; background: var(--card-soft); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; }
+.fin-sum .l { font-size: 12px; color: var(--muted); }
+.fin-sum .v { font-size: 16px; font-weight: 800; }
+.fin-sum .bad .v { color: var(--red); }
 .p-plant { background: #e2f5e9; color: #1f6d42; }
 .p-harvest { background: #fdf0d5; color: #8a5a00; }
 .code-tag { font-family: Consolas, monospace; font-size: 12px; background: #eef1f7; padding: 0 6px; border-radius: 4px; direction: ltr; display: inline-block; color: var(--navy); }
@@ -1983,8 +1992,11 @@ const defaultRoles = () => [
   { id: 'viewer', name: 'مشاهدة فقط', perms: ['customers.view_all', 'orders.view_all', 'aftersales.view', 'support.view', 'analytics.team', 'calendar.team', 'activity.view'], system: false },
   ...extraRoles(),
 ].map(r => r.id === 'owner' || r.id === 'manager' ? r : { ...r, perms: [...new Set([...r.perms, ...BASE_PERMS])] });
+// مدير الحسابات: ملوش عملاء ومش بيتسند له عملاء ولا بيضيف أو يعدّل عملاء أو يسجل متابعات بيع.
+// بيشوف كل العملاء وأرقامهم وكل الطلبيات (علشان الحسابات)، ومعاه صلاحية الحسابات والتحليلات والتصدير
+const ACCOUNTS_PERMS = ['customers.view_all', 'customers.view_phones', 'orders.view_all', 'finance.manage', 'analytics.team', 'analytics.export_team', 'export.all', 'export.lists', 'distributors.view'];
 const extraRoles = () => [
-  { id: 'accounts', name: 'مدير الحسابات', perms: ['customers.view_all', 'customers.view_phones', 'orders.view_all', 'orders.manage', 'orders.collect', 'finance.manage', 'aftersales.view', 'support.view', 'calendar.team', 'analytics.own', 'analytics.team', 'analytics.export_own', 'analytics.export_team', 'export.all', 'distributors.manage'], system: false },
+  { id: 'accounts', name: 'مدير الحسابات', perms: ACCOUNTS_PERMS, system: false },
   { id: 'marketing', name: 'مدير التسويق', perms: ['customers.view_all', 'customers.view_phones', 'customers.create', 'customers.edit', 'customers.import', 'customers.assign', 'customers.share', 'followups.add', 'stages.move', 'orders.view_all', 'aftersales.view', 'support.view', 'calendar.team', 'analytics.own', 'analytics.team', 'analytics.export_own', 'analytics.export_team', 'export.all', 'distributors.manage'], system: false },
 ];
 const roleById = id => DB.roles.find(r => r.id === id);
@@ -2159,6 +2171,9 @@ const NOTICE_KINDS = { follow: 'حوّل إليك العميل {name} للمتا
   ord_new: 'أرسل طلبية جديدة للعميل {name} وهي بانتظار المراجعة', ord_fwd: 'أرسل طلبية العميل {name} لاعتماد الإدارة', ord_ok: 'اعتمد طلبية العميل {name}',
   ord_back: 'أعاد طلبية العميل {name} للحسابات للمراجعة', ord_edit: 'عدّل طلبية العميل {name}', ord_status: 'غيّر حالة طلبية العميل {name}',
   ord_paid: 'سجّل تحصيل قسط من العميل {name}',
+  inst_post: 'طلب تغيير تاريخ قسط العميل {name} وبانتظار اعتماد الإدارة', inst_post_ok: 'اعتمد تغيير تاريخ قسط العميل {name}', inst_post_no: 'رفض تغيير تاريخ قسط العميل {name}',
+  inst_note: 'كتب متابعة على قسط العميل {name}',
+  inst_soon: 'تذكير: العميل {name} عليه قسط بعد أقل من أسبوع، يرجى المتابعة', inst_today: 'قسط العميل {name} مستحق اليوم', inst_late: 'قسط العميل {name} متأخر عن موعده',
   conv_req: 'طلب تحويل طلبية العميل {name} من نقدي إلى تقسيط', conv_ok: 'وافق على تحويل طلبية العميل {name} إلى تقسيط', conv_no: 'رفض تحويل طلبية العميل {name} إلى تقسيط' };
 // conv: تحويل محادثة من رسائل السوشيال (رقمها واسم صاحبها) بدل عميل مسجل
 function addNotice(to, kind, customerIds, text, conv) {
@@ -2175,7 +2190,8 @@ const noticeText = n => {
   if (n.convId) return `${userName(n.from)} ${t(NOTICE_KINDS.social, { name: n.convName || t('عميل') })}`;
   const c = custById(n.customerIds?.[0]);
   const more = n.customerIds.length > 1 ? ` ${t('و{n} عملاء آخرين', { n: n.customerIds.length - 1 })}` : '';
-  return `${userName(n.from)} ${t(NOTICE_KINDS[n.kind] || NOTICE_KINDS.follow, { name: c?.name || '' })}${more}`;
+  // تنبيهات النظام (تذكير الأقساط) من غير اسم مرسل
+  return `${n.from ? `${userName(n.from)} ` : ''}${t(NOTICE_KINDS[n.kind] || NOTICE_KINDS.follow, { name: c?.name || '' })}${more}`;
 };
 function markNoticesRead(ids) {
   const set = new Set(ids);
@@ -2637,7 +2653,9 @@ function customerSeason(c, m = new Date().getMonth()) {
 // ------- الطلبات -------
 const fx = o => o.currency === 'USD' ? (DB.settings.usdRate || 1) : 1;
 const orderValue = o => o.total * fx(o);
-const orderCollected = o => o.payType === 'cash' ? o.total : (+o.deposit || 0) + (o.installments || []).filter(i => i.paid).reduce((s, i) => s + i.amount, 0);
+// المحصّل: النقدي كله، أو المقدم + المسدد من كل قسط (الكلي والجزئي)
+const instPaidAmount = i => (i.payments || []).length ? i.payments.reduce((s, p) => s + (+p.amount || 0), 0) : (i.paid ? +i.amount || 0 : 0);
+const orderCollected = o => o.payType === 'cash' ? o.total : (+o.deposit || 0) + (o.installments || []).reduce((s, i) => s + instPaidAmount(i), 0);
 const visibleOrders = () => {
   const ids = new Set(visibleCustomers().map(c => c.id));
   return DB.orders.filter(o => can('orders.view_all') ? ids.has(o.customerId) : (creditedTo(o, ME.id) || ids.has(o.customerId)));
@@ -3126,7 +3144,20 @@ function migrateDB(db) {
   const v9 = migrateV9(db);
   const v10 = migrateV10(db);
   const v11 = migrateV11(db);
-  return v2 || v3 || v4 || v5 || v6 || v7 || v8 || v9 || v10 || v11;
+  const v12 = migrateV12(db);
+  return v2 || v3 || v4 || v5 || v6 || v7 || v8 || v9 || v10 || v11 || v12;
+}
+// الإصدار 12: صلاحيات مدير الحسابات بالظبط (من غير عملاء ولا متابعات بيع)، ومستخدمين الدور ده ما يتسندلهمش عملاء
+function migrateV12(db) {
+  if ((db.version || 1) >= 12) return false;
+  db.version = 12;
+  const acc = db.roles.find(r => r.id === 'accounts');
+  if (acc) acc.perms = [...ACCOUNTS_PERMS];
+  db.users.filter(u => u.role === 'accounts').forEach(u => {
+    // استثناءات قديمة كانت بتدّيه صلاحيات عملاء أو بيع تتشال
+    ['customers.hold', 'customers.create', 'customers.edit', 'followups.add', 'stages.move', 'orders.create'].forEach(p => { if (u.overrides && p in u.overrides) delete u.overrides[p]; });
+  });
+  return true;
 }
 // الإصدار 11: قسم الحسابات. دور "مدير الحسابات" يأخذ صلاحية الحسابات، والطلبات القديمة تعتبر معتمدة
 function migrateV11(db) {
@@ -5207,8 +5238,11 @@ function viewOrders(root, sub) {
   const ex = $('#exp', root);
   if (ex) ex.onclick = () => {
     if (st.tab === 'installments') {
-      const rows = all.filter(o => o.status !== 'cancelled').flatMap(o => o.installments.map(i => [o.no, custById(o.customerId)?.name || '', custById(o.customerId)?.phone1 || '', orderRepsName(o), fmtDate(i.due), i.amount, curLabel(o), t(i.paid ? 'مسدد' : i.due < today() ? 'متأخر' : i.due === today() ? 'مستحق اليوم' : 'لم يستحق'), fmtDate(i.paidAt)]));
-      exportSheet(t('الأقساط'), [[t('الطلب'), t('العميل'), t('الهاتف'), t('رجل البيع'), t('الاستحقاق'), t('المبلغ'), t('العملة'), t('الحالة'), t('تاريخ السداد')], ...rows]);
+      // التصدير بنفس الفلتر المعروض، وفيه تاريخ ووقت التصدير
+      const now = new Date();
+      const rows = instExportRows(instRowsFiltered());
+      rows.unshift([`${t('تاريخ التصدير')}: ${fmtDT(now.toISOString())}`]);
+      exportSheet(t('الأقساط'), rows);
       return;
     }
     const list = filteredOrders || all;
@@ -5240,33 +5274,55 @@ function viewOrders(root, sub) {
   draw();
 }
 
-function drawInstallments(ob) {
-  const td = today();
-  const rows = visibleOrders().filter(o => o.status !== 'cancelled').flatMap(o => o.installments.filter(i => !i.paid).map(i => ({ o, i }))).sort((a, b) => a.i.due.localeCompare(b.i.due));
-  const late = rows.filter(r => r.i.due < td);
-  const sum = list => list.reduce((s, r) => s + r.i.amount * fx(r.o), 0);
-  ob.innerHTML = `<div class="kpis"><div class="kpi alert"><div class="l">${t('أقساط متأخرة')}</div><div class="v">${money(sum(late))} <small>${t('ج.م')}</small></div><div class="d">${t('عدد الأقساط: {n}', { n: late.length })}</div></div><div class="kpi warn"><div class="l">${t('مستحق خلال 7 أيام')}</div><div class="v">${money(sum(rows.filter(r => r.i.due >= td && r.i.due <= addDays(td, 7))))} <small>${t('ج.م')}</small></div></div><div class="kpi"><div class="l">${t('إجمالي المتبقي')}</div><div class="v">${money(sum(rows))} <small>${t('ج.م')}</small></div><div class="d">${t('عدد الأقساط: {n}', { n: rows.length })}</div></div></div>
-  ${rows.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>${t('الاستحقاق')}</th><th>${t('العميل')}</th><th>${t('الهاتف')}</th><th>${t('الطلب')}</th>${can('orders.view_all') ? `<th>${t('رجل البيع')}</th>` : ''}<th>${t('المبلغ')}</th><th></th></tr></thead><tbody>${rows.slice(0, 200).map(({ o, i }) => {
-    const c = custById(o.customerId);
-    return `<tr><td>${i.due < td ? `<span class="pill p-red">⚠ ${fmtDate(i.due)}</span>` : i.due === td ? `<span class="pill p-orange">${t('اليوم')}</span>` : fmtDate(i.due)}</td><td>${esc(c?.name)}</td><td>${phoneLink(c?.phone1)}</td><td><a href="#" data-o="${o.id}">${o.no}</a></td>${can('orders.view_all') ? `<td>${esc(orderRepsName(o))}</td>` : ''}<td><b>${money(i.amount)}</b> ${curLabel(o)}</td><td>${canFinance() ? `<button class="btn sm" data-pay="${o.id}|${i.id}">✓ ${t('تم السداد')}</button>` : ''}</td></tr>`;
-  }).join('')}</tbody></table></div>` : `<div class="card empty">${t('لا توجد أقساط مستحقة')}</div>`}`;
-  $$('[data-o]', ob).forEach(a => a.onclick = e => { e.preventDefault(); openOrder(a.dataset.o, () => drawInstallments(ob)); });
-  $$('[data-pay]', ob).forEach(b => b.onclick = () => {
-    const [oid, iid] = b.dataset.pay.split('|');
-    markPaid(oid, iid);
-    drawInstallments(ob);
-  });
+// شاشة الأقساط: كل الأقساط بحالاتها، والأرقام فوق، وفلاتر، والضغط على القسط بيفتح تفاصيله وسجلاته
+const instState2 = { f: '', rep: '', q: '' };
+const INST_FILTERS = [['', 'كل الأقساط المفتوحة'], ['late', 'متأخر'], ['today', 'مستحق اليوم'], ['week', 'خلال 7 أيام'], ['notdue', 'لم يستحق'], ['partial', 'مسدد جزئيًا'], ['postponed', 'مؤجل'], ['pending', 'بانتظار اعتماد تغيير التاريخ'], ['paid', 'مسدد كليًا'], ['all', 'الكل']];
+const allInstRows = () => visibleOrders().filter(o => o.status !== 'cancelled').flatMap(o => (o.installments || []).map(i => ({ o, i, c: custById(o.customerId) })));
+function instRowsFiltered() {
+  const st = instState2, td = today(), q = st.q.trim().toLowerCase();
+  return allInstRows().filter(({ o, i, c }) => {
+    const s = instStatus(i);
+    if (st.f === '' && s === 'paid') return false;
+    if (st.f === 'week' && !(instRemain(i) > 0 && i.due >= td && i.due <= addDays(td, 7))) return false;
+    if (!['', 'week', 'all'].includes(st.f) && s !== st.f) return false;
+    if (st.rep && !creditedTo(o, st.rep)) return false;
+    if (q && !(o.no.toLowerCase().includes(q) || (c?.name || '').toLowerCase().includes(q) || custPhones(c || {}).some(p => normPhone(p).includes(normPhone(q))))) return false;
+    return true;
+  }).sort((a, b) => a.i.due.localeCompare(b.i.due));
 }
-function markPaid(oid, iid) {
-  const o = DB.orders.find(x => x.id === oid), i = o.installments.find(x => x.id === iid);
-  i.paid = true; i.paidAt = today();
-  const c = custById(o.customerId), next = o.installments.find(x => !x.paid);
-  if (c) c.payDate = next?.due || i.paidAt;
-  audit('update', 'order', o.id, 'تحصيل قسط من الطلب {no}', { no: o.no }, [{ field: 'قسط', from: fmtDate(i.due), to: money(i.amount) }]);
-  orderLog(o, 'paid', `${fmtDate(i.due)} · ${money(i.amount)}`);
-  notifyOrder(o, 'ord_paid', `${t('قسط')} ${fmtDate(i.due)} · ${money(i.amount)} ${curLabel(o)}`, orderEveryone(o));
-  saveDB();
-  toast(t('تم تسجيل التحصيل'), 'ok');
+// صفوف التصدير الكامل للأقساط (نفس أعمدة التقرير الشامل)
+function instExportRows(list) {
+  const head = ['الطلب', 'العميل', 'كود العميل', 'الهاتف', 'رجل البيع', 'تاريخ الشراء', 'تاريخ الاستحقاق الأصلي', 'تاريخ الاستحقاق الحالي', 'آخر تأجيل وسببه', 'قيمة القسط', 'المسدد', 'المتبقي', 'العملة', 'الحالة', 'أيام التأخير من الأصلي', 'أيام التأخير من الحالي', 'آخر تحصيل', 'آخر متابعة على القسط'].map(x => t(x));
+  return [head, ...list.map(({ o, i, c }) => {
+    const ld = instLateDays(i), lastPost = (i.postpones || []).filter(p => p.status === 'approved').slice(-1)[0], lastPay = (i.payments || []).slice(-1)[0], lastNote = (i.notes || []).slice(-1)[0];
+    return [o.no, c?.name || '', c?.code || '', c?.phone1 || '', orderRepsName(o), fmtDate(o.date), fmtDate(instOrigDue(i)), fmtDate(i.due), lastPost ? `${fmtDate(lastPost.from)} ← ${fmtDate(lastPost.to)}: ${lastPost.reason}` : '', +i.amount || 0, instPaid(i), instRemain(i), curLabel(o), t(INST_STATUS[instStatus(i)]), ld.orig, ld.cur, lastPay ? `${fmtDate(lastPay.date)} ${money(lastPay.amount)} (${t(lastPay.kind === 'full' ? 'كلي' : 'جزئي')})` : (i.paid ? fmtDate(i.paidAt) : ''), lastNote ? `${fmtDT(lastNote.at)} ${userName(lastNote.by)}: ${lastNote.text}` : ''];
+  })];
+}
+function drawInstallments(ob) {
+  const st = instState2, td = today(), all = allInstRows(), open = all.filter(r => instRemain(r.i) > 0);
+  const sumBy = (list, fn) => list.reduce((s, r) => s + fn(r.i) * fx(r.o), 0);
+  const credit = sumBy(all, i => +i.amount || 0), paid = sumBy(all, instPaid), late = open.filter(r => r.i.due < td), week = open.filter(r => r.i.due >= td && r.i.due <= addDays(td, 7));
+  const pend = isOwnerUser() ? pendingPostpones().filter(x => visibleOrders().includes(x.o)) : [];
+  ob.innerHTML = `<div class="kpis">
+      <div class="kpi"><div class="l">${t('إجمالي البيع الآجل')}</div><div class="v">${money(credit)} <small>${t('ج.م')}</small></div><div class="d">${t('المحصّل منه {p}', { p: money(paid) })}</div></div>
+      <div class="kpi"><div class="l">${t('المتبقي على العملاء')}</div><div class="v">${money(credit - paid)} <small>${t('ج.م')}</small></div><div class="d">${t('عدد الأقساط: {n}', { n: open.length })}</div></div>
+      <div class="kpi alert"><div class="l">${t('المتأخرات')}</div><div class="v">${money(sumBy(late, instRemain))} <small>${t('ج.م')}</small></div><div class="d">${t('عدد الأقساط: {n}', { n: late.length })}</div></div>
+      <div class="kpi warn"><div class="l">${t('مستحق خلال 7 أيام')}</div><div class="v">${money(sumBy(week, instRemain))} <small>${t('ج.م')}</small></div><div class="d">${t('عدد الأقساط: {n}', { n: week.length })}</div></div></div>
+    ${pend.length ? `<div class="card mt conv-card pending"><b>${t('تغييرات تواريخ بانتظار اعتمادك ({n})', { n: pend.length })}</b>${pend.map(({ o, i, p }) => `<div class="muted mt"><a href="#" data-inst="${o.id}|${i.id}">${esc(custById(o.customerId)?.name || '')} · ${o.no}</a>: ${fmtDate(p.from)} ← <b>${fmtDate(p.to)}</b> · ${esc(p.reason)} · ${esc(userName(p.by))}</div>`).join('')}</div>` : ''}
+    <div class="filters mt"><input class="inp search" id="iq" placeholder="${t('ابحث باسم العميل أو رقمه أو رقم الطلب')}" value="${esc(st.q)}"><select class="inp" id="if">${optsT(INST_FILTERS, st.f)}</select>${can('orders.view_all') ? `<select class="inp" id="ir">${repOptions(st.rep)}</select>` : ''}</div><div id="il"></div>`;
+  const draw = () => {
+    const list = instRowsFiltered();
+    $('#il', ob).innerHTML = list.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>${t('الاستحقاق')}</th><th>${t('العميل')}</th><th>${t('الطلب')}</th>${can('orders.view_all') ? `<th>${t('رجل البيع')}</th>` : ''}<th>${t('القسط')}</th><th>${t('المسدد')}</th><th>${t('المتبقي')}</th><th>${t('الحالة')}</th><th>${t('أيام التأخير')}</th><th>${t('آخر متابعة')}</th></tr></thead><tbody>${list.slice(0, 300).map(({ o, i, c }) => {
+      const ld = instLateDays(i), n = (i.notes || []).slice(-1)[0];
+      return `<tr class="inst-row click" data-inst="${o.id}|${i.id}"><td>${fmtDate(i.due)}${i.originalDue && i.originalDue !== i.due ? `<div class="muted">${t('الأصلي')}: ${fmtDate(i.originalDue)}</div>` : ''}</td><td>${esc(c?.name || '')}<div class="muted">${phoneLink(c?.phone1)}</div></td><td>${o.no}</td>${can('orders.view_all') ? `<td>${esc(orderRepsName(o))}</td>` : ''}<td>${money(i.amount)} ${curLabel(o)}</td><td>${money(instPaid(i))}</td><td><b>${money(instRemain(i))}</b></td><td>${instPill(i)}</td><td>${ld.cur ? `<span class="pill p-red sm">${ld.cur}</span>` : '—'}${ld.orig > ld.cur ? `<div class="muted">${t('من الأصلي')} ${ld.orig}</div>` : ''}</td><td class="muted">${n ? `${esc(String(n.text).slice(0, 60))}<div>${fmtDate(String(n.at).slice(0, 10))}</div>` : '—'}</td></tr>`;
+    }).join('')}</tbody></table></div>` : `<div class="card empty">${t('لا توجد أقساط مطابقة')}</div>`;
+    $$('[data-inst]', $('#il', ob)).forEach(tr => tr.onclick = () => { const [oid, iid] = tr.dataset.inst.split('|'); openInstallment(oid, iid, () => drawInstallments(ob)); });
+  };
+  $$('a[data-inst]', ob).forEach(a => a.onclick = e => { e.preventDefault(); const [oid, iid] = a.dataset.inst.split('|'); openInstallment(oid, iid, () => drawInstallments(ob)); });
+  $('#iq', ob).oninput = e => { st.q = e.target.value; draw(); };
+  $('#if', ob).onchange = e => { st.f = e.target.value; draw(); };
+  const r = $('#ir', ob); if (r) r.onchange = e => { st.rep = e.target.value; draw(); };
+  draw();
 }
 
 function drawPrices(ob) {
@@ -5431,7 +5487,6 @@ function openOrder(id, onChange) {
       <div class="muted">${t('المقدم')} ${money(conv.deposit)} ${cur} · ${conv.plan.map(p => `${fmtDate(p.due)}: ${money(p.amount)}`).join('، ')}</div>
       ${conv.decidedBy ? `<div class="muted">${t('القرار')}: ${esc(userName(conv.decidedBy))} · ${fmtDT(conv.decidedAt)}${conv.note ? ` · ${esc(conv.note)}` : ''}</div>` : ''}
       ${owner && conv.status === 'pending' ? `<div class="mt"><button class="btn sm primary" id="cvOk">✓ ${t('موافقة على التحويل')}</button> <button class="btn sm" id="cvNo">${t('رفض')}</button></div>` : ''}</div>` : '';
-  const instState = i => i.paid ? `<span class="pill p-green">${t('مسدد')} ${fmtDate(i.paidAt)}</span>` : i.due < today() ? `<span class="pill p-red">⚠ ${t('متأخر')}</span>` : i.due === today() ? `<span class="pill p-orange">${t('مستحق اليوم')}</span>` : `<span class="pill p-gray">${t('لم يستحق')}</span>`;
   const m = openModal({
     title: t('طلب {no}', { no: o.no }), wide: true,
     body: `<div class="kv">${kv('العميل', esc(c?.name))}${kv('الهاتف', phoneLink(c?.phone1))}${kv('التاريخ', fmtDate(o.date))}${kv('الحالة', `${statusPill(o.status)} ${o.statusReason ? `<span class="muted">${esc(tv(o.statusReason))}</span>` : ''} ${o.postponedTo ? `<span class="muted">${fmtDate(o.postponedTo)}</span>` : ''}`)}
@@ -5441,7 +5496,8 @@ function openOrder(id, onChange) {
       ${o.shareWith ? kv('مشترك مع', `${esc(userName(o.shareWith))}${o.sharePct ? ` · ${o.sharePct}%` : ''}`) : ''}</div>
     ${o.notes ? `<div class="mt"><b>${t('ملاحظات')}:</b> ${esc(o.notes)}</div>` : ''}
     <table class="tbl mt"><thead><tr><th>${t('الجهاز')}</th><th>${t('المقاس')}</th><th>${t('الكمية')}</th><th>${t('السعر')}</th><th>${t('الإجمالي')}</th></tr></thead><tbody>${o.items.map(i => `<tr><td>${esc(deviceName(i.type, i.size))}</td><td>${esc(tv(i.size))}</td><td>${i.qty}</td><td>${money(i.price)}</td><td>${money(i.qty * i.price)}</td></tr>`).join('')}${o.discount ? `<tr><td colspan="4">${t('الخصم')}</td><td>- ${money(o.discount)}</td></tr>` : ''}<tr><td colspan="4"><b>${t('الإجمالي')}</b></td><td><b>${money(o.total)} ${cur}</b></td></tr></tbody></table>
-    ${o.installments.length ? `<h4 class="mt">${t('جدول السداد')}</h4><table class="tbl mt"><thead><tr><th>${t('الاستحقاق')}</th><th>${t('المبلغ')}</th><th>${t('الحالة')}</th><th></th></tr></thead><tbody>${o.installments.map(i => `<tr><td>${fmtDate(i.due)}${i.originalDue && i.originalDue !== i.due ? `<div class="muted">${t('الأصلي')}: ${fmtDate(i.originalDue)}</div>` : ''}</td><td>${money(i.amount)} ${cur}</td><td>${instState(i)}</td><td>${!i.paid && o.status !== 'cancelled' && fin ? `<button class="btn sm" data-pay="${i.id}">✓ ${t('تم السداد')}</button>` : ''}</td></tr>`).join('')}</tbody></table>` : ''}
+    ${o.installments.length ? `<h4 class="mt">${t('جدول السداد')} <small class="muted">${t('اضغط على أي قسط لتفاصيله وسجلاته')}</small></h4><div class="tbl-wrap"><table class="tbl mt"><thead><tr><th>${t('الاستحقاق')}</th><th>${t('المبلغ')}</th><th>${t('المسدد')}</th><th>${t('المتبقي')}</th><th>${t('الحالة')}</th><th>${t('أيام التأخير')}</th></tr></thead><tbody>${o.installments.map(i => { const ld = instLateDays(i); return `<tr class="inst-row click" data-inst="${i.id}"><td>${fmtDate(i.due)}${i.originalDue && i.originalDue !== i.due ? `<div class="muted">${t('الأصلي')}: ${fmtDate(i.originalDue)}</div>` : ''}</td><td>${money(i.amount)}</td><td>${money(instPaid(i))}</td><td><b>${money(instRemain(i))}</b></td><td>${instPill(i)}${(i.notes || []).length ? ` <span class="pill p-gray sm">💬 ${i.notes.length}</span>` : ''}</td><td>${ld.cur ? `<span class="pill p-red sm">${ld.cur}</span>` : ''}${ld.orig > ld.cur ? ` <span class="muted">(${t('من الأصلي')} ${ld.orig})</span>` : ''}</td></tr>`; }).join('')}</tbody></table></div>` : ''}
+    ${(() => { const cr = orderCredit(o); return o.installments.length ? `<div class="fin-sum"><div><div class="l">${t('إجمالي البيع الآجل')}</div><div class="v">${money(cr.credit)} ${cur}</div></div><div><div class="l">${t('المحصّل من الأقساط')}</div><div class="v">${money(cr.paid)} ${cur}</div></div><div><div class="l">${t('المتبقي')}</div><div class="v">${money(cr.remain)} ${cur}</div></div><div class="${cr.late ? 'bad' : ''}"><div class="l">${t('المتأخرات')}</div><div class="v">${money(cr.late)} ${cur}</div></div></div>` : ''; })()}
     <div class="muted mt">${t('المحصّل {a} {c} من {b} {c}', { a: money(orderCollected(o)), b: money(o.total), c: cur })}</div>
     ${convCard}${orderHistoryHtml(o)}`,
     footer,
@@ -5450,7 +5506,7 @@ function openOrder(id, onChange) {
   const on = (sel, fn) => { const el = $(sel, m.el); if (el) el.onclick = fn; };
   // تغيير الحالة بيتسجل في سجل الطلبية وبيوصل عنه إشعار للكل
   const setStatus = (s, r, d) => { setOrderStatus(o, s, r, d); orderLog(o, 'status', `${ORDER_STATUS[s]}${r ? ` · ${r}` : ''}${d ? ` · ${fmtDate(d)}` : ''}`); notifyOrder(o, 'ord_status', `${ORDER_STATUS[s]}${r ? ` · ${r}` : ''}`, orderEveryone(o)); };
-  $$('[data-pay]', m.el).forEach(b => b.onclick = () => { markPaid(o.id, b.dataset.pay); done(); });
+  $$('[data-inst]', m.el).forEach(tr => tr.onclick = () => { m.close(); openInstallment(o.id, tr.dataset.inst, onChange); });
   on('#wa', () => shareOrderWhatsApp(o));
   on('#pdf', () => printOrderPdf(o));
   on('#cpage', () => { m.close(); openCustomer(c.id); });
@@ -5509,7 +5565,7 @@ function orderLog(o, action, note = '', extra = {}) {
   o.log = o.log || [];
   o.log.push({ at: nowStamp(), by: ME?.id || '', action, note: String(note || '').slice(0, 500), ...extra });
 }
-const LOG_LABELS = { submitted: 'أرسل الطلبية للمراجعة', forwarded: 'راجعها وأرسلها لاعتماد الإدارة', approved: 'اعتمد الطلبية', returned: 'أعادها للحسابات', edited: 'عدّل الطلبية', status: 'غيّر الحالة', conv_req: 'طلب التحويل لتقسيط', conv_ok: 'وافق على التحويل لتقسيط', conv_no: 'رفض التحويل لتقسيط', paid: 'سجّل تحصيل قسط' };
+const LOG_LABELS = { submitted: 'أرسل الطلبية للمراجعة', forwarded: 'راجعها وأرسلها لاعتماد الإدارة', approved: 'اعتمد الطلبية', returned: 'أعادها للحسابات', edited: 'عدّل الطلبية', status: 'غيّر الحالة', conv_req: 'طلب التحويل لتقسيط', conv_ok: 'وافق على التحويل لتقسيط', conv_no: 'رفض التحويل لتقسيط', paid: 'سجّل تحصيل قسط', post_req: 'طلب تغيير تاريخ قسط', post_ok: 'اعتمد تغيير تاريخ قسط', post_no: 'رفض تغيير تاريخ قسط', inst_note: 'كتب متابعة على قسط' };
 
 function submitOrderForReview(o) {
   o.review = { state: 'accounts', at: nowStamp() };
@@ -5708,6 +5764,222 @@ function orderHistoryHtml(o) {
   const pays = o.payHistory?.length > 1 ? `<div class="mt"><b>${t('تاريخ طريقة الدفع')}</b>${o.payHistory.map(p => `<div class="muted">• ${t(PAY_TYPES[p.payType])} · ${fmtDT(p.at)}${p.reason ? ` · ${t('السبب')}: ${esc(p.reason)}` : ''}${p.approvedBy ? ` · ${t('بموافقة')} ${esc(userName(p.approvedBy))}` : ''}</div>`).join('')}</div>` : '';
   const log = (o.log || []).length ? `<details class="mt"><summary><b>${t('سجل الطلبية')}</b> (${o.log.length})</summary>${o.log.slice().reverse().map(l => `<div class="muted">• ${fmtDT(l.at)} · ${esc(userName(l.by))}: ${esc(t(LOG_LABELS[l.action] || l.action))}${l.note ? ` · ${esc(l.note)}` : ''}</div>`).join('')}</details>` : '';
   return pays + log;
+}
+
+// =================== المرحلة 2: الأقساط والتحصيل ===================
+// القسط فيه 3 سجلات بتتضاف بس ومفيش حاجة منها بتتمسح:
+//   payments: كل تحصيل (كلي أو جزئي) بالمبلغ والتاريخ والسبب ومين سجّله (أ. علي فقط)
+//   postpones: كل تغيير في تاريخ الاستحقاق: القديم والجديد والسبب، وقرار صاحب الشركة
+//   notes: متابعات رجل البيع والحسابات على القسط (اتصل، وعد بالسداد، سبب التأخير...)
+// التاريخ الأصلي (originalDue) بيفضل محفوظ، وdue هو التاريخ الحالي بعد آخر تأجيل معتمد.
+
+const r2 = n => Math.round((+n || 0) * 100) / 100;
+const instPaid = i => (i.payments || []).length ? r2(i.payments.reduce((s, p) => s + (+p.amount || 0), 0)) : (i.paid ? +i.amount || 0 : 0);
+const instRemain = i => Math.max(0, r2((+i.amount || 0) - instPaid(i)));
+const instPendingPostpone = i => (i.postpones || []).find(p => p.status === 'pending');
+const instOrigDue = i => i.originalDue || i.due;
+const dayDiff = (a, b) => Math.round((new Date(`${b}T12:00:00`) - new Date(`${a}T12:00:00`)) / 864e5);
+// أيام التأخير: من التاريخ الأصلي (كام يوم العميل متأخر عن أول اتفاق) ومن التاريخ الحالي (متأخر فعلًا دلوقتي)
+const instLateDays = i => {
+  if (instRemain(i) <= 0) return { orig: 0, cur: 0 };
+  const td = today();
+  return { orig: Math.max(0, dayDiff(instOrigDue(i), td)), cur: Math.max(0, dayDiff(i.due, td)) };
+};
+const lateText = d => !d ? '—' : d >= 60 ? `${d} ${t('يوم')} (${t('حوالي {m} شهر', { m: Math.floor(d / 30) })})` : `${d} ${t('يوم')}`;
+const INST_STATUS = { paid: 'مسدد كليًا', pending: 'بانتظار اعتماد تغيير التاريخ', late: 'متأخر', today: 'مستحق اليوم', partial: 'مسدد جزئيًا', postponed: 'مؤجل', notdue: 'لم يستحق' };
+const INST_PILL = { paid: 'p-green', pending: 'p-orange', late: 'p-red', today: 'p-orange', partial: 'p-blue', postponed: 'p-purple', notdue: 'p-gray' };
+function instStatus(i) {
+  if (instRemain(i) <= 0) return 'paid';
+  if (instPendingPostpone(i)) return 'pending';
+  const td = today();
+  if (i.due < td) return 'late';
+  if (i.due === td) return 'today';
+  if (instPaid(i) > 0) return 'partial';
+  if (i.originalDue && i.originalDue !== i.due) return 'postponed';
+  return 'notdue';
+}
+// الحالة الأساسية + علامات صغيرة (اتدفع منه جزء، اتأجل قبل كده)
+function instPill(i) {
+  const s = instStatus(i), tags = [];
+  if (s !== 'paid' && s !== 'partial' && instPaid(i) > 0) tags.push(t('جزئي'));
+  if (s !== 'postponed' && i.originalDue && i.originalDue !== i.due) tags.push(t('مؤجل'));
+  const lastPay = (i.payments || []).slice(-1)[0];
+  return `<span class="pill ${INST_PILL[s]}">${s === 'late' ? '⚠ ' : ''}${t(INST_STATUS[s])}${s === 'paid' && (lastPay?.date || i.paidAt) ? ` ${fmtDate(lastPay?.date || i.paidAt)}` : ''}</span>${tags.map(x => ` <span class="pill p-gray sm">${x}</span>`).join('')}`;
+}
+// أرقام الطلبية: الآجل، المحصّل منه، المتبقي، والمتأخرات
+function orderCredit(o) {
+  const list = o.status === 'cancelled' ? [] : (o.installments || []);
+  const credit = r2(list.reduce((s, i) => s + (+i.amount || 0), 0));
+  const paid = r2(list.reduce((s, i) => s + instPaid(i), 0));
+  const late = r2(list.filter(i => instRemain(i) > 0 && i.due < today()).reduce((s, i) => s + instRemain(i), 0));
+  return { credit, paid, remain: r2(credit - paid), late };
+}
+const nextDueOf = o => (o.installments || []).filter(i => instRemain(i) > 0).map(i => i.due).sort()[0] || '';
+function syncCustomerPayDate(o) { const c = custById(o.customerId); if (c) c.payDate = nextDueOf(o) || c.payDate; }
+const canNoteInst = o => canFinance() || orderPeople(o).includes(ME.id) || isOwnerUser();
+
+// ---- تسجيل السداد (أ. علي): كلي = الباقي كله، جزئي = جزء + سبب + تاريخ تأجيل الباقي (بيروح لاعتماد صاحب الشركة)
+function recordInstPayment(o, i, { kind, amount, date, reason, postponeTo }) {
+  i.payments = i.payments || [];
+  // قسط قديم اتعلم "تم السداد" قبل السجل ده: يتحول لسجل علشان الحساب يفضل صح
+  if (!i.payments.length && i.paid) i.payments.push({ id: uid(), kind: 'full', amount: +i.amount || 0, date: i.paidAt || today(), by: '', at: nowStamp(), legacy: true });
+  const amt = kind === 'full' ? instRemain(i) : r2(amount);
+  i.payments.push({ id: uid(), kind, amount: amt, date: date || today(), reason: reason || '', by: ME.id, at: nowStamp() });
+  if (instRemain(i) <= 0) { i.paid = true; i.paidAt = date || today(); }
+  const what = `${t(kind === 'full' ? 'سداد كلي' : 'سداد جزئي')} ${money(amt)} ${curLabel(o)} · ${t('قسط')} ${fmtDate(i.due)}${reason ? ` · ${reason}` : ''}`;
+  orderLog(o, 'paid', what);
+  audit('update', 'order', o.id, 'تحصيل قسط من الطلب {no}', { no: o.no }, [{ field: `قسط ${fmtDate(i.due)}`, from: money(i.amount), to: `${kind === 'full' ? 'كلي' : 'جزئي'} ${money(amt)}` }]);
+  notifyOrder(o, 'ord_paid', what, orderEveryone(o));
+  if (kind === 'partial' && postponeTo) requestPostpone(o, i, postponeTo, reason || t('سداد جزئي'), true);
+  syncCustomerPayDate(o);
+  saveDB();
+}
+// ---- تغيير تاريخ الاستحقاق: أ. علي يقترح، وصاحب الشركة يعتمد. التاريخ الأصلي وكل التغييرات بتفضل محفوظة
+function requestPostpone(o, i, to, reason, afterPartial) {
+  i.postpones = i.postpones || [];
+  i.postpones.push({ id: uid(), from: i.due, to, reason, by: ME.id, at: nowStamp(), status: 'pending', afterPartial: !!afterPartial });
+  const what = `${t('قسط')} ${fmtDate(i.due)} ← ${fmtDate(to)} · ${reason}`;
+  orderLog(o, 'post_req', what);
+  notifyOrder(o, 'inst_post', what, orderEveryone(o));
+  saveDB();
+}
+function decidePostpone(o, i, pid, ok, note) {
+  const p = (i.postpones || []).find(x => x.id === pid);
+  if (!p || p.status !== 'pending') return;
+  Object.assign(p, { status: ok ? 'approved' : 'rejected', decidedBy: ME.id, decidedAt: nowStamp(), note: note || '' });
+  if (ok) { if (!i.originalDue) i.originalDue = p.from; i.due = p.to; i.rem = {}; }
+  const what = `${t('قسط')} ${fmtDate(p.from)} ← ${fmtDate(p.to)}${note ? ` · ${note}` : ''}`;
+  orderLog(o, ok ? 'post_ok' : 'post_no', what);
+  audit('update', 'order', o.id, ok ? 'اعتماد تغيير تاريخ قسط في الطلب {no}' : 'رفض تغيير تاريخ قسط في الطلب {no}', { no: o.no }, [{ field: 'تاريخ الاستحقاق', from: fmtDate(p.from), to: fmtDate(p.to) }]);
+  notifyOrder(o, ok ? 'inst_post_ok' : 'inst_post_no', what, orderEveryone(o));
+  syncCustomerPayDate(o);
+  saveDB();
+}
+// ---- متابعة القسط (رجل البيع أو الحسابات): بتتسجل بالتاريخ ومين كتبها
+function addInstNote(o, i, text) {
+  i.notes = i.notes || [];
+  i.notes.push({ id: uid(), at: nowStamp(), by: ME.id, text: String(text).slice(0, 1000) });
+  orderLog(o, 'inst_note', `${t('قسط')} ${fmtDate(i.due)} · ${text}`.slice(0, 480));
+  notifyOrder(o, 'inst_note', `${t('قسط')} ${fmtDate(i.due)} · ${String(text).slice(0, 120)}`, [...financeUsers().map(u => u.id), ...orderPeople(o)]);
+  saveDB();
+}
+// كل الأقساط بانتظار اعتماد صاحب الشركة
+const pendingPostpones = () => DB.orders.filter(o => o.status !== 'cancelled').flatMap(o => (o.installments || []).filter(instPendingPostpone).map(i => ({ o, i, p: instPendingPostpone(i) })));
+
+// ---- تنبيهات المتابعة: قبل القسط بأسبوع، ويوم الاستحقاق، ولو اتأخر. بتتسجل على القسط علشان ما تتكررش
+const INST_REM_KEY = 'dw_inst_rem_day';
+function runInstallmentReminders() {
+  if (!ME) return;
+  const td = today();
+  try { if (localStorage.getItem(INST_REM_KEY) === `${ME.id}:${td}`) return; } catch {}
+  let n = 0;
+  const push = (to, kind, o, text) => { DB.notices = DB.notices || []; DB.notices.unshift({ id: uid(), to, from: null, at: nowStamp(), kind, customerIds: [o.customerId], text, readAt: '' }); n++; };
+  DB.orders.forEach(o => {
+    if (o.status === 'cancelled' || reviewState(o) !== 'approved') return;
+    (o.installments || []).forEach(i => {
+      if (instRemain(i) <= 0) return;
+      i.rem = i.rem || {};
+      const d = dayDiff(td, i.due), text = `${o.no} · ${t('قسط')} ${money(instRemain(i))} ${curLabel(o)} · ${fmtDate(i.due)}`;
+      if (d <= 7 && d > 0 && !i.rem.d7) { i.rem.d7 = td; orderPeople(o).forEach(id => push(id, 'inst_soon', o, text)); }
+      if (d === 0 && !i.rem.d0) { i.rem.d0 = td; [...orderPeople(o), ...financeUsers().map(u => u.id)].forEach(id => push(id, 'inst_today', o, text)); }
+      if (d < 0 && !i.rem.late) { i.rem.late = td; [...orderPeople(o), ...financeUsers().map(u => u.id)].forEach(id => push(id, 'inst_late', o, text)); }
+    });
+  });
+  try { localStorage.setItem(INST_REM_KEY, `${ME.id}:${td}`); } catch {}
+  if (n) saveDB();
+}
+
+// ---- نافذة القسط: كل تفاصيله وسجلاته، والأزرار حسب الدور
+function openInstallment(oid, iid, onChange) {
+  const o = DB.orders.find(x => x.id === oid), i = o?.installments.find(x => x.id === iid);
+  if (!o || !i) return;
+  const c = custById(o.customerId), cur = curLabel(o), fin = canFinance(), owner = isOwnerUser(), pend = instPendingPostpone(i), ld = instLateDays(i);
+  const pays = (i.payments || []).length ? (i.payments || []) : (i.paid ? [{ kind: 'full', amount: i.amount, date: i.paidAt, by: '', legacy: true }] : []);
+  const m = openModal({
+    title: t('قسط {d} · {no}', { d: fmtDate(i.due), no: o.no }), wide: true,
+    body: `<div class="kv">
+        <div><div class="k">${t('العميل')}</div><div class="val">${esc(c?.name || '')} · ${phoneLink(c?.phone1)}</div></div>
+        <div><div class="k">${t('رجل البيع')}</div><div class="val">${esc(orderRepsName(o))}</div></div>
+        <div><div class="k">${t('الحالة')}</div><div class="val">${instPill(i)}</div></div>
+        <div><div class="k">${t('تاريخ الشراء')}</div><div class="val">${fmtDate(o.date)}</div></div>
+        <div><div class="k">${t('تاريخ الاستحقاق الأصلي')}</div><div class="val">${fmtDate(instOrigDue(i))}</div></div>
+        <div><div class="k">${t('تاريخ الاستحقاق الحالي')}</div><div class="val">${fmtDate(i.due)}</div></div>
+        <div><div class="k">${t('قيمة القسط')}</div><div class="val">${money(i.amount)} ${cur}</div></div>
+        <div><div class="k">${t('المسدد')}</div><div class="val">${money(instPaid(i))} ${cur}</div></div>
+        <div><div class="k">${t('المتبقي')}</div><div class="val"><b>${money(instRemain(i))} ${cur}</b></div></div>
+        <div><div class="k">${t('أيام التأخير من التاريخ الأصلي')}</div><div class="val">${lateText(ld.orig)}</div></div>
+        <div><div class="k">${t('أيام التأخير من التاريخ الحالي')}</div><div class="val">${lateText(ld.cur)}</div></div></div>
+      ${pend ? `<div class="card mt conv-card pending"><b>${t('تغيير تاريخ بانتظار اعتماد الإدارة')}</b><div class="muted">${fmtDate(pend.from)} ← <b>${fmtDate(pend.to)}</b> · ${t('السبب')}: ${esc(pend.reason)} · ${esc(userName(pend.by))} · ${fmtDT(pend.at)}</div>${owner ? `<div class="mt"><button class="btn sm primary" id="ppOk">✓ ${t('اعتماد التاريخ الجديد')}</button> <button class="btn sm" id="ppNo">${t('رفض')}</button></div>` : ''}</div>` : ''}
+      <h4 class="mt">${t('سجل التحصيل')}</h4>${pays.length ? `<table class="tbl"><thead><tr><th>${t('التاريخ')}</th><th>${t('النوع')}</th><th>${t('المبلغ')}</th><th>${t('السبب أو الملاحظة')}</th><th>${t('سجّله')}</th></tr></thead><tbody>${pays.map(p => `<tr><td>${fmtDate(p.date)}</td><td>${t(p.kind === 'full' ? 'كلي' : 'جزئي')}</td><td>${money(p.amount)} ${cur}</td><td>${esc(p.reason || '')}</td><td>${p.by ? esc(userName(p.by)) : `<span class="muted">${t('قبل السجل')}</span>`}</td></tr>`).join('')}</tbody></table>` : `<div class="muted">${t('لم يُسجَّل أي تحصيل بعد')}</div>`}
+      <h4 class="mt">${t('سجل تغيير تاريخ الاستحقاق')}</h4>${(i.postpones || []).length ? `<table class="tbl"><thead><tr><th>${t('من')}</th><th>${t('إلى')}</th><th>${t('السبب')}</th><th>${t('طلبه')}</th><th>${t('القرار')}</th></tr></thead><tbody>${i.postpones.map(p => `<tr><td>${fmtDate(p.from)}</td><td>${fmtDate(p.to)}</td><td>${esc(p.reason)}</td><td>${esc(userName(p.by))}<div class="muted">${fmtDT(p.at)}</div></td><td>${p.status === 'pending' ? `<span class="pill p-orange">${t('بانتظار الاعتماد')}</span>` : `<span class="pill ${p.status === 'approved' ? 'p-green' : 'p-red'}">${t(p.status === 'approved' ? 'معتمد' : 'مرفوض')}</span><div class="muted">${esc(userName(p.decidedBy))} · ${fmtDT(p.decidedAt)}${p.note ? ` · ${esc(p.note)}` : ''}</div>`}</td></tr>`).join('')}</tbody></table>` : `<div class="muted">${t('لم يتغير تاريخ هذا القسط')}</div>`}
+      <h4 class="mt">${t('سجل متابعة القسط')}</h4>${(i.notes || []).length ? i.notes.slice().reverse().map(n => `<div class="inst-note"><b>${esc(userName(n.by))}</b> <span class="muted">${fmtDT(n.at)}</span><div>${esc(n.text)}</div></div>`).join('') : `<div class="muted">${t('لا توجد متابعات على هذا القسط بعد')}</div>`}
+      ${canNoteInst(o) ? `<div class="field mt"><label>${t('إضافة متابعة')}</label><textarea class="inp" id="inNote" rows="2" placeholder="${t('مثال: اتصلت بالعميل يوم ... وقال هيسدد يوم ...، أو سبب التأخير')}"></textarea></div>` : ''}`,
+    footer: `${canNoteInst(o) ? `<button class="btn" id="inAdd">💬 ${t('حفظ المتابعة')}</button>` : ''}${fin && instRemain(i) > 0 && o.status !== 'cancelled' ? `<button class="btn primary" id="inPay">💰 ${t('تسجيل سداد')}</button>${pend ? '' : `<button class="btn" id="inPost">📅 ${t('تغيير تاريخ الاستحقاق')}</button>`}` : ''}<button class="btn" id="inOrder">🧾 ${t('فتح الطلبية')}</button>`,
+  });
+  const done = () => { m.close(); onChange ? onChange() : route(); };
+  const on = (sel, fn) => { const el = $(sel, m.el); if (el) el.onclick = fn; };
+  on('#inOrder', () => { m.close(); openOrder(o.id, onChange); });
+  on('#inAdd', () => { const v = $('#inNote', m.el).value.trim(); if (!v) { toast(t('اكتب المتابعة'), 'err'); return; } addInstNote(o, i, v); toast(t('اتحفظت المتابعة'), 'ok'); done(); });
+  on('#inPay', () => { m.close(); openPaymentForm(o, i, onChange); });
+  on('#inPost', () => { m.close(); openPostponeForm(o, i, onChange); });
+  const ask = (title, required, cb) => {
+    const q = openModal({ title, body: `<div class="field"><label>${t(required ? 'السبب' : 'ملاحظة (اختياري)')}${required ? ' <span class="req">*</span>' : ''}</label><textarea class="inp" id="nt" rows="2"></textarea></div>`, footer: `<button class="btn primary" id="nok">${t('تأكيد')}</button>` });
+    $('#nok', q.el).onclick = () => { const v = $('#nt', q.el).value.trim(); if (required && !v) { toast(t('يرجى كتابة السبب'), 'err'); return; } q.close(); cb(v); };
+  };
+  on('#ppOk', () => ask(t('اعتماد التاريخ الجديد للقسط'), false, v => { decidePostpone(o, i, pend.id, true, v); toast(t('اتعتمد التاريخ الجديد'), 'ok'); done(); }));
+  on('#ppNo', () => ask(t('رفض تغيير تاريخ القسط'), true, v => { decidePostpone(o, i, pend.id, false, v); done(); }));
+}
+// نموذج تسجيل السداد (أ. علي): كلي أو جزئي
+function openPaymentForm(o, i, onChange) {
+  const cur = curLabel(o), rem = instRemain(i);
+  const m = openModal({
+    title: t('تسجيل سداد قسط {d}', { d: fmtDate(i.due) }),
+    body: `<p class="muted" style="margin-top:0">${t('المتبقي من القسط')}: <b>${money(rem)} ${cur}</b></p>
+      <div class="field"><label>${t('نوع السداد')}</label><div class="chips" id="pk"><button type="button" class="chip on" data-k="full">${t('سداد كلي')}</button><button type="button" class="chip" data-k="partial">${t('سداد جزئي')}</button></div></div>
+      <div class="grid2"><div class="field"><label>${t('تاريخ السداد')}</label><input class="inp" type="date" id="pd" value="${today()}" max="${today()}"></div><div class="field"><label>${t('المبلغ المسدد')}</label><input class="inp" type="number" min="0" step="any" id="pa" value="${rem}" disabled></div></div>
+      <div id="pPart" hidden><div class="field"><label>${t('سبب عدم سداد القسط كاملًا')} <span class="req">*</span></label><textarea class="inp" id="pr" rows="2"></textarea></div>
+      <div class="field"><label>${t('تاريخ تأجيل الباقي')} <span class="req">*</span></label><input class="inp" type="date" id="pp" min="${today()}" value="${addDays(today(), 14)}"><small class="muted">${t('التاريخ الجديد للباقي بيروح لاعتماد الإدارة، والتاريخ الأصلي بيفضل محفوظ')}</small></div></div>`,
+    footer: `<button class="btn primary" id="psv">${t('حفظ السداد')}</button>`,
+  });
+  let kind = 'full';
+  $$('#pk .chip', m.el).forEach(b => b.onclick = () => {
+    kind = b.dataset.k; $$('#pk .chip', m.el).forEach(x => x.classList.toggle('on', x === b));
+    $('#pPart', m.el).hidden = kind !== 'partial';
+    const a = $('#pa', m.el); a.disabled = kind === 'full'; if (kind === 'full') a.value = rem; else { a.value = ''; a.focus(); }
+  });
+  $('#psv', m.el).onclick = () => {
+    const date = $('#pd', m.el).value;
+    if (!date) { toast(t('حدد تاريخ السداد'), 'err'); return; }
+    if (kind === 'partial') {
+      const amount = r2($('#pa', m.el).value), reason = $('#pr', m.el).value.trim(), to = $('#pp', m.el).value;
+      if (!(amount > 0)) { toast(t('اكتب المبلغ المسدد'), 'err'); return; }
+      if (amount >= rem) { toast(t('المبلغ يساوي الباقي أو أكثر، اختار سداد كلي'), 'err'); return; }
+      if (!reason) { toast(t('اكتب سبب عدم سداد القسط كاملًا'), 'err'); return; }
+      if (!to) { toast(t('حدد تاريخ تأجيل الباقي'), 'err'); return; }
+      recordInstPayment(o, i, { kind, amount, date, reason, postponeTo: to });
+    } else recordInstPayment(o, i, { kind, date });
+    m.close(); toast(t('تم تسجيل السداد'), 'ok');
+    openInstallment(o.id, i.id, onChange);
+  };
+}
+// نموذج تغيير تاريخ الاستحقاق (أ. علي) ← اعتماد صاحب الشركة
+function openPostponeForm(o, i, onChange) {
+  const m = openModal({
+    title: t('تغيير تاريخ استحقاق قسط {d}', { d: fmtDate(i.due) }),
+    body: `<div class="grid2"><div class="field"><label>${t('التاريخ الحالي')}</label><input class="inp" value="${fmtDate(i.due)}" disabled></div><div class="field"><label>${t('التاريخ الجديد')} <span class="req">*</span></label><input class="inp" type="date" id="ptd" value="${addDays(i.due > today() ? i.due : today(), 14)}"></div></div>
+      <div class="field"><label>${t('سبب التغيير')} <span class="req">*</span></label><textarea class="inp" id="ptr" rows="2"></textarea></div>
+      <small class="muted">${t('التغيير مش هيتطبق غير بعد اعتماد صاحب الشركة، والتاريخ الأصلي وكل التغييرات بتفضل محفوظة في سجل القسط.')}</small>`,
+    footer: `<button class="btn primary" id="ptsv">${t('إرسال للاعتماد')}</button>`,
+  });
+  $('#ptsv', m.el).onclick = () => {
+    const to = $('#ptd', m.el).value, reason = $('#ptr', m.el).value.trim();
+    if (!to) { toast(t('حدد التاريخ الجديد'), 'err'); return; }
+    if (to === i.due) { toast(t('التاريخ الجديد زي الحالي'), 'err'); return; }
+    if (!reason) { toast(t('اكتب سبب التغيير'), 'err'); return; }
+    requestPostpone(o, i, to, reason);
+    m.close(); toast(t('اتبعت للإدارة للاعتماد'), 'ok');
+    openInstallment(o.id, i.id, onChange);
+  };
 }
 
 </script>
@@ -6450,7 +6722,7 @@ function openOrderEdit(o, onDone) {
     body: `<div class="grid2"><div class="field"><label>${t('تاريخ الطلب')}</label><input class="inp" type="date" id="od" value="${o.date}"></div><div class="field"><label>${t('عن طريق الموزع')}</label><select class="inp" id="odist">${opts(DB.distributors.map(d => [d.id, d.name]), o.distributorId || '', t('بدون موزع'))}</select></div></div>
     ${items.map((it, i) => `<div class="grid3" style="grid-template-columns:minmax(0,3fr) minmax(0,1fr) minmax(0,1.3fr)"><div class="field"><label>${t('الجهاز')}</label><select class="inp" data-i="${i}" data-k="productId">${opts(DB.products.map(p => [p.id, `${tv(p.type)} - ${tv(p.size)}`]), it.productId, `${tv(it.type)} ${tv(it.size)}`)}</select></div><div class="field"><label>${t('الكمية')}</label><input class="inp" type="number" min="1" data-i="${i}" data-k="qty" value="${it.qty}"></div><div class="field"><label>${t('سعر الوحدة')}</label><input class="inp" type="number" min="0" data-i="${i}" data-k="price" value="${it.price}"></div></div>`).join('')}
     <div class="grid2"><div class="field"><label>${t('الخصم')}</label><input class="inp" type="number" min="0" id="disc" value="${o.discount || 0}"></div><div class="field"><label>${t('قيمة المقدم')}</label><input class="inp" type="number" min="0" id="dep" value="${o.deposit || 0}"></div></div>
-    ${o.installments.length ? `<h4>${t('جدول السداد')}</h4>${o.installments.map((x, i) => `<div class="grid2"><div class="field"><label>${t('الاستحقاق')}</label><input class="inp" type="date" data-ins="${i}" data-k="due" value="${x.due}" ${x.paid ? 'disabled' : ''}></div><div class="field"><label>${t('المبلغ')}</label><input class="inp" type="number" min="0" data-ins="${i}" data-k="amount" value="${x.amount}" ${x.paid ? 'disabled' : ''}></div></div>`).join('')}` : ''}`,
+    ${o.installments.length ? `<h4>${t('جدول السداد')}</h4>${o.installments.map((x, i) => `<div class="grid2"><div class="field"><label>${t('الاستحقاق')}</label><input class="inp" type="date" value="${x.due}" disabled title="${t('تاريخ الاستحقاق بيتغير من نافذة القسط باعتماد الإدارة')}"></div><div class="field"><label>${t('المبلغ')}</label><input class="inp" type="number" min="0" data-ins="${i}" data-k="amount" value="${x.amount}" ${x.paid ? 'disabled' : ''}></div></div>`).join('')}` : ''}`,
     footer: `<button class="btn primary" id="sv">${t('حفظ التعديلات')}</button>`,
   });
   $('#sv', m.el).onclick = () => {
@@ -9236,6 +9508,8 @@ function route() {
   }
   scrollTo(0, 0);
   resumePendingCall();
+  // تذكير الأقساط (قبلها بأسبوع، ويوم الاستحقاق، ولو اتأخرت) مرة في اليوم
+  if (typeof runInstallmentReminders === 'function') try { runInstallmentReminders(); } catch (err) { console.error(err); }
   updateNotices();
   if (window.mountAssistant) mountAssistant();
   if (!pushRefreshed && pushSupported() && Notification.permission === 'granted') { pushRefreshed = true; enablePush(false).catch(() => {}); }
