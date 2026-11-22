@@ -530,6 +530,14 @@ html { -webkit-text-size-adjust: 100%; }
 .soc-msg .bubble { padding: 8px 12px; border-radius: 14px; background: #fff; border: 1px solid var(--border); white-space: pre-wrap; word-break: break-word; }
 .soc-msg.out .bubble { background: var(--blue-bg); border-color: #cfe6f5; }
 .soc-meta { font-size: 11.5px; margin-top: 2px; }
+/* تفاعل العميل على الرسالة، وعلامة وصلت/اتقرت، و"معدّلة" */
+.soc-msg .bubble { position: relative; }
+.soc-react { position: absolute; bottom: -10px; inset-inline-end: 6px; background: #fff; border: 1px solid var(--border); border-radius: 999px; padding: 0 5px; font-size: 13px; line-height: 18px; box-shadow: 0 1px 3px rgba(13,26,77,.12); }
+.soc-msg:has(.soc-react) { margin-bottom: 8px; }
+.soc-tick { font-size: 11px; letter-spacing: -2px; color: var(--muted); margin-inline-start: 4px; }
+.soc-tick.read { color: #1d9bf0; }
+.soc-tick.fail { color: var(--red, #d33); font-weight: 800; letter-spacing: 0; }
+.soc-edited { cursor: help; }
 .soc-img { display: block; margin-top: 4px; }
 .soc-img img { max-width: 220px; max-height: 220px; border-radius: 10px; display: block; object-fit: cover; }
 .soc-audio { display: block; margin-top: 4px; width: 260px; max-width: 100%; height: 40px; }
@@ -1249,6 +1257,7 @@ const EN = {
   'كشف حساب وورد': 'Statement Word', 'التقرير الشامل وورد': 'Full report Word', 'ملف العميل': 'Customer file', 'ملف العميل وورد': 'Customer file (Word)', 'تم تنزيل ملف العميل': 'Customer file downloaded', 'فتح الطلبية': 'Open order', 'فتح القسط': 'Open installment',
   'أقساط مستحقة في {d} ({n})': 'Installments due on {d} ({n})', 'الأقساط والاستحقاقات': 'Installments & due dates', 'سجل السداد والتحصيل': 'Payment & collection log', 'تغييرات تواريخ الأقساط': 'Installment date changes', 'متابعات الأقساط': 'Installment follow-ups',
   'من تاريخ': 'From date', 'إلى تاريخ': 'To date', 'القرار': 'Decision', 'طلبه': 'Requested by', 'اعتمده': 'Approved by', 'كتبها': 'Written by', 'بواسطة': 'By', 'من': 'From', 'إلى': 'To', 'النتيجة': 'Outcome', 'المتابعة القادمة': 'Next follow-up', 'تاريخ المتابعة القادمة': 'Next follow-up date', 'تاريخ التسجيل': 'Registered on', 'لا يوجد': 'None', 'معتمد': 'Approved', 'بانتظار الاعتماد': 'Pending approval',
+  'تفاعل': 'Reaction', 'النص الأصلي': 'Original text', 'معدّلة': 'Edited', 'لم تصل': 'Not delivered', 'اتقرت': 'Read', 'وصلت': 'Delivered', 'اتبعتت': 'Sent',
   'تم تنزيل كشف الحساب': 'Statement downloaded', 'بيانات العميل': 'Customer details', 'الملخص المالي (ج.م)': 'Financial summary (EGP)', 'البيانات': 'Details', 'الأقساط': 'Installments', 'تحصيل': 'Collections', 'آخر متابعة': 'Last follow-up', 'من الأصلي': 'from original',
 };
 
@@ -8512,10 +8521,11 @@ async function socialTick() {
     if (changed.length) {
       updateSocialBadge();
       if (location.hash.startsWith('#/social') && $('#socialList')) { drawSocialList(); drawSocialStats(); }
+      if (changed.some(c => c.id === socialState.sel)) await refreshOpenThread().catch(() => {});
     }
   } catch (err) { socialState.error = err.message; }
 }
-setInterval(socialTick, 30000);
+setInterval(socialTick, 15000);
 
 // ------- إبلاغ ميتا بالعملاء القادمين من رسائلها (Conversions API) -------
 // كل عميل جاء من ماسنجر أو إنستجرام: يُبلَّغ مرة "عميل محتمل" (Lead) عند تسجيله، ومرة "شراء" (Purchase) عند أول بيع بقيمته،
@@ -8722,6 +8732,28 @@ async function updateConv(id, patch, okMsg) {
   } catch (err) { toast(err.message, 'err'); return null; }
 }
 const countryPick = (p, i) => `<select class="inp sm" data-combo data-pc="${i}" aria-label="${t('دولة الرقم')}"><option value="">${t('حدد الدولة')}</option>${(p.candidates || []).length ? `<optgroup label="${esc(t('المحتمل'))}">${p.candidates.map(n => `<option value="${esc(n)}">${esc(countryLabel(n))}</option>`).join('')}</optgroup>` : ''}<optgroup label="${esc(t('كل الدول'))}"><option value="مصر">${esc(countryLabel('مصر') || 'مصر')}</option>${COUNTRIES.map(c => `<option value="${esc(c.name)}" data-s="${esc([c.name, ...c.aliases].join(' '))}">${esc(countryLabel(c.name))}</option>`).join('')}</optgroup></select>`;
+// علامة ردودنا: ✓ اتبعتت، ✓✓ وصلت، ✓✓ زرقا اتقرت، ! ما وصلتش (واتساب)
+function msgTick(m, c) {
+  if (m.dir !== 'out') return '';
+  if (m.status === 'failed') return ` <span class="soc-tick fail" title="${esc(t('لم تصل'))}">!</span>`;
+  const read = m.status === 'read' || (c.read_at && m.at <= c.read_at);
+  const del = read || m.status === 'delivered' || (c.delivered_at && m.at <= c.delivered_at);
+  return ` <span class="soc-tick ${read ? 'read' : ''}" title="${esc(t(read ? 'اتقرت' : del ? 'وصلت' : 'اتبعتت'))}">${del ? '✓✓' : '✓'}</span>`;
+}
+// المحادثة المفتوحة تتحدّث لوحدها لما يجيلها جديد (رسالة، وصلت/اتقرت، تفاعل، تعديل)، من غير ما يضيع الرد اللي بتكتبه
+async function refreshOpenThread() {
+  const id = socialState.sel;
+  if (!id || !$('#socialThread') || socialState.thread?.conv?.id !== id) return;
+  const out = await socialApi(`conv/${encodeURIComponent(id)}`);
+  if (socialState.sel !== id) return;
+  const ta = $('#socText'), draft = ta?.value || '', focused = ta && document.activeElement === ta;
+  socialState.convs.set(id, out.conv);
+  socialState.thread = out;
+  drawSocialThread();
+  const ta2 = $('#socText');
+  if (ta2 && draft) ta2.value = draft;
+  if (ta2 && focused) ta2.focus();
+}
 function drawSocialThread() {
   const box = $('#socialThread');
   const th = socialState.thread;
@@ -8756,7 +8788,7 @@ function drawSocialThread() {
       ${c.status === 'ignored' ? `<button class="btn" id="socReopen">${t('إعادة فتح')}</button>` : `<button class="btn" id="socIgnore">${t('تجاهل')}</button>`}
       <button class="btn" id="socAddPhone">${t('إضافة رقم يدويًا')}</button>
     </div>
-    <div class="soc-msgs" id="socMsgs">${msgs.length ? msgs.map(m => `<div class="soc-msg ${m.dir}"><div class="bubble">${esc(msgText(m))}${m.attach ? socialAttach(m.attach) : ''}</div><div class="muted soc-meta">${socialTime(m.at)}${m.dir === 'out' && m.by && m.by !== 'page' ? ` · ${esc(userName(m.by))}` : ''}</div></div>`).join('') : `<div class="muted" style="padding:12px">${t('لا توجد رسائل')}</div>`}</div>
+    <div class="soc-msgs" id="socMsgs">${msgs.length ? msgs.map(m => `<div class="soc-msg ${m.dir}"><div class="bubble">${esc(msgText(m))}${m.attach ? socialAttach(m.attach) : ''}${m.reaction ? `<span class="soc-react" title="${esc(t('تفاعل'))}">${esc(m.reaction)}</span>` : ''}</div><div class="muted soc-meta">${socialTime(m.at)}${m.dir === 'out' && m.by && m.by !== 'page' ? ` · ${esc(userName(m.by))}` : ''}${m.edited_at ? ` · <span class="soc-edited" title="${esc(`${t('النص الأصلي')}: ${m.orig_text || ''}`)}">✎ ${t('معدّلة')}</span>` : ''}${msgTick(m, c)}</div></div>`).join('') : `<div class="muted" style="padding:12px">${t('لا توجد رسائل')}</div>`}</div>
     <div class="soc-reply">${windowOpen ? `${typeof aiEnabled === 'function' && aiEnabled() ? `<button class="btn ai-btn" id="socAI" type="button" title="${t('يكتب Dropy ردًا مقترحًا من معلومات دلتا ووتر بدون أسعار، وتراجعه أنت قبل الإرسال')}">✨ ${t('اقترح رد')}</button>` : ''}${templates.length ? `<select class="inp" id="socTpl" aria-label="${t('رد جاهز')}"><option value="">${t('رد جاهز...')}</option>${templates.map((x, i) => `<option value="${i}">${esc(x.name)}</option>`).join('')}</select>` : ''}
       <textarea class="inp" id="socText" rows="2" placeholder="${t('اكتب ردك هنا، ويصل للعميل على {ch}', { ch: t(SOCIAL_CHANNELS[c.channel]) })}"></textarea><button class="btn primary" id="socSend">${t('إرسال')}</button>`
       : `<div class="muted">${t('مرّ أكثر من 24 ساعة على آخر رسالة من العميل، وميتا لا تسمح بالرد من النظام بعدها. يمكن الرد من تطبيق ماسنجر أو إنستجرام، أو الاتصال بالعميل على رقمه.')}</div>`}</div>`;
