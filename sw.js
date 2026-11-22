@@ -1,7 +1,7 @@
 // يتيح تثبيت النظام كتطبيق ويسرّع فتحه. الصفحة تُعرض فورًا من النسخة المحفوظة على الجهاز،
 // وفي الوقت نفسه تُجلب أحدث نسخة من الإنترنت، وإذا تغيّرت تُبلَّغ الصفحة لتعيد التحميل مرة واحدة.
 // البيانات نفسها لا تُحفظ هنا أبدًا، فهي تُقرأ من خدمة جوجل في كل مرة
-const CACHE = 'dw-crm-shell-v3';
+const CACHE = 'dw-crm-shell-v4';
 const SHELL = ['./', './icon-192.png', './icon-512.png', './manifest.webmanifest'];
 
 self.addEventListener('install', e => {
@@ -48,24 +48,31 @@ const AUTH_CACHE = 'dw-crm-auth';
 const readJson = async (name, fallback) => { try { const r = await (await caches.open(AUTH_CACHE)).match(name); return r ? await r.json() : fallback; } catch { return fallback; } };
 const writeJson = async (name, v) => { try { await (await caches.open(AUTH_CACHE)).put(name, new Response(JSON.stringify(v))); } catch {} };
 self.addEventListener('message', e => {
-  if (e.data && e.data.type === 'dw-auth') e.waitUntil(writeJson('/__dw_auth', { url: e.data.url || '', key: e.data.key || '', user: e.data.user || '' }));
+  if (e.data && e.data.type === 'dw-auth') e.waitUntil(writeJson('/__dw_auth', { url: e.data.url || '', relay: e.data.relay || '', key: e.data.key || '', user: e.data.user || '' }));
 });
 self.addEventListener('push', e => {
   e.waitUntil((async () => {
     const auth = await readJson('/__dw_auth', null);
     let items = [];
+    // نص الإشعار من خدمة جوجل مباشرة، ولو الشبكة قافلاها (أو اتأخرت) من ممر Cloudflare
+    const withTimeout = (p, ms) => Promise.race([p, new Promise((_, no) => setTimeout(() => no(new Error('timeout')), ms))]);
     if (auth && auth.url && auth.user) {
+      const q = `action=inbox&user=${encodeURIComponent(auth.user)}`;
       try {
-        const res = await fetch(`${auth.url}?key=${encodeURIComponent(auth.key)}&action=inbox&user=${encodeURIComponent(auth.user)}`, { cache: 'no-store' });
-        const out = await res.json();
-        items = out.items || [];
-      } catch {}
+        const res = await withTimeout(fetch(`${auth.url}?key=${encodeURIComponent(auth.key)}&${q}`, { cache: 'no-store' }), 9000);
+        items = (await res.json()).items || [];
+      } catch {
+        if (auth.relay) {
+          try { const res = await withTimeout(fetch(`${auth.relay}?${q}`, { cache: 'no-store', headers: { 'X-CRM-Key': auth.key } }), 9000); items = (await res.json()).items || []; } catch {}
+        }
+      }
     }
     const seen = await readJson('/__dw_seen', []);
     let fresh = items.filter(i => !seen.includes(i.id));
     // يجب عرض إشعار لكل رسالة واردة، فإن تعذر جلب النص يظهر إشعار عام
-    if (!fresh.length) fresh = [{ id: 'g' + Date.now(), title: 'Delta CRM', body: 'لديك تحويل جديد. افتح النظام لمعرفة التفاصيل', url: './#/notifications' }];
-    await Promise.all(fresh.slice(0, 3).map(i => self.registration.showNotification(i.title || 'Delta CRM', {
+    if (!fresh.length) fresh = [{ id: 'g' + Date.now(), title: 'Delta CRM', body: 'لديك إشعار جديد. افتح النظام لمعرفة التفاصيل', url: './#/notifications' }];
+    // كل إشعار جديد يظهر لوحده (حتى 8 مرة واحدة)، الأقدم الأول
+    await Promise.all(fresh.slice(0, 8).reverse().map(i => self.registration.showNotification(i.title || 'Delta CRM', {
       body: i.body || '', tag: i.id, icon: 'icon-192.png', badge: 'icon-192.png', dir: 'rtl', lang: 'ar',
       vibrate: [200, 100, 200], renotify: true, requireInteraction: false, data: { url: i.url || './' },
     })));
