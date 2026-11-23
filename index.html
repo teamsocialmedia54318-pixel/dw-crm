@@ -717,6 +717,17 @@ button.kpi:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; 
 }
 .soc-item { min-width: 0; max-width: 100%; }
 .soc-item .soc-main { min-width: 0; }
+/* مراحل العملاء في لوحة أداء السوشيال */
+.stage-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; }
+.stage-box { border-radius: 10px; padding: 10px 12px; text-align: center; }
+.stage-box .v { font-size: 22px; font-weight: 800; }
+.stage-box .l { font-size: 12.5px; }
+/* صورة العميل من ميتا، وعلامة القناة صغيرة عليها */
+.soc-av { position: relative; width: 38px; height: 38px; flex: 0 0 38px; }
+.soc-av img { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; display: block; }
+.soc-av .soc-ch { position: absolute; bottom: -3px; inset-inline-end: -3px; transform: scale(.6); transform-origin: bottom right; }
+.soc-av.broken img { display: none; }
+.soc-av.broken .soc-ch { position: static; transform: none; }
 
 </style>
 </head>
@@ -1292,6 +1303,7 @@ const EN = {
   'من تاريخ': 'From date', 'إلى تاريخ': 'To date', 'القرار': 'Decision', 'طلبه': 'Requested by', 'اعتمده': 'Approved by', 'كتبها': 'Written by', 'بواسطة': 'By', 'من': 'From', 'إلى': 'To', 'النتيجة': 'Outcome', 'المتابعة القادمة': 'Next follow-up', 'تاريخ المتابعة القادمة': 'Next follow-up date', 'تاريخ التسجيل': 'Registered on', 'لا يوجد': 'None', 'معتمد': 'Approved', 'بانتظار الاعتماد': 'Pending approval',
   'تفاعل': 'Reaction', 'النص الأصلي': 'Original text', 'معدّلة': 'Edited', 'لم تصل': 'Not delivered', 'اتقرت': 'Read', 'وصلت': 'Delivered', 'اتبعتت': 'Sent',
   'مستنية موافقة ميتا على صلاحية Business Asset User Profile Access ({n} محادثة من غير اسم). الرسايل شغالة عادي، والأسماء هتظهر لوحدها بعد الموافقة': 'Waiting for Meta to approve Business Asset User Profile Access ({n} conversations without a name). Messages work normally; names will appear automatically after approval',
+  'مراحل العملاء (اللي بتتبعت للإعلانات)': 'Customer stages (sent to ads)', 'أداء كل إعلان: المحادثات والمراحل والدول': 'Each ad: conversations, stages and countries', 'اتحولوا للسيلز': 'Sent to sales', 'مفقود / سبام': 'Lost / spam', 'العملاء حسب الدولة': 'Customers by country', 'العملاء': 'Customers', 'غير محددة': 'Unknown', 'الإعلانات والدول': 'Ads by country', 'الدول': 'Countries', 'مراحل العملاء': 'Customer stages', 'الدولة': 'Country', 'غالبًا {c} (من توقيت حسابه)': 'Probably {c} (from the account time zone)',
   'متابعة': 'Follow-up', 'مسجل': 'Lead', 'مؤهل': 'Qualified', 'غير مؤهل': 'Not qualified', 'تم التحويل': 'Converted', 'مفقود': 'Lost', 'سبام': 'Spam',
   'مرحلة العميل': 'Customer stage', 'كل المراحل': 'All stages', 'من غير مرحلة': 'No stage', 'بيتبعت للإعلانات على إنه {e}': 'Sent to ads as {e}', 'بيتحفظ في السيستم بس': 'Saved in the CRM only', 'اتحددت تلقائيًا': 'Set automatically', 'ميتا': 'Meta',
   'اتحفظت المرحلة: {s}': 'Stage saved: {s}', 'اتحفظت المرحلة واتبعتت لميتا علشان الإعلان يتعلم ✓': 'Stage saved and sent to Meta so ads can learn ✓', 'اتحفظت المرحلة (ميتا عندها الحدث ده من قبل)': 'Stage saved (Meta already has this event)',
@@ -8741,13 +8753,18 @@ const socialMatches = c => {
   return true;
 };
 const channelBadge = ch => `<span class="soc-ch soc-${ch}" title="${esc(t(SOCIAL_CHANNELS[ch]))}">${ch === 'ig' ? 'IG' : ch === 'wa' ? '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="#fff" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3a.5.5 0 0 0 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5 5 0 0 0 1.1 2.7 11.5 11.5 0 0 0 4.4 3.9c1.6.7 2.3.8 3.1.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg>' : 'f'}</span>`;
+// صورة العميل من ميتا (بعد موافقة صلاحية الملف الشخصي)، ولو مش موجودة أو الرابط انتهى تظهر علامة القناة
+const socialAvatar = c => c.pic ? `<span class="soc-av"><img src="${esc(c.pic)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.classList.add('broken')">${channelBadge(c.channel)}</span>` : channelBadge(c.channel);
+// تخمين الدولة من توقيت حساب ماسنجر لما العميل ما يبعتش رقمه (تقريبي: كذا دولة ليها نفس التوقيت)
+const TZ_HINT = { 0: 'المغرب', 1: 'الجزائر أو تونس أو المغرب', 2: 'مصر أو ليبيا', 3: 'السعودية أو الخليج أو العراق', 4: 'الإمارات أو عمان' };
+const tzHint = tz => tz === null || tz === undefined || tz === '' ? '' : TZ_HINT[Math.round(+tz)] || `GMT${+tz >= 0 ? '+' : ''}${+tz}`;
 const socialTime = ms => { if (!ms) return ''; const d = new Date(ms); return localDay(d.toISOString()) === today() ? `${pad(d.getHours())}:${pad(d.getMinutes())}` : fmtDT(d.toISOString()); };
 function drawSocialList() {
   const box = $('#socialList');
   if (!box) return;
   const list = [...socialState.convs.values()].filter(socialMatches).sort((a, b) => b.last_at - a.last_at);
   box.innerHTML = list.length ? list.slice(0, 300).map(c => `<button class="soc-item ${c.id === socialState.sel ? 'on' : ''} ${c.status === 'new' ? 'unread' : ''}" data-cv="${esc(c.id)}">
-      ${channelBadge(c.channel)}<div class="soc-main"><div class="soc-top"><b>${esc(c.name || t('عميل بدون اسم'))}</b><span class="muted">${socialTime(c.last_at)}</span></div>
+      ${socialAvatar(c)}<div class="soc-main"><div class="soc-top"><b>${esc(c.name || t('عميل بدون اسم'))}</b><span class="muted">${socialTime(c.last_at)}</span></div>
       <div class="soc-last">${c.last_dir === 'out' ? `<span class="muted">${t('أنت')}: </span>` : ''}${esc(c.last_text || '')}</div>
       <div class="soc-tags">${stagePillHtml(c)}${c.ad_title || c.ad_id ? `<span class="pill p-harvest">📣 ${esc(c.ad_title || t('إعلان'))}</span>` : ''}${(c.phones || []).length ? `<span class="pill p-green">📞 ${c.phones.length}</span>` : ''}${c.status !== 'new' ? `<span class="pill p-gray">${t(SOCIAL_STATUS[c.status])}</span>` : ''}${c.assignee ? `<span class="pill p-blue">${esc(userName(c.assignee))}</span>` : ''}</div></div></button>`).join('')
     : `<div class="empty" style="padding:20px">${t(socialState.loaded ? 'لا توجد محادثات هنا' : 'جارٍ تحميل المحادثات...')}</div>`;
@@ -8843,11 +8860,12 @@ function drawSocialThread() {
   const windowOpen = lastIn && Date.now() - lastIn < 24 * 3600000;
   const templates = socialCfg().templates || [];
   const kv = (k, v) => v ? `<div><div class="k">${k}</div><div class="val">${v}</div></div>` : '';
-  box.innerHTML = `<div class="soc-head"><button class="btn sm soc-back" id="socBack" aria-label="${t('رجوع')}">→</button>${channelBadge(c.channel)}<div><b>${esc(c.name || t('عميل بدون اسم'))}</b>${c.username ? ` <span class="muted" dir="ltr">@${esc(c.username)}</span>` : ''}<div class="muted" style="font-size:12px">${t(SOCIAL_CHANNELS[c.channel])} · ID: <span dir="ltr">${esc(c.user_id)}</span></div></div><span class="spacer"></span>${stagePillHtml(c)}<span class="pill ${c.status === 'new' ? 'p-orange' : c.status === 'converted' ? 'p-green' : 'p-gray'}">${t(SOCIAL_STATUS[c.status])}</span><button class="btn sm soc-side-btn" id="socSideBtn" type="button" aria-label="${t('بيانات العميل')}">ℹ <span class="lbl">${t('بيانات العميل')}</span></button></div>
+  box.innerHTML = `<div class="soc-head"><button class="btn sm soc-back" id="socBack" aria-label="${t('رجوع')}">→</button>${socialAvatar(c)}<div><b>${esc(c.name || t('عميل بدون اسم'))}</b>${c.username ? ` <span class="muted" dir="ltr">@${esc(c.username)}</span>` : ''}<div class="muted" style="font-size:12px">${t(SOCIAL_CHANNELS[c.channel])} · ID: <span dir="ltr">${esc(c.user_id)}</span></div></div><span class="spacer"></span>${stagePillHtml(c)}<span class="pill ${c.status === 'new' ? 'p-orange' : c.status === 'converted' ? 'p-green' : 'p-gray'}">${t(SOCIAL_STATUS[c.status])}</span><button class="btn sm soc-side-btn" id="socSideBtn" type="button" aria-label="${t('بيانات العميل')}">ℹ <span class="lbl">${t('بيانات العميل')}</span></button></div>
     <div class="soc-body"><aside class="soc-side">
     <div class="soc-info kv">
       ${kv(t('جاء من'), c.ad_title || c.ad_id ? `📣 <b>${esc(c.ad_title || t('إعلان'))}</b>${c.ad_id ? ` <span class="muted" dir="ltr">#${esc(c.ad_id)}</span>` : ''}` : esc(t('رسالة مباشرة (ليست من إعلان)')))}
       ${kv(t('أول رسالة'), esc(fmtDT(new Date(c.first_at).toISOString())))}
+      ${kv(t('الدولة'), convCountry(c) ? esc(countryLabel(convCountry(c))) : tzHint(c.tz) ? `<span class="muted">${esc(t('غالبًا {c} (من توقيت حسابه)', { c: tzHint(c.tz) }))}</span>` : '')}
       ${kv(t('أرقام الهاتف'), (c.phones || []).length ? c.phones.map((p, i) => `<div class="soc-phone"><span dir="ltr" class="num">${esc(p.p)}</span> ${p.country && !p.guessed ? `<span class="pill p-blue">${esc(countryLabel(p.country))}</span>` : `${p.guessed ? `<span class="pill p-orange" title="${esc(t('رقم محلي بدون رمز الدولة، فالدولة تخمين يحتاج تأكيدًا'))}">${esc(countryLabel(p.country))}؟</span>` : ''}${countryPick(p, i)}`}</div>`).join('') : '')}
       ${kv(t('البريد الإلكتروني'), (c.emails || []).map(emailLink).join('<br>'))}
       ${kv(t('الموقع من الشات'), esc([ins.gov, ins.country ? countryLabel(ins.country) : ''].filter(Boolean).join(' · ')))}
@@ -8875,6 +8893,9 @@ function drawSocialThread() {
       : `<div class="muted">${t('مرّ أكثر من 24 ساعة على آخر رسالة من العميل، وميتا لا تسمح بالرد من النظام بعدها. يمكن الرد من تطبيق ماسنجر أو إنستجرام، أو الاتصال بالعميل على رقمه.')}</div>`}</div></div></div>`;
   const m = $('#socMsgs', box);
   m.scrollTop = m.scrollHeight;
+  // الدولة من الشات (اسم دولة أو محافظة مصرية) بتتحفظ في المحادثة لوحدها لو مش محددة، علشان تظهر في لوحة الإعلانات
+  const guess = ins.country || (ins.gov ? 'مصر' : '');
+  if (!convCountry(c) && guess && canSocial()) socialApi(`conv/${encodeURIComponent(c.id)}`, { method: 'POST', body: { country: guess } }).then(out => { socialState.convs.set(c.id, out.conv); if (socialState.thread?.conv?.id === c.id) socialState.thread.conv = out.conv; }).catch(() => {});
   hydrateWaMedia(m);
   // اختيار دولة الرقم بالكتابة (الصفحة ليست نافذة، فيُطبَّق البحث هنا مباشرة)
   comboizeIn(box);
@@ -9060,6 +9081,9 @@ function socialDashPeriod() {
   else start.setDate(start.getDate() - (+d.range || 7));
   return { from: start.getTime(), to: end.getTime(), label: t(SOCIAL_RANGES.find(r => r[0] === d.range)?.[1] || '') };
 }
+// دولة المحادثة: اللي اتحددت في الشات، أو دولة رقم العميل (المؤكدة أولًا)
+const convCountry = cv => cv.country || (cv.phones || []).find(p => p.country && !p.guessed)?.country || (cv.phones || []).find(p => p.country)?.country || '';
+const countryTop = (obj, n = 4) => Object.entries(obj).sort((a, b) => b[1] - a[1]).slice(0, n).map(([k, v]) => `${k ? countryLabel(k) : t('غير محددة')} ${v}`).join(' · ');
 // تجميع المحادثات مع بيانات الـ CRM: من تحوّل لعميل، ومن اشترى، وقيمة مبيعاته
 function socialDashCompute(data, period) {
   const convs = data.convs || [];
@@ -9070,24 +9094,29 @@ function socialDashCompute(data, period) {
   const revenue = c => c ? sales(c).reduce((s, o) => s + orderValue(o), 0) : 0;
   const days = {};
   for (let ms = period.from; ms < period.to; ms += 86400000) days[localDay(new Date(ms).toISOString())] = { convs: 0, phones: 0 };
-  const countries = {}, ads = {}, channels = { fb: 0, ig: 0, wa: 0 };
+  const countries = {}, ads = {}, channels = { fb: 0, ig: 0, wa: 0 }, stages = {};
   let withPhone = 0, customers = 0, buyers = 0, value = 0;
   convs.forEach(cv => {
     const day = localDay(new Date(cv.first_at).toISOString());
     if (days[day]) { days[day].convs++; if ((cv.phones || []).length) days[day].phones++; }
     channels[cv.channel] = (channels[cv.channel] || 0) + 1;
     if ((cv.phones || []).length) withPhone++;
-    (cv.phones || []).forEach(p => { const k = p.country || ''; countries[k] = (countries[k] || 0) + 1; });
+    // دولة العميل: المختارة في المحادثة، أو من رقمه (كل عميل يتحسب مرة واحدة)
+    const ctry = convCountry(cv);
+    countries[ctry] = (countries[ctry] || 0) + 1;
+    if (cv.stage) stages[cv.stage] = (stages[cv.stage] || 0) + 1;
     const cu = custOf(cv), b = bought(cu), v = revenue(cu);
     if (cu) customers++;
     if (b) { buyers++; value += v; }
     const ak = cv.ad_id || cv.ad_title ? `${cv.ad_id}|${cv.ad_title}` : 'direct';
-    const a = ads[ak] = ads[ak] || { title: cv.ad_title || (cv.ad_id ? `${t('إعلان')} ${cv.ad_id}` : t('رسائل مباشرة (بدون إعلان)')), convs: 0, phones: 0, customers: 0, buyers: 0, value: 0 };
+    const a = ads[ak] = ads[ak] || { title: cv.ad_title || (cv.ad_id ? `${t('إعلان')} ${cv.ad_id}` : t('رسائل مباشرة (بدون إعلان)')), convs: 0, phones: 0, customers: 0, buyers: 0, value: 0, stages: {}, countries: {} };
     a.convs++; if ((cv.phones || []).length) a.phones++; if (cu) a.customers++; if (b) { a.buyers++; a.value += v; }
+    if (cv.stage) a.stages[cv.stage] = (a.stages[cv.stage] || 0) + 1;
+    a.countries[ctry] = (a.countries[ctry] || 0) + 1;
   });
   const waits = (data.resp || []).filter(r => r.fi && r.fo).map(r => (r.fo - r.fi) / 60000).sort((a, b) => a - b);
   const median = waits.length ? waits[Math.floor(waits.length / 2)] : null;
-  return { total: convs.length, withPhone, customers, buyers, value, days, countries, ads: Object.values(ads).sort((a, b) => b.buyers - a.buyers || b.customers - a.customers || b.convs - a.convs), channels, median, replied: waits.length, fastShare: waits.length ? waits.filter(w => w <= 60).length / waits.length : null };
+  return { total: convs.length, withPhone, customers, buyers, value, days, countries, stages, ads: Object.values(ads).sort((a, b) => b.buyers - a.buyers || b.customers - a.customers || b.convs - a.convs), channels, median, replied: waits.length, fastShare: waits.length ? waits.filter(w => w <= 60).length / waits.length : null };
 }
 const pct = (a, b) => b ? `${Math.round(a / b * 100)}%` : '—';
 const fmtWait = m => m == null ? '—' : m < 60 ? t('{n} دقيقة', { n: Math.round(m) }) : m < 1440 ? t('{n} ساعة', { n: (m / 60).toFixed(1) }) : t('{n} يوم', { n: (m / 1440).toFixed(1) });
@@ -9124,21 +9153,25 @@ function drawSocialDash(box, s, period) {
       <div class="kpi"><div class="l">${t('متوسط أول رد من الفريق')}</div><div class="v" style="font-size:20px">${fmtWait(s.median)}</div><div class="muted" style="font-size:12px">${s.fastShare == null ? '' : t('{p} خلال ساعة', { p: pct(s.fastShare * 100, 100) })}</div></div>
     </div>
     <div class="card mt"><b>${t('المحادثات يومًا بيوم')}</b>${dayRows.length > 1 ? barChart(dayRows, v => String(v)) : `<div class="muted mt">${t('اختر فترة أطول لعرض الرسم')}</div>`}</div>
-    <div class="card mt"><b>${t('أي إعلان يأتي بعملاء يشترون؟')}</b>
-      <div class="tbl-wrap mt"><table class="tbl"><thead><tr><th>${t('الإعلان')}</th><th>${t('محادثات')}</th><th>${t('أرقام')}</th><th>${t('عملاء')}</th><th>${t('اشتروا')}</th><th>${t('نسبة الشراء')}</th><th>${t('المبيعات (ج.م)')}</th></tr></thead>
-      <tbody>${s.ads.length ? s.ads.map(a => `<tr><td class="wrap">${esc(a.title)}</td><td>${a.convs}</td><td>${a.phones}</td><td>${a.customers}</td><td><b>${a.buyers}</b></td><td>${pct(a.buyers, a.convs)}</td><td>${money(a.value)}</td></tr>`).join('') : `<tr><td colspan="7" class="muted">${t('لا توجد محادثات في هذه الفترة')}</td></tr>`}</tbody></table></div></div>
+    <div class="card mt"><b>${t('مراحل العملاء (اللي بتتبعت للإعلانات)')}</b>
+      <div class="stage-row mt">${Object.entries(SOCIAL_STAGES).map(([k, l]) => `<div class="stage-box ${STAGE_PILL[k]}"><div class="v">${s.stages[k] || 0}</div><div class="l">${t(l)}${STAGE_META[k] ? ' ⓜ' : ''}</div></div>`).join('')}<div class="stage-box p-gray"><div class="v">${s.total - Object.values(s.stages).reduce((x, y) => x + y, 0)}</div><div class="l">${t('من غير مرحلة')}</div></div></div></div>
+    <div class="card mt"><b>${t('أداء كل إعلان: المحادثات والمراحل والدول')}</b>
+      <div class="tbl-wrap mt"><table class="tbl"><thead><tr><th>${t('الإعلان')}</th><th>${t('محادثات')}</th><th>${t('أرقام')}</th><th>${t('اتحولوا للسيلز')}</th><th>${t('متابعة')}</th><th>${t('مسجل')}</th><th>${t('مؤهل')}</th><th>${t('تم التحويل')}</th><th>${t('مفقود / سبام')}</th><th>${t('اشتروا')}</th><th>${t('المبيعات (ج.م)')}</th></tr></thead>
+      <tbody>${s.ads.length ? s.ads.map(a => `<tr><td class="wrap">${esc(a.title)}<div class="muted" style="font-size:12px">🌍 ${esc(countryTop(a.countries))}</div></td><td>${a.convs}</td><td>${a.phones}</td><td>${a.customers}</td><td>${a.stages.followup || 0}</td><td>${a.stages.lead || 0}</td><td>${a.stages.qualified || 0}</td><td><b>${a.stages.converted || 0}</b></td><td>${(a.stages.lost || 0) + (a.stages.spam || 0)}</td><td><b>${a.buyers}</b> <span class="muted">${pct(a.buyers, a.convs)}</span></td><td>${money(a.value)}</td></tr>`).join('') : `<tr><td colspan="11" class="muted">${t('لا توجد محادثات في هذه الفترة')}</td></tr>`}</tbody></table></div></div>
     <div class="grid2 mt">
-      <div class="card"><b>${t('الأرقام حسب الدولة')}</b>${hbars(Object.entries(s.countries).sort((a, b) => b[1] - a[1]).map(([k, n]) => [k ? countryLabel(k) : t('دولة غير محددة'), n, String(n)]), { fmt: String, h1: t('الدولة'), h2: t('الأرقام') })}</div>
+      <div class="card"><b>${t('العملاء حسب الدولة')}</b>${hbars(Object.entries(s.countries).sort((a, b) => b[1] - a[1]).map(([k, n]) => [k ? countryLabel(k) : t('دولة غير محددة'), n, String(n)]), { fmt: String, h1: t('الدولة'), h2: t('العملاء') })}</div>
       <div class="card"><b>${t('القنوات')}</b>${s.total ? stackBar([[t('ماسنجر'), s.channels.fb || 0], [t('إنستجرام'), s.channels.ig || 0], [t('واتساب'), s.channels.wa || 0]], String) : `<div class="empty">${t('لا توجد بيانات في هذه الفترة')}</div>`}</div>
     </div>`;
 }
 function exportSocialDash(s, period) {
   const title = t('أداء السوشيال');
   const summary = [[t('البند'), t('القيمة')], [t('الفترة'), period.label], [t('محادثات جديدة'), s.total], [t('أرسلوا أرقامهم'), s.withPhone], [t('تحوّلوا لعملاء'), s.customers], [t('اشتروا'), s.buyers], [t('المبيعات (ج.م)'), Math.round(s.value)], [t('متوسط أول رد من الفريق'), fmtWait(s.median)]];
-  const ads = [[t('الإعلان'), t('محادثات'), t('أرقام'), t('عملاء'), t('اشتروا'), t('نسبة الشراء'), t('المبيعات (ج.م)')], ...s.ads.map(a => [a.title, a.convs, a.phones, a.customers, a.buyers, pct(a.buyers, a.convs), Math.round(a.value)])];
+  const ads = [[t('الإعلان'), t('محادثات'), t('أرقام'), t('اتحولوا للسيلز'), t('متابعة'), t('مسجل'), t('مؤهل'), t('تم التحويل'), t('مفقود'), t('سبام'), t('اشتروا'), t('نسبة الشراء'), t('المبيعات (ج.م)'), t('الدول')], ...s.ads.map(a => [a.title, a.convs, a.phones, a.customers, a.stages.followup || 0, a.stages.lead || 0, a.stages.qualified || 0, a.stages.converted || 0, a.stages.lost || 0, a.stages.spam || 0, a.buyers, pct(a.buyers, a.convs), Math.round(a.value), countryTop(a.countries, 20)])];
+  const allC = [...new Set(s.ads.flatMap(a => Object.keys(a.countries)))].sort((x, y) => (s.countries[y] || 0) - (s.countries[x] || 0));
+  const adCountry = [[t('الإعلان'), ...allC.map(k => k ? countryLabel(k) : t('غير محددة'))], ...s.ads.map(a => [a.title, ...allC.map(k => a.countries[k] || 0)])];
   const days = [[t('اليوم'), t('محادثات'), t('أرسلوا أرقامهم')], ...Object.entries(s.days).map(([k, v]) => [fmtDate(k), v.convs, v.phones])];
-  const countries = [[t('الدولة'), t('الأرقام')], ...Object.entries(s.countries).sort((a, b) => b[1] - a[1]).map(([k, n]) => [k ? countryLabel(k) : t('دولة غير محددة'), n])];
-  downloadBlob(buildXlsx([{ name: t('الملخص'), rows: summary }, { name: t('الإعلانات'), rows: ads }, { name: t('الأيام'), rows: days }, { name: t('الدول'), rows: countries }]), `${title} ${today()}.xlsx`);
+  const countries = [[t('الدولة'), t('العملاء')], ...Object.entries(s.countries).sort((a, b) => b[1] - a[1]).map(([k, n]) => [k ? countryLabel(k) : t('دولة غير محددة'), n])];
+  downloadBlob(buildXlsx([{ name: t('الملخص'), rows: summary }, { name: t('الإعلانات'), rows: ads }, { name: t('الإعلانات والدول'), rows: adCountry }, { name: t('الأيام'), rows: days }, { name: t('الدول'), rows: countries }]), `${title} ${today()}.xlsx`);
   audit('export', 'social', null, 'تصدير لوحة أداء السوشيال');
 }
 
@@ -9153,8 +9186,9 @@ async function socialDashDocx(s, period) {
           top ? t('أفضل إعلان في الشراء: "{n}" ({b} مشترين من {c} محادثة).', { n: top.title, b: top.buyers, c: top.convs }) : ''].filter(Boolean) },
       { heading: t('المحادثات يومًا بيوم'), chart: { rows: Object.entries(s.days).map(([k, v]) => [`${k.slice(8)}/${k.slice(5, 7)}`, v.convs]) } },
       { heading: t('أداء الإعلانات'), chart: { horizontal: true, rows: s.ads.slice(0, 10).map(a => [a.title, a.convs]), caption: t('عدد المحادثات لكل إعلان') },
-        table: { head: [t('الإعلان'), t('محادثات'), t('أرقام'), t('عملاء'), t('اشتروا'), t('نسبة الشراء'), t('المبيعات (ج.م)')], rows: s.ads.map(a => [a.title, a.convs, a.phones, a.customers, a.buyers, pct(a.buyers, a.convs), Math.round(a.value)]) } },
-      { heading: t('الأرقام حسب الدولة'), chart: { horizontal: true, rows: Object.entries(s.countries).sort((a, b) => b[1] - a[1]).slice(0, 12).map(([k, n]) => [k ? countryLabel(k) : t('دولة غير محددة'), n]) } },
+        table: { head: [t('الإعلان'), t('محادثات'), t('أرقام'), t('اتحولوا للسيلز'), t('مسجل'), t('مؤهل'), t('تم التحويل'), t('اشتروا'), t('المبيعات (ج.م)'), t('الدول')], rows: s.ads.map(a => [a.title, a.convs, a.phones, a.customers, a.stages.lead || 0, a.stages.qualified || 0, a.stages.converted || 0, a.buyers, Math.round(a.value), countryTop(a.countries, 3)]) } },
+      { heading: t('مراحل العملاء'), kpis: Object.entries(SOCIAL_STAGES).filter(([k]) => s.stages[k]).map(([k, l]) => [t(l), s.stages[k]]) },
+      { heading: t('العملاء حسب الدولة'), chart: { horizontal: true, rows: Object.entries(s.countries).sort((a, b) => b[1] - a[1]).slice(0, 12).map(([k, n]) => [k ? countryLabel(k) : t('دولة غير محددة'), n]) } },
     ],
   });
   downloadBlob(blob, `${t('تقرير أداء السوشيال')} ${today()}.docx`);
