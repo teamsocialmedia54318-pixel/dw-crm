@@ -495,7 +495,7 @@ html { -webkit-text-size-adjust: 100%; }
 }
 /* رسائل السوشيال: قائمة المحادثات بجانب الشات */
 .social-wrap { display: grid; grid-template-columns: minmax(260px, 360px) minmax(0, 1fr); gap: 12px; align-items: start; }
-.social-list { padding: 0; max-height: 72vh; overflow-y: auto; }
+.social-list { padding: 0; height: max(560px, calc(100vh - 150px)); overflow-y: auto; }
 .soc-item { display: flex; gap: 10px; width: 100%; text-align: start; padding: 10px 12px; border: 0; border-bottom: 1px solid var(--border); background: none; cursor: pointer; font: inherit; color: inherit; }
 .soc-item:hover { background: var(--card-soft); }
 .soc-item.on { background: var(--blue-bg); }
@@ -511,7 +511,7 @@ html { -webkit-text-size-adjust: 100%; }
 .soc-fb { background: #1877F2; }
 .soc-ig { background: linear-gradient(45deg, #F58529, #DD2A7B 55%, #8134AF); font-size: 11px; }
 .soc-wa { background: #25D366; }
-.social-thread { padding: 0; display: flex; flex-direction: column; min-height: 420px; }
+.social-thread { padding: 0; display: flex; flex-direction: column; height: max(560px, calc(100vh - 150px)); overflow: hidden; }
 .social-thread:empty { display: none; }
 .soc-head { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--border); }
 .soc-back { display: none; }
@@ -523,7 +523,7 @@ html { -webkit-text-size-adjust: 100%; }
 .soc-note.ok { background: var(--green-bg); }
 .soc-actions { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--border); }
 .soc-actions .inp { width: auto; min-width: 190px; }
-.soc-msgs { flex: 1; overflow-y: auto; max-height: 46vh; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; background: var(--card-soft); }
+.soc-msgs { flex: 1; min-height: 0; overflow-y: auto; padding: 14px 18px; display: flex; flex-direction: column; gap: 8px; background: var(--card-soft); }
 .soc-msg { display: flex; flex-direction: column; max-width: 78%; }
 .soc-msg.in { align-self: flex-start; }
 .soc-msg.out { align-self: flex-end; align-items: flex-end; }
@@ -556,7 +556,7 @@ html { -webkit-text-size-adjust: 100%; }
 @media (max-width: 900px) {
   .social-wrap { grid-template-columns: 1fr; }
   .social-thread { display: none; }
-  .social-thread.open { display: flex; position: fixed; inset: 0; z-index: 85; border-radius: 0; margin: 0; min-height: 0; }
+  .social-thread.open { display: flex; position: fixed; inset: 0; z-index: 85; border-radius: 0; margin: 0; min-height: 0; height: auto; }
   .social-thread.open .soc-msgs { max-height: none; }
   .soc-back { display: inline-flex; }
   .social-list { max-height: none; }
@@ -688,7 +688,33 @@ button.kpi:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; 
 .soc-stage { padding: 8px 14px; border-top: 1px solid var(--border); display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
 .soc-stage .chips { margin: 0; }
 .soc-stage .chip { font-size: 12.5px; }
-
+/* الشات واسع في النص، وبيانات العميل في لوحة جانبية (تتقفل وتتفتح) */
+.soc-body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 330px; }
+.soc-chat { order: 1; display: flex; flex-direction: column; min-height: 0; min-width: 0; }
+.soc-side { order: 2; min-height: 0; overflow-y: auto; border-inline-start: 1px solid var(--border); background: var(--card); display: flex; flex-direction: column; }
+.soc-side .soc-stage { order: 1; border-top: 0; border-bottom: 1px solid var(--border); }
+.soc-side .soc-actions { order: 2; }
+.soc-side .soc-note { order: 3; margin: 10px 14px; }
+.soc-side .soc-info { order: 4; border-bottom: 0; }
+.soc-side .soc-info.kv { grid-template-columns: 1fr; gap: 10px; }
+.soc-side .soc-actions .inp, .soc-side .soc-actions .btn { width: 100%; min-width: 0; }
+.soc-side .soc-phone .combo, .soc-side .soc-phone select { width: 100%; }
+.social-thread.side-off .soc-body { grid-template-columns: minmax(0, 1fr); }
+.social-thread.side-off .soc-side { display: none; }
+.soc-msg { max-width: min(78%, 640px); }
+.soc-reply { border-top: 1px solid var(--border); background: var(--card); }
+.soc-side-btn { white-space: nowrap; }
+@media (max-width: 900px) {
+  .soc-body { grid-template-columns: minmax(0, 1fr); }
+  .soc-side { display: none; }
+  .social-thread.side-on .soc-side { display: flex; border: 0; }
+  .social-thread.side-on .soc-chat { display: none; }
+  .social-thread.open { position: fixed; }
+  .soc-head { flex-wrap: wrap; row-gap: 6px; }
+  .soc-head > div { min-width: 0; flex: 1 1 140px; }
+  .soc-head > div b { word-break: break-all; }
+  .soc-side-btn .lbl { display: none; }
+}
 </style>
 </head>
 <body>
@@ -8810,7 +8836,8 @@ function drawSocialThread() {
   const windowOpen = lastIn && Date.now() - lastIn < 24 * 3600000;
   const templates = socialCfg().templates || [];
   const kv = (k, v) => v ? `<div><div class="k">${k}</div><div class="val">${v}</div></div>` : '';
-  box.innerHTML = `<div class="soc-head"><button class="btn sm soc-back" id="socBack" aria-label="${t('رجوع')}">→</button>${channelBadge(c.channel)}<div><b>${esc(c.name || t('عميل بدون اسم'))}</b>${c.username ? ` <span class="muted" dir="ltr">@${esc(c.username)}</span>` : ''}<div class="muted" style="font-size:12px">${t(SOCIAL_CHANNELS[c.channel])} · ID: <span dir="ltr">${esc(c.user_id)}</span></div></div><span class="spacer"></span><span class="pill ${c.status === 'new' ? 'p-orange' : c.status === 'converted' ? 'p-green' : 'p-gray'}">${t(SOCIAL_STATUS[c.status])}</span></div>
+  box.innerHTML = `<div class="soc-head"><button class="btn sm soc-back" id="socBack" aria-label="${t('رجوع')}">→</button>${channelBadge(c.channel)}<div><b>${esc(c.name || t('عميل بدون اسم'))}</b>${c.username ? ` <span class="muted" dir="ltr">@${esc(c.username)}</span>` : ''}<div class="muted" style="font-size:12px">${t(SOCIAL_CHANNELS[c.channel])} · ID: <span dir="ltr">${esc(c.user_id)}</span></div></div><span class="spacer"></span>${stagePillHtml(c)}<span class="pill ${c.status === 'new' ? 'p-orange' : c.status === 'converted' ? 'p-green' : 'p-gray'}">${t(SOCIAL_STATUS[c.status])}</span><button class="btn sm soc-side-btn" id="socSideBtn" type="button" aria-label="${t('بيانات العميل')}">ℹ <span class="lbl">${t('بيانات العميل')}</span></button></div>
+    <div class="soc-body"><aside class="soc-side">
     <div class="soc-info kv">
       ${kv(t('جاء من'), c.ad_title || c.ad_id ? `📣 <b>${esc(c.ad_title || t('إعلان'))}</b>${c.ad_id ? ` <span class="muted" dir="ltr">#${esc(c.ad_id)}</span>` : ''}` : esc(t('رسالة مباشرة (ليست من إعلان)')))}
       ${kv(t('أول رسالة'), esc(fmtDT(new Date(c.first_at).toISOString())))}
@@ -8834,17 +8861,25 @@ function drawSocialThread() {
       ${c.status === 'ignored' ? `<button class="btn" id="socReopen">${t('إعادة فتح')}</button>` : `<button class="btn" id="socIgnore">${t('تجاهل')}</button>`}
       <button class="btn" id="socAddPhone">${t('إضافة رقم يدويًا')}</button>
     </div>
+    </aside><div class="soc-chat">
     <div class="soc-msgs" id="socMsgs">${msgs.length ? msgs.map(m => `<div class="soc-msg ${m.dir}"><div class="bubble">${esc(msgText(m))}${m.attach ? socialAttach(m.attach) : ''}${m.reaction ? `<span class="soc-react" title="${esc(t('تفاعل'))}">${esc(m.reaction)}</span>` : ''}</div><div class="muted soc-meta">${socialTime(m.at)}${m.dir === 'out' && m.by && m.by !== 'page' ? ` · ${esc(userName(m.by))}` : ''}${m.edited_at ? ` · <span class="soc-edited" title="${esc(`${t('النص الأصلي')}: ${m.orig_text || ''}`)}">✎ ${t('معدّلة')}</span>` : ''}${msgTick(m, c)}</div></div>`).join('') : `<div class="muted" style="padding:12px">${t('لا توجد رسائل')}</div>`}</div>
     <div class="soc-reply">${windowOpen ? `${typeof aiEnabled === 'function' && aiEnabled() ? `<button class="btn ai-btn" id="socAI" type="button" title="${t('يكتب Dropy ردًا مقترحًا من معلومات دلتا ووتر بدون أسعار، وتراجعه أنت قبل الإرسال')}">✨ ${t('اقترح رد')}</button>` : ''}${templates.length ? `<select class="inp" id="socTpl" aria-label="${t('رد جاهز')}"><option value="">${t('رد جاهز...')}</option>${templates.map((x, i) => `<option value="${i}">${esc(x.name)}</option>`).join('')}</select>` : ''}
       <textarea class="inp" id="socText" rows="2" placeholder="${t('اكتب ردك هنا، ويصل للعميل على {ch}', { ch: t(SOCIAL_CHANNELS[c.channel]) })}"></textarea><button class="btn primary" id="socSend">${t('إرسال')}</button>`
-      : `<div class="muted">${t('مرّ أكثر من 24 ساعة على آخر رسالة من العميل، وميتا لا تسمح بالرد من النظام بعدها. يمكن الرد من تطبيق ماسنجر أو إنستجرام، أو الاتصال بالعميل على رقمه.')}</div>`}</div>`;
+      : `<div class="muted">${t('مرّ أكثر من 24 ساعة على آخر رسالة من العميل، وميتا لا تسمح بالرد من النظام بعدها. يمكن الرد من تطبيق ماسنجر أو إنستجرام، أو الاتصال بالعميل على رقمه.')}</div>`}</div></div></div>`;
   const m = $('#socMsgs', box);
   m.scrollTop = m.scrollHeight;
   hydrateWaMedia(m);
   // اختيار دولة الرقم بالكتابة (الصفحة ليست نافذة، فيُطبَّق البحث هنا مباشرة)
   comboizeIn(box);
   const on = (sel, fn) => { const el = $(sel, box); if (el) el.onclick = fn; };
-  on('#socBack', () => { box.classList.remove('open'); socialState.sel = ''; history.replaceState(null, '', '#/social'); drawSocialList(); });
+  on('#socBack', () => { box.classList.remove('open', 'side-on'); socialState.sel = ''; history.replaceState(null, '', '#/social'); drawSocialList(); });
+  // لوحة بيانات العميل الجانبية: على الكمبيوتر تتقفل وتتفتح (والاختيار بيتحفظ)، وعلى الموبايل بتظهر فوق الشات لما تدوسي عليها
+  const wide = () => window.matchMedia('(min-width: 901px)').matches;
+  try { box.classList.toggle('side-off', localStorage.getItem('dw_soc_side') === 'off'); } catch {}
+  on('#socSideBtn', () => {
+    if (wide()) { const off = box.classList.toggle('side-off'); try { localStorage.setItem('dw_soc_side', off ? 'off' : 'on'); } catch {} }
+    else box.classList.toggle('side-on');
+  });
   on('#socOpenC', () => openCustomer(linked.id));
   on('#socSaveImgs', async () => { $('#socSaveImgs', box).disabled = true; await saveChatImages(linked, c, chatImages(msgs)); drawSocialThread(); });
   on('#socOpenDup', () => openCustomer(dup.id));
