@@ -684,6 +684,10 @@ button.kpi:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; 
 .dt-fix input[type=date]::-webkit-datetime-edit{display:none}
 .dt-fix input[type=date]::before{content:attr(data-date);flex:1;color:inherit;white-space:nowrap}
 .dt-fix input[type=date]{display:flex;align-items:center}
+/* مرحلة العميل في محادثات السوشيال */
+.soc-stage { padding: 8px 14px; border-top: 1px solid var(--border); display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.soc-stage .chips { margin: 0; }
+.soc-stage .chip { font-size: 12.5px; }
 
 </style>
 </head>
@@ -1258,6 +1262,14 @@ const EN = {
   'أقساط مستحقة في {d} ({n})': 'Installments due on {d} ({n})', 'الأقساط والاستحقاقات': 'Installments & due dates', 'سجل السداد والتحصيل': 'Payment & collection log', 'تغييرات تواريخ الأقساط': 'Installment date changes', 'متابعات الأقساط': 'Installment follow-ups',
   'من تاريخ': 'From date', 'إلى تاريخ': 'To date', 'القرار': 'Decision', 'طلبه': 'Requested by', 'اعتمده': 'Approved by', 'كتبها': 'Written by', 'بواسطة': 'By', 'من': 'From', 'إلى': 'To', 'النتيجة': 'Outcome', 'المتابعة القادمة': 'Next follow-up', 'تاريخ المتابعة القادمة': 'Next follow-up date', 'تاريخ التسجيل': 'Registered on', 'لا يوجد': 'None', 'معتمد': 'Approved', 'بانتظار الاعتماد': 'Pending approval',
   'تفاعل': 'Reaction', 'النص الأصلي': 'Original text', 'معدّلة': 'Edited', 'لم تصل': 'Not delivered', 'اتقرت': 'Read', 'وصلت': 'Delivered', 'اتبعتت': 'Sent',
+  'متابعة': 'Follow-up', 'مسجل': 'Lead', 'مؤهل': 'Qualified', 'غير مؤهل': 'Not qualified', 'تم التحويل': 'Converted', 'مفقود': 'Lost', 'سبام': 'Spam',
+  'مرحلة العميل': 'Customer stage', 'كل المراحل': 'All stages', 'من غير مرحلة': 'No stage', 'بيتبعت للإعلانات على إنه {e}': 'Sent to ads as {e}', 'بيتحفظ في السيستم بس': 'Saved in the CRM only', 'اتحددت تلقائيًا': 'Set automatically', 'ميتا': 'Meta',
+  'اتحفظت المرحلة: {s}': 'Stage saved: {s}', 'اتحفظت المرحلة واتبعتت لميتا علشان الإعلان يتعلم ✓': 'Stage saved and sent to Meta so ads can learn ✓', 'اتحفظت المرحلة (ميتا عندها الحدث ده من قبل)': 'Stage saved (Meta already has this event)',
+  'اتحفظت المرحلة، بس ميتا رفضت الحدث': 'Stage saved, but Meta rejected the event', 'اتحفظت المرحلة في السيستم. الإبلاغ لميتا مش متوصل لسه (محتاج DATASET_ID)': 'Stage saved in the CRM. Reporting to Meta is not connected yet (needs DATASET_ID)',
+  'تم التحويل: قيمة الشراء': 'Converted: purchase value', 'قيمة الشراء (ج.م)': 'Purchase value (EGP)', 'اختياري. ميتا بتستخدم القيمة علشان تجيب عملاء بيشتروا بقيمة قريبة. القيمة مش بتظهر للعميل.': 'Optional. Meta uses the value to find customers who buy at a similar value. The customer never sees it.',
+  'إبلاغ الإعلانات بمراحل العملاء (Conversions API)': 'Reporting customer stages to ads (Conversions API)', 'شغال: مسجل ومؤهل وتم التحويل بيتبعتوا لميتا': 'Working: Lead, Qualified and Converted are sent to Meta',
+  'واتساب: ضيف WABA_ID في Cloudflare علشان عملاء إعلانات الواتساب يتبعتوا كمان': 'WhatsApp: add WABA_ID in Cloudflare so WhatsApp ad customers are sent too', 'وضع الاختبار شغال (CAPI_TEST_CODE)، الأحداث بتظهر في Test events بس': 'Test mode is on (CAPI_TEST_CODE); events only show in Test events',
+  'مش متوصل: المراحل بتتحفظ في السيستم بس ومش بتوصل للإعلانات. محتاج DATASET_ID في Cloudflare (مجموعة بيانات من مدير الأحداث مربوطة بالصفحة والإنستجرام)': 'Not connected: stages are saved in the CRM only and do not reach ads. Needs DATASET_ID in Cloudflare (a dataset from Events Manager linked to the Page and Instagram)',
   'تم تنزيل كشف الحساب': 'Statement downloaded', 'بيانات العميل': 'Customer details', 'الملخص المالي (ج.م)': 'Financial summary (EGP)', 'البيانات': 'Details', 'الأقساط': 'Installments', 'تحصيل': 'Collections', 'آخر متابعة': 'Last follow-up', 'من الأصلي': 'from original',
 };
 
@@ -8459,6 +8471,11 @@ function openLeaderPick(tm, userId, onDone) {
 const SOCIAL_CHANNELS = { fb: 'ماسنجر', ig: 'إنستجرام', wa: 'واتساب' };
 const SOCIAL_STATUS = { new: 'جديدة', open: 'مفتوحة', converted: 'تحوّلت لعميل', ignored: 'متجاهلة' };
 const SOCIAL_SOURCE = { fb: 'فيسبوك', ig: 'إنستجرام', wa: 'واتساب' };
+// مرحلة العميل زي ميتا. مسجل ومؤهل وتم التحويل بيتبعتوا لميتا (LeadSubmitted / QualifiedLead / Purchase) علشان الإعلان يجيب ناس شبههم
+const SOCIAL_STAGES = { followup: 'متابعة', lead: 'مسجل', qualified: 'مؤهل', unqualified: 'غير مؤهل', converted: 'تم التحويل', lost: 'مفقود', spam: 'سبام' };
+const STAGE_PILL = { followup: 'p-blue', lead: 'p-orange', qualified: 'p-purple', unqualified: 'p-gray', converted: 'p-green', lost: 'p-red', spam: 'p-red' };
+const STAGE_META = { lead: 'LeadSubmitted', qualified: 'QualifiedLead', converted: 'Purchase' };
+const stagePillHtml = c => c.stage ? `<span class="pill ${STAGE_PILL[c.stage] || 'p-gray'}">${t(SOCIAL_STAGES[c.stage] || c.stage)}</span>` : '';
 const socialCfg = () => DB.settings.social || {};
 // د. محمود جمعة هو المسؤول الافتراضي عن رسائل السوشيال حتى تحدد الإدارة غيره
 const socialMembers = () => {
@@ -8483,7 +8500,7 @@ async function socialApi(path, { method = 'GET', body } = {}) {
 }
 
 // ------- الذاكرة المحلية للمحادثات + التحديث كل 30 ثانية -------
-const socialState = { convs: new Map(), at: 0, loaded: false, error: '', tab: 'active', channel: '', q: '', sel: '', thread: null, stats: null, statsDay: '' };
+const socialState = { convs: new Map(), at: 0, loaded: false, error: '', tab: 'active', channel: '', stage: '', q: '', sel: '', thread: null, stats: null, statsDay: '' };
 const SOCIAL_SEEN_KEY = () => `dw_social_seen_${ME?.id || ''}`;
 async function loadSocial() {
   const out = await socialApi(`convs${socialState.at ? `?since=${socialState.at}` : ''}`);
@@ -8542,7 +8559,8 @@ async function socialCapiTick() {
       const done = c.social.capi || {};
       const sales = DB.orders.filter(o => o.customerId === c.id && countsAsSale(o));
       const jobs = [];
-      if (!done.Lead) jobs.push({ event: 'Lead', at: new Date(c.createdAt).getTime() });
+      // اسمه عند ميتا في الرسائل LeadSubmitted (السجلات القديمة اتسجلت باسم Lead)
+      if (!done.Lead && !done.LeadSubmitted) jobs.push({ event: 'LeadSubmitted', at: new Date(c.createdAt).getTime() });
       if (!done.Purchase && (c.purchased || sales.length)) jobs.push({ event: 'Purchase', at: sales.length ? new Date(sales.map(o => o.date).sort()[0]).getTime() || Date.now() : Date.now(), value: sales.reduce((s, o) => s + orderValue(o), 0) });
       for (const j of jobs) {
         try {
@@ -8649,6 +8667,7 @@ function viewSocial(root, sub) {
     : `<div id="socialStats"></div>
     <div class="filters mt"><div class="tabs" id="socTabs">${[['active', 'الجديدة والمفتوحة'], ['new', 'الجديدة'], ['mine', 'المحوّلة إليّ'], ['converted', 'تحوّلت لعملاء'], ['ignored', 'المتجاهلة'], ['all', 'الكل']].map(([k, l]) => `<button class="tab ${socialState.tab === k ? 'on' : ''}" data-st="${k}">${t(l)}</button>`).join('')}</div>
       <select class="inp" id="socCh" aria-label="${t('القناة')}">${opts([['', t('كل القنوات')], ['fb', t('ماسنجر')], ['ig', t('إنستجرام')], ['wa', t('واتساب')]], socialState.channel)}</select>
+      <select class="inp" id="socStage" aria-label="${t('مرحلة العميل')}">${opts([['', t('كل المراحل')], ['none', t('من غير مرحلة')], ...Object.entries(SOCIAL_STAGES).map(([k, v]) => [k, t(v)])], socialState.stage)}</select>
       <input class="inp" id="socQ" type="search" placeholder="${t('بحث بالاسم أو الرقم أو الإعلان')}" value="${esc(socialState.q)}"></div>
     <div class="social-wrap mt"><div class="social-list card" id="socialList"><div class="muted" style="padding:12px">${t('جارٍ تحميل المحادثات...')}</div></div><div class="social-thread card" id="socialThread"></div></div>`}`;
   const set = $('#socSet', root);
@@ -8658,6 +8677,7 @@ function viewSocial(root, sub) {
   $('#socRe', root).onclick = async () => { socialState.at = 0; socialState.convs.clear(); await refreshSocial(true); };
   $$('#socTabs .tab', root).forEach(b => b.onclick = () => { socialState.tab = b.dataset.st; $$('#socTabs .tab', root).forEach(x => x.classList.toggle('on', x === b)); drawSocialList(); });
   $('#socCh', root).onchange = e => { socialState.channel = e.target.value; drawSocialList(); };
+  $('#socStage', root).onchange = e => { socialState.stage = e.target.value; drawSocialList(); };
   $('#socQ', root).oninput = e => { socialState.q = e.target.value; drawSocialList(); };
   refreshSocial(!socialState.loaded);
 }
@@ -8681,6 +8701,7 @@ async function refreshSocial(full) {
 const socialMatches = c => {
   const st = socialState, q = normHeader(toLatinDigits(st.q)).trim();
   if (st.channel && c.channel !== st.channel) return false;
+  if (st.stage && (st.stage === 'none' ? !!c.stage : c.stage !== st.stage)) return false;
   if (st.tab === 'active' && !['new', 'open'].includes(c.status)) return false;
   if (st.tab === 'mine' && c.assignee !== ME.id) return false;
   if (!['active', 'mine', 'all'].includes(st.tab) && c.status !== st.tab) return false;
@@ -8698,7 +8719,7 @@ function drawSocialList() {
   box.innerHTML = list.length ? list.slice(0, 300).map(c => `<button class="soc-item ${c.id === socialState.sel ? 'on' : ''} ${c.status === 'new' ? 'unread' : ''}" data-cv="${esc(c.id)}">
       ${channelBadge(c.channel)}<div class="soc-main"><div class="soc-top"><b>${esc(c.name || t('عميل بدون اسم'))}</b><span class="muted">${socialTime(c.last_at)}</span></div>
       <div class="soc-last">${c.last_dir === 'out' ? `<span class="muted">${t('أنت')}: </span>` : ''}${esc(c.last_text || '')}</div>
-      <div class="soc-tags">${c.ad_title || c.ad_id ? `<span class="pill p-harvest">📣 ${esc(c.ad_title || t('إعلان'))}</span>` : ''}${(c.phones || []).length ? `<span class="pill p-green">📞 ${c.phones.length}</span>` : ''}${c.status !== 'new' ? `<span class="pill p-gray">${t(SOCIAL_STATUS[c.status])}</span>` : ''}${c.assignee ? `<span class="pill p-blue">${esc(userName(c.assignee))}</span>` : ''}</div></div></button>`).join('')
+      <div class="soc-tags">${stagePillHtml(c)}${c.ad_title || c.ad_id ? `<span class="pill p-harvest">📣 ${esc(c.ad_title || t('إعلان'))}</span>` : ''}${(c.phones || []).length ? `<span class="pill p-green">📞 ${c.phones.length}</span>` : ''}${c.status !== 'new' ? `<span class="pill p-gray">${t(SOCIAL_STATUS[c.status])}</span>` : ''}${c.assignee ? `<span class="pill p-blue">${esc(userName(c.assignee))}</span>` : ''}</div></div></button>`).join('')
     : `<div class="empty" style="padding:20px">${t(socialState.loaded ? 'لا توجد محادثات هنا' : 'جارٍ تحميل المحادثات...')}</div>`;
   $$('.soc-item', box).forEach(b => b.onclick = () => {
     history.replaceState(null, '', `#/social/${encodeURIComponent(b.dataset.cv)}`);
@@ -8720,6 +8741,28 @@ async function openSocialThread(id) {
   } catch (err) {
     box.innerHTML = `<div class="err-msg" style="margin:12px">${esc(err.message)}</div>`;
   }
+}
+// تغيير مرحلة العميل. "تم التحويل" بيسأل عن قيمة الشراء (ميتا بتستخدمها تجيب عملاء بيشتروا بقيمة أعلى)
+async function setConvStage(c, stage, linked) {
+  if (c.stage === stage) return;
+  const phone = linked ? metaPhone(linked) : '', email = linked?.email1 || '';
+  const done = async extra => {
+    const before = socialState.thread?.conv?.capi || {};
+    const out = await updateConv(c.id, { stage, by: ME.id, phone, email, ...extra });
+    if (!out) return;
+    const ev = STAGE_META[stage];
+    if (!ev) { toast(t('اتحفظت المرحلة: {s}', { s: t(SOCIAL_STAGES[stage]) }), 'ok'); return; }
+    const r = out.capi?.[ev];
+    if (r?.at && !before[ev]?.at) toast(t('اتحفظت المرحلة واتبعتت لميتا علشان الإعلان يتعلم ✓'), 'ok');
+    else if (r?.at) toast(t('اتحفظت المرحلة (ميتا عندها الحدث ده من قبل)'), 'ok');
+    else if (r?.err) toast(`${t('اتحفظت المرحلة، بس ميتا رفضت الحدث')}: ${r.err}`, 'err');
+    else toast(t('اتحفظت المرحلة في السيستم. الإبلاغ لميتا مش متوصل لسه (محتاج DATASET_ID)'), '');
+  };
+  if (stage !== 'converted') return done({});
+  const sales = linked ? DB.orders.filter(o => o.customerId === linked.id && countsAsSale(o)) : [];
+  const sum = Math.round(sales.reduce((s, o) => s + orderValue(o), 0));
+  const md = openModal({ title: t('تم التحويل: قيمة الشراء'), body: `<div class="field"><label>${t('قيمة الشراء (ج.م)')}</label><input class="inp" type="number" min="0" id="cvVal" value="${sum || ''}"></div><small class="muted">${t('اختياري. ميتا بتستخدم القيمة علشان تجيب عملاء بيشتروا بقيمة قريبة. القيمة مش بتظهر للعميل.')}</small>`, footer: `<button class="btn primary" id="cvOk">${t('حفظ')}</button>` });
+  $('#cvOk', md.el).onclick = async () => { const value = +$('#cvVal', md.el).value || 0; md.close(); await done({ value, currency: 'EGP' }); };
 }
 async function updateConv(id, patch, okMsg) {
   try {
@@ -8780,8 +8823,11 @@ function drawSocialThread() {
       ${kv(t('اهتمام العميل'), ins.intents.map(n => `<span class="pill p-after">${esc(t(n))}</span>`).join(' '))}
       ${kv(t('المسؤول عن المحادثة'), c.assignee ? esc(userName(c.assignee)) : '')}
     </div>
-    ${linked ? `<div class="soc-note ok">✓ ${t('مرتبطة بالعميل')} <b>${esc(linked.name)}</b> (${esc(linked.code)}) <button class="btn sm" id="socOpenC">${t('فتح ملف العميل')}</button>${(() => { const imgs = chatImages(msgs), left = imgs.filter(im => !(linked.social?.savedMedia || []).includes(im.key)).length; return imgs.length ? left ? `<button class="btn sm" id="socSaveImgs">📷 ${t('حفظ صور الشات في ملف العميل ({n})', { n: left })}</button>` : `<span class="muted">📷 ${t('صور الشات محفوظة في ملفه')}</span>` : ''; })()}${socialCfg().capi ? `<span class="muted">· ${t('ميتا')}: ${linked.social?.capi?.Lead ? `${t('عميل محتمل')} ✓` : `${t('عميل محتمل')} …`}${linked.social?.capi?.Purchase ? ` · ${t('شراء')} ✓` : ''}</span>` : ''}</div>`
+    ${linked ? `<div class="soc-note ok">✓ ${t('مرتبطة بالعميل')} <b>${esc(linked.name)}</b> (${esc(linked.code)}) <button class="btn sm" id="socOpenC">${t('فتح ملف العميل')}</button>${(() => { const imgs = chatImages(msgs), left = imgs.filter(im => !(linked.social?.savedMedia || []).includes(im.key)).length; return imgs.length ? left ? `<button class="btn sm" id="socSaveImgs">📷 ${t('حفظ صور الشات في ملف العميل ({n})', { n: left })}</button>` : `<span class="muted">📷 ${t('صور الشات محفوظة في ملفه')}</span>` : ''; })()}${socialCfg().capi ? `<span class="muted">· ${t('ميتا')}: ${linked.social?.capi?.Lead || linked.social?.capi?.LeadSubmitted ? `${t('عميل محتمل')} ✓` : `${t('عميل محتمل')} …`}${linked.social?.capi?.Purchase ? ` · ${t('شراء')} ✓` : ''}</span>` : ''}</div>`
       : dup ? `<div class="soc-note">${t('هذا الرقم مسجل باسم "{name}" لدى {owner}', { name: esc(dup.name), owner: esc(userName(dup.ownerId)) })} ${customerVisible(dup) ? `<button class="btn sm" id="socOpenDup">${t('فتح ملف العميل')}</button>` : ''}<button class="btn sm" id="socLinkDup">${t('ربط المحادثة بهذا العميل')}</button></div>` : ''}
+    <div class="soc-stage"><b>${t('مرحلة العميل')}:</b> <div class="chips" id="socStages">${Object.entries(SOCIAL_STAGES).map(([k, v]) => `<button type="button" class="chip ${c.stage === k ? 'on' : ''}" data-stg="${k}" title="${STAGE_META[k] ? esc(t('بيتبعت للإعلانات على إنه {e}', { e: STAGE_META[k] })) : esc(t('بيتحفظ في السيستم بس'))}">${t(v)}${STAGE_META[k] ? ' ⓜ' : ''}</button>`).join('')}</div>
+      ${c.stage ? `<span class="muted">${c.stage_by === 'auto' ? t('اتحددت تلقائيًا') : esc(userName(c.stage_by))} · ${c.stage_at ? esc(fmtDT(new Date(c.stage_at).toISOString())) : ''}</span>` : ''}
+      ${Object.keys(c.capi || {}).length ? `<div class="muted">${t('ميتا')}: ${Object.entries(c.capi).map(([e, r]) => `${esc({ LeadSubmitted: t('مسجل'), QualifiedLead: t('مؤهل'), Purchase: t('تم التحويل') }[e] || e)} ${r.at ? '✓' : `✗ <span title="${esc(r.err || '')}">${esc(String(r.err || '').slice(0, 60))}</span>`}`).join(' · ')}</div>` : ''}</div>
     <div class="soc-actions">
       ${!linked && !dup ? `<button class="btn primary" id="socConvert">＋ ${t('تحويل لعميل في النظام')}</button>` : ''}
       <select class="inp" id="socAssign" aria-label="${t('تحويل لزميل في فريق السوشيال')}"><option value="">${t('تحويل لزميل...')}</option>${members.filter(id => id !== c.assignee).map(id => `<option value="${id}">${esc(userName(id))}</option>`).join('')}</select>
@@ -8806,6 +8852,7 @@ function drawSocialThread() {
   on('#socConvert', () => convertConv(c, msgs, ins));
   on('#socIgnore', () => updateConv(c.id, { status: 'ignored' }, t('تم تجاهل المحادثة، وتعود للقائمة إذا راسل العميل مرة أخرى')));
   on('#socReopen', () => updateConv(c.id, { status: 'open' }));
+  $$('[data-stg]', box).forEach(b => b.onclick = () => setConvStage(c, b.dataset.stg, linked));
   on('#socAddPhone', () => {
     const md = openModal({ title: t('إضافة رقم يدويًا'), body: `<div class="field"><label>${t('رقم الهاتف كما كتبه العميل')}</label><input class="inp" dir="ltr" id="ap" placeholder="+218 91 234 5678"></div><small class="muted">${t('اكتبه برمز الدولة إن أمكن ليتحدد بلده تلقائيًا')}</small>`, footer: `<button class="btn primary" id="apOk">${t('إضافة')}</button>` });
     $('#apOk', md.el).onclick = async () => { const v = $('#ap', md.el).value.trim(); if (!v) return; md.close(); await updateConv(c.id, { addPhone: v }, t('أُضيف الرقم')); };
@@ -8925,7 +8972,7 @@ function chatSummary(c, msgs, ins) {
   return `${parts.join(' · ')}${said ? ` — ${t('كلام العميل')}: ${said}` : ''}`.slice(0, 1500);
 }
 async function linkConvToCustomer(c, cust) {
-  const done = await updateConv(c.id, { customerId: cust.id, status: 'converted' }, t('رُبطت المحادثة بالعميل {name}', { name: cust.name }));
+  const done = await updateConv(c.id, { customerId: cust.id, status: 'converted', ...(!c.stage || c.stage === 'followup' ? { stage: 'lead', by: ME.id } : {}) }, t('رُبطت المحادثة بالعميل {name}', { name: cust.name }));
   if (done && customerVisible(cust) && !cust.social) {
     cust.social = { channel: c.channel, userId: c.user_id, convId: c.id, adId: c.ad_id || '', adTitle: c.ad_title || '', at: nowStamp() };
     audit('social', 'customer', cust.id, 'ربط العميل {name} بمحادثة {ch}', { name: cust.name, ch: SOCIAL_CHANNELS[c.channel] });
@@ -8951,7 +8998,7 @@ function convertConv(c, msgs, ins) {
   }
   // بعد الحفظ: تُربط المحادثة بالعميل، وتُحفظ صور الشات تلقائيًا في ملفه
   openWizard(egypt ? 'egypt' : 'intl', preset, { onSaved: async cust => {
-    await updateConv(c.id, { customerId: cust.id, status: 'converted' });
+    await updateConv(c.id, { customerId: cust.id, status: 'converted', ...(!c.stage || c.stage === 'followup' ? { stage: 'lead', by: ME.id } : {}) });
     const imgs = chatImages(msgs);
     if (imgs.length) saveChatImages(cust, c, imgs, true);
   } });
@@ -9095,6 +9142,8 @@ function metaCheckHtml(checks) {
       : d(c).perms?.length ? t('ميتا رافضة تدي الاسم: التطبيق ناقصه صلاحية {p}. بعد ما تتضاف اعمل Generate token جديد وحطه مكان القديم', { p: d(c).perms.join(', ') })
       : `${t('ميتا رافضة تدي الاسم ({n} محادثة من غير اسم)', { n: d(c).missing })}: ${d(c).message || ''}`],
     received: c => [t('آخر رسالة وصلت من ميتا'), c.status === 'ok' ? fmtDT(new Date(d(c).at).toISOString()) : t('لسه مفيش رسايل وصلت. ابعت رسالة تجربة للصفحة (ولو التطبيق Development لازم من حساب ليه دور في التطبيق)')],
+    capi: c => [t('إبلاغ الإعلانات بمراحل العملاء (Conversions API)'), c.status === 'ok' ? `${t('شغال: مسجل ومؤهل وتم التحويل بيتبعتوا لميتا')}${d(c).waba ? '' : `\n${t('واتساب: ضيف WABA_ID في Cloudflare علشان عملاء إعلانات الواتساب يتبعتوا كمان')}`}${d(c).test ? `\n${t('وضع الاختبار شغال (CAPI_TEST_CODE)، الأحداث بتظهر في Test events بس')}` : ''}`
+      : t('مش متوصل: المراحل بتتحفظ في السيستم بس ومش بتوصل للإعلانات. محتاج DATASET_ID في Cloudflare (مجموعة بيانات من مدير الأحداث مربوطة بالصفحة والإنستجرام)')],
   };
   // سطر إضافي تحت التوكن: الصلاحيات اللي فيه فعلًا والناقص منها
   const tok = checks.find(c => c.id === 'token');
