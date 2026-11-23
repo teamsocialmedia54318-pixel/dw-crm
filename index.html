@@ -1291,6 +1291,7 @@ const EN = {
   'أقساط مستحقة في {d} ({n})': 'Installments due on {d} ({n})', 'الأقساط والاستحقاقات': 'Installments & due dates', 'سجل السداد والتحصيل': 'Payment & collection log', 'تغييرات تواريخ الأقساط': 'Installment date changes', 'متابعات الأقساط': 'Installment follow-ups',
   'من تاريخ': 'From date', 'إلى تاريخ': 'To date', 'القرار': 'Decision', 'طلبه': 'Requested by', 'اعتمده': 'Approved by', 'كتبها': 'Written by', 'بواسطة': 'By', 'من': 'From', 'إلى': 'To', 'النتيجة': 'Outcome', 'المتابعة القادمة': 'Next follow-up', 'تاريخ المتابعة القادمة': 'Next follow-up date', 'تاريخ التسجيل': 'Registered on', 'لا يوجد': 'None', 'معتمد': 'Approved', 'بانتظار الاعتماد': 'Pending approval',
   'تفاعل': 'Reaction', 'النص الأصلي': 'Original text', 'معدّلة': 'Edited', 'لم تصل': 'Not delivered', 'اتقرت': 'Read', 'وصلت': 'Delivered', 'اتبعتت': 'Sent',
+  'مستنية موافقة ميتا على صلاحية Business Asset User Profile Access ({n} محادثة من غير اسم). الرسايل شغالة عادي، والأسماء هتظهر لوحدها بعد الموافقة': 'Waiting for Meta to approve Business Asset User Profile Access ({n} conversations without a name). Messages work normally; names will appear automatically after approval',
   'متابعة': 'Follow-up', 'مسجل': 'Lead', 'مؤهل': 'Qualified', 'غير مؤهل': 'Not qualified', 'تم التحويل': 'Converted', 'مفقود': 'Lost', 'سبام': 'Spam',
   'مرحلة العميل': 'Customer stage', 'كل المراحل': 'All stages', 'من غير مرحلة': 'No stage', 'بيتبعت للإعلانات على إنه {e}': 'Sent to ads as {e}', 'بيتحفظ في السيستم بس': 'Saved in the CRM only', 'اتحددت تلقائيًا': 'Set automatically', 'ميتا': 'Meta',
   'اتحفظت المرحلة: {s}': 'Stage saved: {s}', 'اتحفظت المرحلة واتبعتت لميتا علشان الإعلان يتعلم ✓': 'Stage saved and sent to Meta so ads can learn ✓', 'اتحفظت المرحلة (ميتا عندها الحدث ده من قبل)': 'Stage saved (Meta already has this event)',
@@ -9164,6 +9165,9 @@ async function socialDashDocx(s, period) {
 function metaCheckHtml(checks) {
   const icon = { ok: '✅', warn: '⚠️', bad: '❌' };
   const d = c => c.detail || {};
+  // أسماء العملاء: ميتا بترفض لحد ما توافق على صلاحية Business Asset User Profile Access. ده مش عطل، والرسايل شغالة عادي
+  const namesPending = c => c.id === 'names' && c.status === 'bad' && (+d(c).code === 100 || /does not exist|missing permissions/i.test(d(c).message || ''));
+  checks = checks.map(c => namesPending(c) ? { ...c, status: 'warn', detail: { ...d(c), pendingReview: true } } : c);
   const lines = {
     verify: c => [t('رمز التحقق (META_VERIFY_TOKEN)'), c.status === 'ok' ? t('متسجل') : t('ناقص: أضفه في Cloudflare بنفس الرمز المكتوب في ميتا')],
     token: c => [t('توكن الصفحة (PAGE_TOKEN)'), c.status === 'ok' ? t('شغال، وتابع لصفحة: {n}', { n: d(c).page?.name || d(c).page?.id || '' }) + (d(c).systemUser ? ` · ${t('توكن System User دائم')}` : '')
@@ -9179,6 +9183,7 @@ function metaCheckHtml(checks) {
       : d(c).reason === 'not set' ? t('لسه ما اتربطش: ضيف WA_TOKEN (Secret) و WA_PHONE_ID (Text) في Cloudflare بعد إعداد واتساب في تطبيق ميتا')
       : d(c).reason === 'invalid' ? t('توكن واتساب غلط أو انتهى: اعمل توكن System User جديد وحطه مكان WA_TOKEN') : `${t('ميتا رفضت')}: ${d(c).message || ''}`],
     names: c => [t('أسماء العملاء في المحادثات'), c.status === 'ok' ? (d(c).fixed ? t('اتجاب اسم {n} محادثة دلوقتي', { n: d(c).fixed }) : t('كل المحادثات ليها أسماء'))
+      : d(c).pendingReview ? t('مستنية موافقة ميتا على صلاحية Business Asset User Profile Access ({n} محادثة من غير اسم). الرسايل شغالة عادي، والأسماء هتظهر لوحدها بعد الموافقة', { n: d(c).missing })
       : d(c).reason === 'consent' ? t('{n} محادثة إنستجرام من غير اسم: العميل بعت ستوري أو ريلز أو تفاعل بس من غير ما يكتب، وميتا مش بتدي الاسم في الحالة دي. الاسم هيظهر لوحده أول ما يكتب رسالة', { n: d(c).missing })
       : d(c).perms?.length ? t('ميتا رافضة تدي الاسم: التطبيق ناقصه صلاحية {p}. بعد ما تتضاف اعمل Generate token جديد وحطه مكان القديم', { p: d(c).perms.join(', ') })
       : `${t('ميتا رافضة تدي الاسم ({n} محادثة من غير اسم)', { n: d(c).missing })}: ${d(c).message || ''}`],
