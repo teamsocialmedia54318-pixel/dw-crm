@@ -494,8 +494,8 @@ html { -webkit-text-size-adjust: 100%; }
   .multi-row.dev > .x-btn { grid-row: auto; grid-column: auto; }
 }
 /* رسائل السوشيال: قائمة المحادثات بجانب الشات */
-.social-wrap { display: grid; grid-template-columns: minmax(260px, 360px) minmax(0, 1fr); gap: 12px; align-items: start; }
-.social-list { padding: 0; height: max(560px, calc(100vh - 150px)); overflow-y: auto; }
+.social-wrap { display: grid; grid-template-columns: minmax(280px, 380px) minmax(0, 1fr); gap: 12px; align-items: start; scroll-margin-top: 8px; }
+.social-list { padding: 0; height: max(560px, calc(100vh - 20px)); overflow-y: auto; overflow-x: hidden; }
 .soc-item { display: flex; gap: 10px; width: 100%; text-align: start; padding: 10px 12px; border: 0; border-bottom: 1px solid var(--border); background: none; cursor: pointer; font: inherit; color: inherit; }
 .soc-item:hover { background: var(--card-soft); }
 .soc-item.on { background: var(--blue-bg); }
@@ -511,7 +511,7 @@ html { -webkit-text-size-adjust: 100%; }
 .soc-fb { background: #1877F2; }
 .soc-ig { background: linear-gradient(45deg, #F58529, #DD2A7B 55%, #8134AF); font-size: 11px; }
 .soc-wa { background: #25D366; }
-.social-thread { padding: 0; display: flex; flex-direction: column; height: max(560px, calc(100vh - 150px)); overflow: hidden; }
+.social-thread { padding: 0; display: flex; flex-direction: column; height: max(560px, calc(100vh - 20px)); overflow: hidden; }
 .social-thread:empty { display: none; }
 .soc-head { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--border); }
 .soc-back { display: none; }
@@ -715,6 +715,9 @@ button.kpi:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; 
   .soc-head > div b { word-break: break-all; }
   .soc-side-btn .lbl { display: none; }
 }
+.soc-item { min-width: 0; max-width: 100%; }
+.soc-item .soc-main { min-width: 0; }
+
 </style>
 </head>
 <body>
@@ -8758,6 +8761,9 @@ async function openSocialThread(id) {
   const box = $('#socialThread');
   if (!box) return;
   box.classList.add('open');
+  // على الكمبيوتر الصفحة بتنزل لحد الشات علشان ياخد طول الشاشة كله
+  const wrap = document.querySelector('.social-wrap');
+  if (wrap && window.matchMedia('(min-width: 901px)').matches && Math.abs(wrap.getBoundingClientRect().top) > 12) wrap.scrollIntoView({ block: 'start', behavior: 'smooth' });
   box.innerHTML = `<div class="muted" style="padding:16px">${t('جارٍ تحميل المحادثة...')}</div>`;
   try {
     const out = await socialApi(`conv/${encodeURIComponent(id)}`);
