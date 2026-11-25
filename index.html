@@ -1304,6 +1304,7 @@ const EN = {
   'تفاعل': 'Reaction', 'النص الأصلي': 'Original text', 'معدّلة': 'Edited', 'لم تصل': 'Not delivered', 'اتقرت': 'Read', 'وصلت': 'Delivered', 'اتبعتت': 'Sent',
   'مستنية موافقة ميتا على صلاحية Business Asset User Profile Access ({n} محادثة من غير اسم). الرسايل شغالة عادي، والأسماء هتظهر لوحدها بعد الموافقة': 'Waiting for Meta to approve Business Asset User Profile Access ({n} conversations without a name). Messages work normally; names will appear automatically after approval',
   'مراحل العملاء (اللي بتتبعت للإعلانات)': 'Customer stages (sent to ads)', 'أداء كل إعلان: المحادثات والمراحل والدول': 'Each ad: conversations, stages and countries', 'اتحولوا للسيلز': 'Sent to sales', 'مفقود / سبام': 'Lost / spam', 'العملاء حسب الدولة': 'Customers by country', 'العملاء': 'Customers', 'غير محددة': 'Unknown', 'الإعلانات والدول': 'Ads by country', 'الدول': 'Countries', 'مراحل العملاء': 'Customer stages', 'الدولة': 'Country', 'غالبًا {c} (من توقيت حسابه)': 'Probably {c} (from the account time zone)',
+  'الطريقة الأولى اترفضت': 'First method was rejected', 'بالرقم بس': 'by phone only',
   'متابعة': 'Follow-up', 'مسجل': 'Lead', 'مؤهل': 'Qualified', 'غير مؤهل': 'Not qualified', 'تم التحويل': 'Converted', 'مفقود': 'Lost', 'سبام': 'Spam',
   'مرحلة العميل': 'Customer stage', 'كل المراحل': 'All stages', 'من غير مرحلة': 'No stage', 'بيتبعت للإعلانات على إنه {e}': 'Sent to ads as {e}', 'بيتحفظ في السيستم بس': 'Saved in the CRM only', 'اتحددت تلقائيًا': 'Set automatically', 'ميتا': 'Meta',
   'اتحفظت المرحلة: {s}': 'Stage saved: {s}', 'اتحفظت المرحلة واتبعتت لميتا علشان الإعلان يتعلم ✓': 'Stage saved and sent to Meta so ads can learn ✓', 'اتحفظت المرحلة (ميتا عندها الحدث ده من قبل)': 'Stage saved (Meta already has this event)',
@@ -8794,7 +8795,8 @@ async function openSocialThread(id) {
 }
 // تغيير مرحلة العميل. "تم التحويل" بيسأل عن قيمة الشراء (ميتا بتستخدمها تجيب عملاء بيشتروا بقيمة أعلى)
 async function setConvStage(c, stage, linked) {
-  if (c.stage === stage) return;
+  // نفس المرحلة تاني = إعادة محاولة لو ميتا كانت رفضت الحدث المرة اللي فاتت
+  if (c.stage === stage && !(STAGE_META[stage] && c.capi?.[STAGE_META[stage]]?.err)) return;
   const phone = linked ? metaPhone(linked) : '', email = linked?.email1 || '';
   const done = async extra => {
     const before = socialState.thread?.conv?.capi || {};
@@ -8879,7 +8881,7 @@ function drawSocialThread() {
       : dup ? `<div class="soc-note">${t('هذا الرقم مسجل باسم "{name}" لدى {owner}', { name: esc(dup.name), owner: esc(userName(dup.ownerId)) })} ${customerVisible(dup) ? `<button class="btn sm" id="socOpenDup">${t('فتح ملف العميل')}</button>` : ''}<button class="btn sm" id="socLinkDup">${t('ربط المحادثة بهذا العميل')}</button></div>` : ''}
     <div class="soc-stage"><b>${t('مرحلة العميل')}:</b> <div class="chips" id="socStages">${Object.entries(SOCIAL_STAGES).map(([k, v]) => `<button type="button" class="chip ${c.stage === k ? 'on' : ''}" data-stg="${k}" title="${STAGE_META[k] ? esc(t('بيتبعت للإعلانات على إنه {e}', { e: STAGE_META[k] })) : esc(t('بيتحفظ في السيستم بس'))}">${t(v)}${STAGE_META[k] ? ' ⓜ' : ''}</button>`).join('')}</div>
       ${c.stage ? `<span class="muted">${c.stage_by === 'auto' ? t('اتحددت تلقائيًا') : esc(userName(c.stage_by))} · ${c.stage_at ? esc(fmtDT(new Date(c.stage_at).toISOString())) : ''}</span>` : ''}
-      ${Object.keys(c.capi || {}).length ? `<div class="muted">${t('ميتا')}: ${Object.entries(c.capi).map(([e, r]) => `${esc({ LeadSubmitted: t('مسجل'), QualifiedLead: t('مؤهل'), Purchase: t('تم التحويل') }[e] || e)} ${r.at ? '✓' : `✗ <span title="${esc(r.err || '')}">${esc(String(r.err || '').slice(0, 60))}</span>`}`).join(' · ')}</div>` : ''}</div>
+      ${Object.keys(c.capi || {}).length ? `<div class="muted">${t('ميتا')}: ${Object.entries(c.capi).map(([e, r]) => `${esc({ LeadSubmitted: t('مسجل'), QualifiedLead: t('مؤهل'), Purchase: t('تم التحويل') }[e] || e)} ${r.at ? `<span title="${esc(r.note ? `${t('الطريقة الأولى اترفضت')}: ${r.note}` : '')}">✓${r.mode === 'phone' ? ` (${t('بالرقم بس')})` : ''}</span>` : `✗ <span title="${esc(r.err || '')}">${esc(String(r.err || '').slice(0, 60))}</span>`}`).join(' · ')}</div>` : ''}</div>
     <div class="soc-actions">
       ${!linked && !dup ? `<button class="btn primary" id="socConvert">＋ ${t('تحويل لعميل في النظام')}</button>` : ''}
       <select class="inp" id="socAssign" aria-label="${t('تحويل لزميل في فريق السوشيال')}"><option value="">${t('تحويل لزميل...')}</option>${members.filter(id => id !== c.assignee).map(id => `<option value="${id}">${esc(userName(id))}</option>`).join('')}</select>
