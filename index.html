@@ -819,6 +819,9 @@ button.stage-box:hover { transform: translateY(-2px); }
 .soc-chip .dot.p-gray { background: #8a94a6; } .soc-chip .dot.p-green { background: #31a24c; } .soc-chip .dot.p-red { background: #f02849; }
 @media (max-width: 600px) { .soc-chip { max-width: 140px; } }
 
+/* زرار تحميل المحادثات الأقدم أسفل صندوق الرسائل */
+.soc-more { display: block; width: calc(100% - 24px); margin: 12px auto; }
+
 </style>
 </head>
 <body>
@@ -8861,7 +8864,7 @@ async function socialApi(path, { method = 'GET', body } = {}) {
 }
 
 // ------- الذاكرة المحلية للمحادثات + التحديث كل 30 ثانية -------
-const socialState = { convs: new Map(), at: 0, loaded: false, error: '', tab: 'active', channel: '', stage: '', q: '', sel: '', thread: null, stats: null, statsDay: '' };
+const socialState = { convs: new Map(), show: 300, counts: null, countsAt: 0, noOlder: '', at: 0, loaded: false, error: '', tab: 'active', channel: '', stage: '', q: '', sel: '', thread: null, stats: null, statsDay: '' };
 const SOCIAL_SEEN_KEY = () => `dw_social_seen_${ME?.id || ''}`;
 async function loadSocial() {
   const out = await socialApi(`convs${socialState.at ? `?since=${socialState.at}` : ''}`);
@@ -9036,9 +9039,15 @@ function viewSocial(root, sub) {
   if (!cfg.url || !cloudMode) return;
   $('#socDash', root).onclick = () => { socialState.view = 'dash'; history.replaceState(null, '', '#/social'); viewSocial(root); };
   $('#socRe', root).onclick = async () => { socialState.at = 0; socialState.convs.clear(); await refreshSocial(true); };
-  $$('#socTabs .tab', root).forEach(b => b.onclick = () => { socialState.tab = b.dataset.st; $$('#socTabs .tab', root).forEach(x => x.classList.toggle('on', x === b)); drawSocialList(); });
-  $('#socStage', root).onchange = e => { socialState.stage = e.target.value; drawSocialList(); };
-  $('#socQ', root).oninput = e => { socialState.q = e.target.value; drawSocialList(); };
+  $$('#socTabs .tab', root).forEach(b => b.onclick = () => { socialState.tab = b.dataset.st; socialState.show = 300; $$('#socTabs .tab', root).forEach(x => x.classList.toggle('on', x === b)); drawSocialList(); loadSocialCounts(); });
+  $('#socStage', root).onchange = e => { socialState.stage = e.target.value; socialState.show = 300; drawSocialList(); loadSocialCounts(); };
+  // البحث يعرض المحمّل فورًا، ثم يبحث في كل المحادثات على السيرفر ويضيف النتائج
+  let qTimer = 0;
+  $('#socQ', root).oninput = e => {
+    socialState.q = e.target.value; socialState.show = 300; drawSocialList();
+    clearTimeout(qTimer);
+    qTimer = setTimeout(() => { loadSocialCounts(); searchSocialServer(); }, 400);
+  };
   refreshSocial(!socialState.loaded);
 }
 async function refreshSocial(full) {
@@ -9046,7 +9055,9 @@ async function refreshSocial(full) {
   if (socialState.loaded) drawSocialList();
   try {
     const changed = await loadSocial();
-    if (full) socialPhoneAlerts(changed);
+    // تنبيه الأرقام الجديدة لمحادثات اليومين الأخيرين فقط، حتى لا تنبّه المحادثات القديمة المستوردة
+    if (full) socialPhoneAlerts(changed.filter(c => c.last_at > Date.now() - 2 * 86400000));
+    if (full || Date.now() - (socialState.countsAt || 0) > 2 * 60 * 1000) loadSocialCounts();
     updateSocialBadge();
     drawSocialList();
     if (socialState.statsDay !== today() || full) await loadSocialStats();
@@ -9072,15 +9083,57 @@ const socialMatches = (c, ignoreChannel) => {
   if (q && !socialPhoneHit(c, st.q) && ![c.name, c.username, c.ad_title, c.last_text, ...(c.phones || []).map(p => p.p), ...(c.emails || [])].some(v => normHeader(v || '').includes(q))) return false;
   return true;
 };
-// تابات القنوات زي ميتا: الكل / واتساب / ماسنجر / إنستجرام، وجنب كل واحدة عدد المحادثات حسب الفلاتر التانية
+// فلاتر الصندوق كما يفهمها السيرفر (للعدد الحقيقي والبحث والمحادثات الأقدم)
+const socialFilterParams = extra => {
+  const st = socialState, p = new URLSearchParams({ tab: st.tab, me: ME?.id || '', all: canManageSocial() ? '1' : '0' });
+  if (st.stage) p.set('stage', st.stage);
+  if (st.q.trim()) p.set('q', toLatinDigits(st.q.trim()));
+  Object.entries(extra || {}).forEach(([k, v]) => v !== '' && v != null && p.set(k, v));
+  return p;
+};
+async function loadSocialCounts() {
+  const key = socialFilterParams().toString();
+  try {
+    const out = await socialApi(`convcount?${key}`);
+    socialState.counts = { key, data: out.counts || {} };
+    socialState.countsAt = Date.now();
+    drawSocialChTabs();
+  } catch { /* السيرفر القديم أو انقطاع: تبقى الأعداد المحلية */ }
+}
+async function searchSocialServer() {
+  if (!socialState.q.trim()) return;
+  try {
+    const out = await socialApi(`convs?${socialFilterParams({ limit: 200 })}`);
+    (out.convs || []).forEach(c => { if (!socialState.convs.has(c.id)) socialState.convs.set(c.id, c); });
+    drawSocialList();
+  } catch {}
+}
+// المحادثات الأقدم من آخر محادثة ظاهرة، بنفس الفلاتر والقناة
+async function loadOlderSocial(btn) {
+  const st = socialState;
+  const shown = [...st.convs.values()].filter(c => socialMatches(c)).sort((a, b) => b.last_at - a.last_at);
+  if (shown.length > st.show) { st.show += 300; drawSocialList(); return; }
+  if (btn) { btn.disabled = true; btn.textContent = t('جارٍ التحميل...'); }
+  try {
+    const before = shown.length ? shown[shown.length - 1].last_at : Date.now();
+    const out = await socialApi(`convs?${socialFilterParams({ before, ch: st.channel, limit: 300 })}`);
+    (out.convs || []).forEach(c => { if (!st.convs.has(c.id)) st.convs.set(c.id, c); });
+    st.noOlder = out.more ? '' : socialFilterParams({ ch: st.channel }).toString();
+    st.show += 300;
+  } catch (err) { toast(err.message, 'err'); }
+  drawSocialList();
+}
+// تابات القنوات زي ميتا: الكل / واتساب / ماسنجر / إنستجرام، وجنب كل واحدة العدد الحقيقي من السيرفر (أو المحمّل لو السيرفر لم يرد بعد)
 function drawSocialChTabs() {
   const box = $('#socChTabs');
   if (!box) return;
   const all = [...socialState.convs.values()].filter(c => socialMatches(c, true));
-  const n = ch => all.filter(c => !ch || c.channel === ch).length;
-  const unread = ch => all.filter(c => (!ch || c.channel === ch) && c.status === 'new').length;
+  const sc = socialState.counts && socialState.counts.key === socialFilterParams().toString() ? socialState.counts.data : null;
+  const fromServer = (ch, k) => ch ? +(sc[ch]?.[k] || 0) : Object.values(sc).reduce((s, x) => s + (+x[k] || 0), 0);
+  const n = ch => sc ? fromServer(ch, 'n') : all.filter(c => !ch || c.channel === ch).length;
+  const unread = ch => sc ? fromServer(ch, 'unread') : all.filter(c => (!ch || c.channel === ch) && c.status === 'new').length;
   box.innerHTML = [['', t('كل الرسائل')], ['wa', t('واتساب')], ['fb', t('ماسنجر')], ['ig', t('إنستجرام')]].map(([k, l]) => `<button class="soc-chtab ${socialState.channel === k ? 'on' : ''}" data-ch="${k}">${k ? channelBadge(k) : '💬'} ${l} <span class="n">${n(k)}</span>${unread(k) ? `<span class="cnt-dot" title="${esc(t('جديدة'))}">${unread(k)}</span>` : ''}</button>`).join('');
-  $$('[data-ch]', box).forEach(b => b.onclick = () => { socialState.channel = b.dataset.ch; drawSocialList(); });
+  $$('[data-ch]', box).forEach(b => b.onclick = () => { socialState.channel = b.dataset.ch; socialState.show = 300; drawSocialList(); });
 }
 const channelBadge = ch => `<span class="soc-ch soc-${ch}" title="${esc(t(SOCIAL_CHANNELS[ch]))}">${ch === 'ig' ? 'IG' : ch === 'wa' ? '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="#fff" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3a.5.5 0 0 0 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5 5 0 0 0 1.1 2.7 11.5 11.5 0 0 0 4.4 3.9c1.6.7 2.3.8 3.1.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg>' : 'f'}</span>`;
 // صورة العميل من ميتا (بعد موافقة صلاحية الملف الشخصي)، ولو مش موجودة أو الرابط انتهى تظهر علامة القناة
@@ -9096,7 +9149,13 @@ function drawSocialList() {
   const list = [...socialState.convs.values()].filter(c => socialMatches(c)).sort((a, b) => b.last_at - a.last_at);
   // صف المحادثة بشكل صندوق ميتا: الصورة وعليها القناة، الاسم وآخر رسالة ووقتها، ونقطة زرقاء لغير المقروءة، ثم وسوم صغيرة في سطر واحد
   const chip = (cls, dot, text, title) => `<span class="soc-chip ${cls}"${title ? ` title="${esc(title)}"` : ''}>${dot ? `<i class="dot ${dot}"></i>` : ''}<span class="tx">${esc(text)}</span></span>`;
-  box.innerHTML = list.length ? list.slice(0, 300).map(c => {
+  const show = socialState.show || 300;
+  // "عرض المزيد": يظهر ما دام هناك محادثات محمّلة لم تظهر، أو قد يكون على السيرفر محادثات أقدم
+  const sc = socialState.counts && socialState.counts.key === socialFilterParams().toString() ? socialState.counts.data : null;
+  const total = sc ? (socialState.channel ? +(sc[socialState.channel]?.n || 0) : Object.values(sc).reduce((s, x) => s + (+x.n || 0), 0)) : null;
+  const canMore = list.length > show || (socialState.noOlder !== socialFilterParams({ ch: socialState.channel }).toString() && (total == null ? list.length >= 50 : total > list.length));
+  const moreBtn = canMore ? `<button class="btn soc-more" id="socMore" type="button">${t('عرض المزيد')}${total != null && total > Math.min(list.length, show) ? ` <span class="muted">(${t('{n} محادثة أخرى', { n: total - Math.min(list.length, show) })})</span>` : ''}</button>` : '';
+  box.innerHTML = list.length ? list.slice(0, show).map(c => {
     const unread = c.status === 'new';
     const tags = [
       c.stage ? chip('', STAGE_PILL[c.stage] || 'p-gray', t(SOCIAL_STAGES[c.stage] || c.stage)) : '',
@@ -9109,8 +9168,9 @@ function drawSocialList() {
       ${socialAvatar(c)}<div class="soc-main"><div class="soc-top"><b>${esc(c.name || t('عميل بدون اسم'))}</b></div>
       <div class="soc-lastrow"><div class="soc-last">${c.last_dir === 'out' ? `${t('أنت')}: ` : ''}${esc(c.last_text || '')}</div><span class="soc-time">${socialTime(c.last_at)}</span>${unread ? `<i class="soc-unread" title="${esc(t('غير مقروءة'))}"></i>` : ''}</div>
       ${tags ? `<div class="soc-tags">${tags}</div>` : ''}</div></button>`;
-  }).join('')
-    : `<div class="empty" style="padding:20px">${t(socialState.loaded ? 'لا توجد محادثات هنا' : 'جارٍ تحميل المحادثات...')}</div>`;
+  }).join('') + moreBtn
+    : `<div class="empty" style="padding:20px">${t(socialState.loaded ? 'لا توجد محادثات هنا' : 'جارٍ تحميل المحادثات...')}</div>${moreBtn}`;
+  const mb = $('#socMore', box); if (mb) mb.onclick = () => loadOlderSocial(mb);
   $$('.soc-item', box).forEach(b => b.onclick = () => {
     history.replaceState(null, '', `#/social/${encodeURIComponent(b.dataset.cv)}`);
     openSocialThread(b.dataset.cv);
@@ -9509,7 +9569,7 @@ function openSocialSettings() {
   $('#ssHist', m.el).onclick = async () => {
     const msg = $('#ssHistMsg', m.el), btn = $('#ssHist', m.el), stop = $('#ssHistStop', m.el);
     histStop = false; btn.disabled = true; stop.style.display = '';
-    let convs = 0, created = 0, added = 0;
+    let convs = 0, created = 0, added = 0, capped = false;
     const failed = [], state = { messenger: '…', instagram: '…' };
     const show = () => { msg.textContent = t('جارٍ الاستيراد: {n} محادثة، {m} رسالة جديدة...', { n: convs, m: added }) + ` (${t('ماسنجر')} ${state.messenger} · ${t('إنستجرام')} ${state.instagram})`; };
     const runPlatform = async (platform, label) => {
@@ -9521,6 +9581,8 @@ function openSocialSettings() {
         try { out = await socialApi('history', { method: 'POST', body: { platform, after } }); errs = 0; }
         catch (err) { if (++errs <= 3) { await new Promise(r => setTimeout(r, 3000 * errs)); continue; } failed.push(`${label}: ${err.message}`); state[platform] = '✗'; return; }
         convs += out.convs || 0; created += out.created || 0; added += out.added || 0;
+        // الحد اليومي للاستيراد (حتى لا يتجاوز حد Cloudflare المجاني): يتوقف ويكمل في اليوم التالي من حيث وقف
+        if (out.capped) { capped = out.limit || true; state[platform] = '⏸'; return; }
         if (out.more === undefined ? !out.next : !out.more) break;
         after = out.next || '';
       }
@@ -9529,7 +9591,7 @@ function openSocialSettings() {
     };
     await Promise.all([runPlatform('messenger', t('ماسنجر')), runPlatform('instagram', t('إنستجرام'))]);
     btn.disabled = false; stop.style.display = 'none';
-    msg.textContent = `${histStop ? t('توقف الاستيراد') : '✓ ' + t('اكتمل الاستيراد')}: ${t('{n} محادثة، منها {c} جديدة، و{m} رسالة أُضيفت', { n: convs, c: created, m: added })}${failed.length ? ` · ✗ ${failed.some(f => /not found|unknown/i.test(f)) ? t('يلزم تحديث خادم Cloudflare أولًا') : failed.join(' · ')}` : ''}`;
+    msg.textContent = `${capped ? `⏸ ${t('بلغ الاستيراد حده اليومي ({n} رسالة) حفاظًا على حد Cloudflare المجاني. يُستكمل غدًا بالضغط على «بدء الاستيراد» بعد الساعة 2 صباحًا بتوقيت القاهرة، ويكمل من حيث توقف', { n: typeof capped === 'number' ? capped.toLocaleString('en') : '15,000' })}` : histStop ? t('توقف الاستيراد') : '✓ ' + t('اكتمل الاستيراد')}: ${t('{n} محادثة، منها {c} جديدة، و{m} رسالة أُضيفت', { n: convs, c: created, m: added })}${failed.length ? ` · ✗ ${failed.some(f => /not found|unknown/i.test(f)) ? t('يلزم تحديث خادم Cloudflare أولًا') : failed.join(' · ')}` : ''}`;
     if (added) { audit('social', 'social', null, 'استيراد المحادثات القديمة من ميتا: {n} رسالة', { n: added }); socialState.at = 0; socialState.convs.clear(); refreshSocial(true); }
   };
   $('#ssTest', m.el).onclick = async () => {
@@ -9994,6 +10056,8 @@ Object.assign(EN, {
   'يجلب من ميتا سجل محادثات ماسنجر وإنستجرام السابقة كاملًا مع الصور، وتُضاف كمحادثات مقروءة دون تكرار ما هو موجود. أما واتساب فلا تتيح ميتا استرجاع الرسائل السابقة لتاريخ الربط.': 'Pulls the full history of past Messenger and Instagram conversations from Meta, including photos, as read conversations without duplicating existing messages. Meta does not provide WhatsApp messages from before the connection date.',
   'جارٍ الاستيراد: {n} محادثة، {m} رسالة جديدة...': 'Importing: {n} conversations, {m} new messages...', '{n} محادثة، منها {c} جديدة، و{m} رسالة أُضيفت': '{n} conversations ({c} new), {m} messages added', 'يلزم تحديث خادم Cloudflare أولًا': 'The Cloudflare server needs updating first',
   'يُعرض تحصيل {u} ومديونيته فقط': 'Showing collections and debt for {u} only',
+  '{n} محادثة أخرى': '{n} more conversations', 'جارٍ التحميل...': 'Loading...',
+  'بلغ الاستيراد حده اليومي ({n} رسالة) حفاظًا على حد Cloudflare المجاني. يُستكمل غدًا بالضغط على «بدء الاستيراد» بعد الساعة 2 صباحًا بتوقيت القاهرة، ويكمل من حيث توقف': 'The import reached its daily limit ({n} messages) to stay within the free Cloudflare quota. Continue tomorrow after 2 AM Cairo time with "Start import"; it resumes where it stopped',
   'لوحة أداء الإعلانات والسوشيال': 'Ads & social performance', 'من الإعلان إلى المحادثة إلى العميل الجاد إلى رجل البيع إلى البيع. كل رقم يعرض أسماء العملاء، وكل اسم يفتح المحادثة.': 'From ad to conversation to serious lead to sales rep to sale. Every number opens the customer names, and every name opens the chat.',
   'تحديث من ميتا': 'Refresh from Meta', 'الرسائل': 'Messages', 'أمس': 'Yesterday', 'الشهر الماضي': 'Last month', 'كل الحملات': 'All campaigns', 'الحملة': 'Campaign', 'القناة': 'Channel',
   'عملاء جادّون تم تحويلهم إلى رجال البيع': 'Serious leads transferred to sales reps', 'مؤهلين': 'Qualified', 'أرسلوا أرقامهم': 'Sent their number', 'صرف الإعلانات': 'Ad spend', 'تكلفة المحادثة': 'Cost per conversation', 'تكلفة المؤهل': 'Cost per qualified',
