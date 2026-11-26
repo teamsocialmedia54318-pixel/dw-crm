@@ -793,6 +793,32 @@ button.stage-box:hover { transform: translateY(-2px); }
 .soc-strip details { width: 100%; }
 .soc-strip summary { cursor: pointer; color: var(--teal); font-weight: 600; }.soc-chtab .cnt-dot { background: var(--red); color: #fff; border-radius: 10px; padding: 0 6px; font-size: 11px; }
 
+/* صف المحادثة بشكل صندوق ميتا */
+.soc-item { padding: 12px 14px; gap: 12px; align-items: center; }
+.soc-item .soc-av, .soc-item > .soc-ch { width: 48px; height: 48px; flex: 0 0 48px; }
+.soc-item .soc-av img { width: 48px; height: 48px; }
+.soc-item > .soc-ch { font-size: 18px; }
+.soc-item > .soc-ch svg { width: 24px; height: 24px; }
+.soc-item .soc-av .soc-ch { transform: scale(.62); bottom: -4px; inset-inline-end: -4px; box-shadow: 0 0 0 3px var(--card, #fff); }
+.soc-item .soc-top b { font-weight: 600; font-size: 15px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.soc-lastrow { display: flex; align-items: center; gap: 6px; min-width: 0; margin-top: 2px; }
+.soc-lastrow .soc-last { flex: 0 1 auto; min-width: 0; font-size: 13.5px; }
+.soc-time { flex: none; color: var(--muted); font-size: 12px; white-space: nowrap; }
+.soc-time::before { content: '· '; }
+.soc-unread { flex: none; width: 10px; height: 10px; border-radius: 50%; background: #0866ff; margin-inline-start: auto; }
+.soc-item.unread .soc-top b { font-weight: 800; }
+.soc-item.unread .soc-last { font-weight: 700; color: var(--text); }
+.soc-item.unread .soc-time { color: #0866ff; font-weight: 700; }
+.soc-item .soc-tags { flex-wrap: nowrap; overflow: hidden; gap: 6px; margin-top: 6px; }
+.soc-chip { display: inline-flex; align-items: center; gap: 5px; flex: none; max-width: 170px; padding: 3px 10px; border-radius: 999px; background: #eef1f6; color: var(--text); font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.soc-chip .tx { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.soc-chip.ad { flex: 0 1 auto; min-width: 110px; max-width: 240px; }
+.soc-chip.ad .tx { unicode-bidi: plaintext; }
+.soc-chip .dot { flex: none; width: 9px; height: 9px; border-radius: 50%; padding: 0; }
+.soc-chip .dot.p-blue { background: #0866ff; } .soc-chip .dot.p-orange { background: #f2994a; } .soc-chip .dot.p-purple { background: #8e5bd8; }
+.soc-chip .dot.p-gray { background: #8a94a6; } .soc-chip .dot.p-green { background: #31a24c; } .soc-chip .dot.p-red { background: #f02849; }
+@media (max-width: 600px) { .soc-chip { max-width: 140px; } }
+
 </style>
 </head>
 <body>
@@ -1159,55 +1185,55 @@ const EN = {
   'نص': 'Text', 'رقم': 'Number', 'تاريخ': 'Date', 'قائمة اختيار': 'Dropdown', 'نعم / لا': 'Yes / No', 'أضف أي بيانات جديدة تريد تسجيلها للعميل. يظهر الحقل تلقائيًا في نموذج الإدخال وملف العميل والتصدير ورفع الملفات.': 'Add any new customer data you want to record. The field appears automatically in forms, the customer file, exports and uploads.', 'حقل جديد': 'New field', 'الحقل': 'Field', 'إلزامي': 'Required', 'في الجدول': 'In table', 'لا توجد حقول مخصصة بعد': 'No custom fields yet', 'تعديل الحقل': 'Edit field', 'يظهر في قسم': 'Shown in section', 'خيارات القائمة': 'Dropdown options', 'افصل بين الخيارات بفاصلة': 'Separate options with commas', 'حقل إلزامي': 'Required field', 'يظهر في جدول العملاء': 'Show in customer table', 'يرجى إدخال خيارات القائمة': 'Please enter dropdown options',
   'إضافة قيمة': 'Add a value', 'أنواع الري': 'Irrigation types', 'مصادر المياه': 'Water sources', 'مصادر المعرفة': 'Lead sources', 'أنواع طلبات الدعم': 'Support ticket types',
   'خطة متابعة ما بعد البيع': 'After-sales follow-up plan', 'عند تسليم أي طلب تُنشأ هذه المتابعات تلقائيًا لرجل البيع المسؤول، ولا يتأثر ما أُنشئ سابقًا.': 'When an order is delivered, these follow-ups are created for the responsible rep. Existing ones are not affected.', 'بعد التسليم بعدد أيام': 'Days after delivery', 'إضافة متابعة': 'Add follow-up', 'حفظ الخطة': 'Save plan', 'متابعة جديدة': 'New follow-up', 'تم الحفظ': 'Saved', 'سعر الدولار (ج.م)': 'USD rate (EGP)', 'موعد بريد الصباح': 'Morning email time', 'يجب أن يكون سعر الدولار أكبر من صفر': 'The USD rate must be greater than zero',
-  'رسائل السوشيال': 'Social messages', 'ماسنجر': 'Messenger', 'إنستجرام': 'Instagram', 'جديدة': 'New', 'مفتوحة': 'Open', 'تحوّلت لعميل': 'Converted', 'متجاهلة': 'Ignored', 'لم يتم ربط رسائل السوشيال بعد': 'Social messages are not connected yet', '{name} بعت رقمه على {ch}: {p}': '{name} sent a phone number on {ch}: {p}', 'عميل': 'Customer',
+  'رسائل السوشيال': 'Social messages', 'ماسنجر': 'Messenger', 'إنستجرام': 'Instagram', 'جديدة': 'New', 'مفتوحة': 'Open', 'تحوّلت لعميل': 'Converted', 'متجاهلة': 'Ignored', 'لم يتم ربط رسائل السوشيال بعد': 'Social messages are not connected yet', '{name} أرسل رقمه على {ch}: {p}': '{name} sent a phone number on {ch}: {p}', 'عميل': 'Customer',
   'محادثات جديدة لم تُفتح': 'New, unopened conversations', 'محادثات بدأت اليوم': 'Conversations started today', 'أرقام وصلت اليوم': 'Phone numbers received today', 'عملاء سُجلوا اليوم من السوشيال': 'Customers added today from social', 'منهم {n} من إعلانات': '{n} of them from ads', 'أرقام اليوم حسب الدولة': "Today's numbers by country", 'دولة غير محددة': 'Country not identified', 'لا توجد أرقام اليوم حتى الآن': 'No numbers yet today', 'محادثات اليوم حسب الإعلان': "Today's conversations by ad", 'إعلان': 'Ad', 'لا توجد محادثات من إعلانات اليوم': 'No conversations from ads today',
-  'إعدادات الربط والفريق': 'Connection & team settings', 'تحديث': 'Refresh', 'رسائل ماسنجر وإنستجرام وواتساب (بدون التعليقات) في سلة واحدة: من أي إعلان جاء العميل، ورقمه وإيميله، والشات كاملًا بالصور والفويس. فريق السوشيال: {m}': 'Messenger, Instagram and WhatsApp messages (no comments) in one inbox: which ad the customer came from, their phone and email, and the full chat with photos and voice notes. Social team: {m}',
-  'الجديدة والمفتوحة': 'New & open', 'الجديدة': 'New', 'المحوّلة إليّ': 'Assigned to me', 'تحوّلت لعملاء': 'Converted', 'المتجاهلة': 'Ignored', 'كل القنوات': 'All channels', 'بحث بالاسم أو الرقم أو الإعلان': 'Search by name, number or ad', 'جارٍ تحميل المحادثات...': 'Loading conversations...', 'لا توجد محادثات هنا': 'No conversations here', 'عميل بدون اسم': 'Unnamed customer', 'أنت': 'You', 'جارٍ تحميل المحادثة...': 'Loading conversation...',
-  'تعذر الوصول إلى رسائل السوشيال: {e}': 'Could not reach social messages: {e}', 'جاء من': 'Came from', 'رسالة مباشرة (ليست من إعلان)': 'Direct message (not from an ad)', 'أول رسالة': 'First message', 'أرقام الهاتف': 'Phone numbers', 'الموقع من الشات': 'Location from chat', 'المحاصيل': 'Crops', 'درجة الملوحة': 'Salinity', 'اهتمام العميل': 'Customer interest', 'المسؤول عن المحادثة': 'Conversation owner',
+  'إعدادات الربط والفريق': 'Connection & team settings', 'تحديث': 'Refresh', 'رسائل ماسنجر وإنستجرام وواتساب (دون التعليقات) في صندوق واحد: من أي إعلان جاء العميل، ورقمه وبريده الإلكتروني، والمحادثة كاملة بالصور والرسائل الصوتية. فريق السوشيال: {m}': 'Messenger, Instagram and WhatsApp messages (no comments) in one inbox: which ad the customer came from, their phone and email, and the full chat with photos and voice notes. Social team: {m}',
+  'الجديدة والمفتوحة': 'New & open', 'الجديدة': 'New', 'المحوّلة إليّ': 'Assigned to me', 'تحوّلت إلى عملاء': 'Converted', 'المتجاهلة': 'Ignored', 'كل القنوات': 'All channels', 'بحث بالاسم أو الرقم أو الإعلان': 'Search by name, number or ad', 'جارٍ تحميل المحادثات...': 'Loading conversations...', 'لا توجد محادثات هنا': 'No conversations here', 'عميل بدون اسم': 'Unnamed customer', 'أنت': 'You', 'جارٍ تحميل المحادثة...': 'Loading conversation...',
+  'تعذر الوصول إلى رسائل السوشيال: {e}': 'Could not reach social messages: {e}', 'جاء من': 'Came from', 'رسالة مباشرة (ليست من إعلان)': 'Direct message (not from an ad)', 'أول رسالة': 'First message', 'أرقام الهاتف': 'Phone numbers', 'الموقع من المحادثة': 'Location from chat', 'المحاصيل': 'Crops', 'درجة الملوحة': 'Salinity', 'اهتمام العميل': 'Customer interest', 'المسؤول عن المحادثة': 'Conversation owner',
   'مرتبطة بالعميل': 'Linked to customer', 'فتح ملف العميل': 'Open customer file', 'ربط المحادثة بهذا العميل': 'Link conversation to this customer', 'تحويل لعميل في النظام': 'Convert to customer', 'تحويل لزميل...': 'Transfer to colleague...', 'تحويل لزميل في فريق السوشيال': 'Transfer to a social team colleague', 'إعادة فتح': 'Reopen', 'تجاهل': 'Ignore', 'إضافة رقم يدويًا': 'Add number manually', 'لا توجد رسائل': 'No messages', 'رد جاهز...': 'Quick reply...', 'رد جاهز': 'Quick reply', 'اكتب ردك هنا، ويصل للعميل على {ch}': 'Type your reply; it reaches the customer on {ch}', 'إرسال': 'Send',
   'مرّ أكثر من 24 ساعة على آخر رسالة من العميل، وميتا لا تسمح بالرد من النظام بعدها. يمكن الرد من تطبيق ماسنجر أو إنستجرام، أو الاتصال بالعميل على رقمه.': 'More than 24 hours have passed since the customer\'s last message, and Meta does not allow replies from the system after that. Reply from the Messenger or Instagram app, or call the customer.', 'مرّ أكثر من 24 ساعة على آخر رسالة من العميل، فلا يمكن الرد من النظام': 'More than 24 hours since the customer\'s last message, so replying from the system is not allowed', 'تعذر إرسال الرد: {e}': 'Could not send the reply: {e}',
   'تم تجاهل المحادثة، وتعود للقائمة إذا راسل العميل مرة أخرى': 'Conversation ignored; it returns if the customer writes again', 'رقم الهاتف كما كتبه العميل': 'Phone number as the customer wrote it', 'اكتبه برمز الدولة إن أمكن ليتحدد بلده تلقائيًا': 'Include the country code if possible so the country is detected automatically', 'أُضيف الرقم': 'Number added', 'تم تحديد دولة الرقم': 'Country set for the number', 'تم تحويل المحادثة إلى {u}': 'Conversation transferred to {u}', 'عرض الصورة': 'View image', 'رُبطت المحادثة بالعميل {name}': 'Conversation linked to {name}', 'من {ch}': 'From {ch}', 'دولة الرقم': 'Number\'s country', 'حدد الدولة': 'Choose country', 'المحتمل': 'Likely', 'كل الدول': 'All countries',
   'إعدادات رسائل السوشيال': 'Social messages settings', 'رابط المستقبِل على Cloudflare': 'Cloudflare receiver URL', 'فريق السوشيال (يرى الرسائل ويرد عليها ويحوّلها، ويصله إشعار عند وصول رقم)': 'Social team (sees, replies to and transfers messages, and is notified when a number arrives)', 'الردود الجاهزة': 'Quick replies', 'اختبار الاتصال': 'Test connection', 'جارٍ الاختبار...': 'Testing...', 'الاتصال يعمل': 'Connection works', 'الكود في Cloudflare لا يطابق كود الاتصال': 'The code in Cloudflare does not match the access code', 'تعذر الوصول إلى الرابط': 'Could not reach the URL', 'الرابط يجب أن يبدأ بـ https://': 'The URL must start with https://', 'تم الحفظ': 'Saved',
   'جاء من السوشيال': 'Came from social', 'رسالة مباشرة': 'Direct message', 'فتح المحادثة': 'Open conversation', 'حوّل إليك محادثة {name} من رسائل السوشيال': 'transferred the social conversation {name} to you', 'رسائل السوشيال تعمل من الرابط المنشور للنظام فقط.': 'Social messages work from the published system link only.',
   'رقم محلي بدون رمز الدولة، فالدولة تخمين يحتاج تأكيدًا': 'Local number without a country code, so the country is a guess to confirm',
-  'صور الزرع': 'Crop photos', 'صورة من العميل': 'Photo from the customer', 'كل صور الشات محفوظة بالفعل في ملف العميل': 'All chat photos are already saved in the customer file', 'صورة أرسلها العميل على {ch} في {d}': 'Photo the customer sent on {ch} at {d}', 'تعذر حفظ صورة من الشات: {e}': 'Could not save a chat photo: {e}', 'حُفظت {n} صورة من الشات في ملف العميل (صور الزرع)': 'Saved {n} chat photos to the customer file (crop photos)', 'حفظ صور الشات في ملف العميل ({n})': 'Save chat photos to customer file ({n})', 'صور الشات محفوظة في ملفه': 'Chat photos saved in their file', 'أرسل {n} صورة (محفوظة في ملفه: صور الزرع)': 'Sent {n} photos (saved in their file: crop photos)', 'كلام العميل': 'Customer said', 'الموقع': 'Location', 'المحصول': 'Crop', 'الأرقام': 'Numbers',
+  'صور الزرع': 'Crop photos', 'صورة من العميل': 'Photo from the customer', 'جميع صور المحادثة محفوظة بالفعل في ملف العميل': 'All chat photos are already saved in the customer file', 'صورة أرسلها العميل على {ch} في {d}': 'Photo the customer sent on {ch} at {d}', 'تعذر حفظ صورة من المحادثة: {e}': 'Could not save a chat photo: {e}', 'حُفظت {n} صورة من المحادثة في ملف العميل (صور الزرع)': 'Saved {n} chat photos to the customer file (crop photos)', 'حفظ صور المحادثة في ملف العميل ({n})': 'Save chat photos to customer file ({n})', 'صور المحادثة محفوظة في ملفه': 'Chat photos saved in their file', 'أرسل {n} صورة (محفوظة في ملفه: صور الزرع)': 'Sent {n} photos (saved in their file: crop photos)', 'كلام العميل': 'Customer said', 'الموقع': 'Location', 'المحصول': 'Crop', 'الأرقام': 'Numbers',
   'لوحة الأداء': 'Performance', 'لوحة أداء السوشيال': 'Social performance', 'الرسائل': 'Messages', 'إكسيل': 'Excel', 'تقرير وورد': 'Word report', 'آخر 7 أيام': 'Last 7 days', 'آخر 30 يومًا': 'Last 30 days', 'هذا الشهر': 'This month', 'فترة محددة': 'Custom period', 'محادثات جديدة': 'New conversations', 'أرسلوا أرقامهم': 'Sent their number', 'من المحادثات': 'of conversations', 'تحوّلوا لعملاء': 'Became customers', 'اشتروا': 'Bought', 'متوسط أول رد من الفريق': 'Median first team reply', '{p} خلال ساعة': '{p} within an hour', 'المحادثات يومًا بيوم': 'Conversations by day', 'اختر فترة أطول لعرض الرسم': 'Choose a longer period to show the chart', 'أي إعلان يأتي بعملاء يشترون؟': 'Which ad brings customers who buy?', 'محادثات': 'Conversations', 'أرقام': 'Numbers', 'عملاء': 'Customers', 'نسبة الشراء': 'Purchase rate', 'المبيعات (ج.م)': 'Sales (EGP)', 'رسائل مباشرة (بدون إعلان)': 'Direct messages (no ad)', 'القنوات': 'Channels', 'أداء السوشيال': 'Social performance', 'تقرير أداء السوشيال': 'Social performance report', 'ماسنجر وإنستجرام': 'Messenger & Instagram', 'أداء الإعلانات': 'Ad performance', 'عدد المحادثات لكل إعلان': 'Conversations per ad', '{n} دقيقة': '{n} min', '{n} ساعة': '{n} h', '{n} يوم': '{n} days', 'تعذر تحميل البيانات: {e}': 'Could not load data: {e}', 'جارٍ تحميل البيانات...': 'Loading data...',
   'تقرير تحليل المبيعات': 'Sales analysis report', 'تم إنشاء التقرير': 'Report created', 'تاريخ التقرير': 'Report date', 'أعده': 'Prepared by', 'ميتا': 'Meta', 'عميل محتمل': 'Lead', 'شراء': 'Purchase',
   'حملات المتابعة': 'Follow-up campaigns', 'حملة جديدة': 'New campaign', 'حملة متابعة جديدة': 'New follow-up campaign', 'اسم الحملة': 'Campaign name', 'فترة الإرسال': 'Sending period', 'الرسالة': 'Message', 'معاينة لأول عميل': 'Preview for the first customer', 'إنشاء الحملة ومراجعة الرسائل': 'Create campaign and review messages', 'مسودة': 'Draft', 'بانتظار المراجعة': 'Awaiting review', 'معتمدة للإرسال': 'Approved to send', 'اكتملت': 'Completed', 'مرفوضة': 'Rejected', 'تحتاج مراجعتك': 'Needs your review', 'أُرسل': 'Sent', 'متبقي': 'Remaining', 'إرسال للمراجعة': 'Send for review', 'اعتماد الحملة': 'Approve campaign', 'رفض مع ملاحظة': 'Reject with a note', 'إنهاء الحملة': 'Finish campaign', 'إرسال واتساب': 'Send on WhatsApp', 'أُرسلت': 'Sent', 'استبعاد': 'Exclude', 'مستبعد': 'Excluded', 'بانتظار الاعتماد': 'Awaiting approval', 'رسالة واتساب': 'WhatsApp message', 'الحملات': 'Campaigns', 'فتح الحملة': 'Open campaign', 'أُرسلت الحملة للمراجعة': 'Campaign sent for review', 'اعتُمدت الحملة': 'Campaign approved', 'رفض الحملة': 'Reject campaign',
   'Dropy': 'Dropy', 'Dropy: مساعد دلتا ووتر': 'Dropy: Delta Water assistant', 'اسألني 💧': 'Ask me 💧', 'مساعد دلتا ووتر الخاص · يعمل على {w}': 'Delta Water private assistant · runs on {w}', 'سيرفر الشركة': 'Company server', 'إعدادات Dropy': 'Dropy settings', 'محادثة جديدة': 'New chat', 'أهلًا {n}، أنا Dropy 💧': 'Hi {n}, I am Dropy 💧', 'أقرأ أرقام المبيعات وأحللها، وأكتب رسائل متابعة وردودًا للعملاء من معلومات دلتا ووتر، وأجهز تقارير وورد. اختر من الأزرار أو اكتب سؤالك.': 'I read and analyse sales numbers, write follow-up messages and customer replies from Delta Water information, and prepare Word reports. Pick a button or type your question.', 'اسأل Dropy عن المبيعات أو اطلب رسالة...': 'Ask Dropy about sales or request a message...', 'موديل مفتوح المصدر على حساب الشركة، لا يتعلم من بياناتكم. للتحليل تُرسل أرقام مجمّعة فقط بلا أسماء أو هواتف.': 'An open-source model on the company account that does not learn from your data. For analysis only aggregated numbers are sent, with no names or phones.',
   '📊 ملخص مبيعات الشهر': '📊 This month\'s sales', '🏆 أداء رجال البيع': '🏆 Sales team performance', '🌱 أفضل المحافظات والمحاصيل': '🌱 Best regions and crops', '⚠ متابعات متأخرة وفرص ضائعة': '⚠ Late follow-ups and lost chances', '📄 تقرير وورد بقراءة Dropy': '📄 Word report with Dropy\'s reading', '📣 اكتب رسالة متابعة': '📣 Write a follow-up message', 'جهزت التقرير ونزل على جهازك ✓. هذه قراءتي للأرقام التي وضعتها في أوله:': 'The report is ready and downloaded ✓. Here is my reading of the numbers, placed at its start:', 'استخدمها في حملة جديدة': 'Use in a new campaign', 'نسخ': 'Copy', 'تم النسخ': 'Copied', 'قراءة Dropy للأرقام والتوصيات': 'Dropy\'s reading and recommendations',
   'لم يُحدد عنوان سيرفر الشركة في إعدادات Dropy': 'The company server address is not set in Dropy settings', 'Dropy يحتاج ربط Cloudflare أولًا (رابط المستقبِل في إعدادات رسائل السوشيال)': 'Dropy needs the Cloudflare connection first (receiver URL in social settings)', 'وصل Dropy للحد اليومي المجاني على Cloudflare، ويرجع للعمل غدًا': 'Dropy reached the free daily limit on Cloudflare and will work again tomorrow', 'لم يُفعَّل Workers AI على المستقبِل بعد': 'Workers AI is not enabled on the receiver yet', 'مكان تشغيل الموديل': 'Where the model runs', 'من يرى Dropy': 'Who sees Dropy', 'كل المستخدمين': 'All users', 'الإدارة وفريق السوشيال فقط': 'Management and social team only', 'Dropy مفعّل': 'Dropy enabled', 'اختبار Dropy': 'Test Dropy', 'عنوان السيرفر': 'Server address', 'اسم الموديل على السيرفر': 'Model name on the server', 'اكتب عنوان السيرفر بشكل صحيح': 'Enter a valid server address',
-  'محلل المبيعات': 'Sales analyst', 'مدرب المبيعات': 'Sales coach', 'خبير السوشيال ميديا': 'Social media expert', 'مستشار الإدارة': 'Management advisor', 'مهارات Dropy': 'Dropy skills', 'المحادثات المحفوظة': 'Saved chats', 'محادثاتك المحفوظة': 'Your saved chats', 'لا توجد محادثات محفوظة بعد. كل محادثة مع Dropy تُحفظ تلقائيًا هنا.': 'No saved chats yet. Every chat with Dropy is saved here automatically.', 'اختار مهارة من فوق، وبعدين اضغط زرار جاهز أو اكتب سؤالك. كل محادثة بتتحفظ وتقدر ترجعلها من 🕘.': 'Pick a skill above, then press a ready button or type your question. Every chat is saved and you can return to it from 🕘.', 'اختار العميل': 'Choose the customer', 'اكتب اسم العميل أو كوده': 'Type the customer name or code', 'حذف المحادثة': 'Delete chat', 'ستُحذف هذه المحادثة نهائيًا.': 'This chat will be deleted permanently.', 'محادثة': 'Chat', 'اسأل Dropy...': 'Ask Dropy...', 'اكتب هدف الرسالة ومن هم العملاء...': 'Write the message goal and who the customers are...', 'جهزني للمكالمة': 'Prepare me for the call', 'تحضير مكالمة: {n}': 'Call prep: {n}', '📞 جهزني لمكالمة {n}': '📞 Prepare me to call {n}',
-  '📞 جهزني لمكالمة عميل': '📞 Prepare me to call a customer', '🛡 رد على "الجهاز غالي"': '🛡 Answer "too expensive"', '🤔 "مش مقتنع إنه بيشتغل"': '🤔 "Not convinced it works"', '🎯 أسئلة تأهيل عميل جديد': '🎯 Qualifying questions', '🔁 خطة متابعة 30 يومًا': '🔁 30-day follow-up plan', '📣 اكتب رسالة متابعة لحملة': '📣 Write a campaign message', '✍ 3 بوستات فيسبوك': '✍ 3 Facebook posts', '🎬 سكريبت ريلز 30 ثانية': '🎬 30-second reel script', '📣 3 نصوص إعلان رسائل': '📣 3 message-ad texts', '🗓 خطة محتوى أسبوعين': '🗓 Two-week content plan', '💬 رد على تعليق "بكام؟"': '💬 Reply to "how much?"', '📈 أي إعلان شغال؟': '📈 Which ad works?', '📈 توقع الشهر الجاي': '📈 Next month forecast', '🧾 التحصيل والمخاطر': '🧾 Collection and risks', '👥 قرارات الفريق': '👥 Team decisions',
+  'محلل المبيعات': 'Sales analyst', 'مدرب المبيعات': 'Sales coach', 'خبير السوشيال ميديا': 'Social media expert', 'مستشار الإدارة': 'Management advisor', 'مهارات Dropy': 'Dropy skills', 'المحادثات المحفوظة': 'Saved chats', 'محادثاتك المحفوظة': 'Your saved chats', 'لا توجد محادثات محفوظة بعد. كل محادثة مع Dropy تُحفظ تلقائيًا هنا.': 'No saved chats yet. Every chat with Dropy is saved here automatically.', 'اختر مهارة من الأعلى، ثم اضغط زرًا جاهزًا أو اكتب سؤالك. تُحفظ كل محادثة ويمكنك الرجوع إليها من 🕘.': 'Pick a skill above, then press a ready button or type your question. Every chat is saved and you can return to it from 🕘.', 'اختر العميل': 'Choose the customer', 'اكتب اسم العميل أو كوده': 'Type the customer name or code', 'حذف المحادثة': 'Delete chat', 'ستُحذف هذه المحادثة نهائيًا.': 'This chat will be deleted permanently.', 'محادثة': 'Chat', 'اسأل Dropy...': 'Ask Dropy...', 'اكتب هدف الرسالة ومن هم العملاء...': 'Write the message goal and who the customers are...', 'جهزني للمكالمة': 'Prepare me for the call', 'تحضير مكالمة: {n}': 'Call prep: {n}', '📞 جهزني لمكالمة {n}': '📞 Prepare me to call {n}',
+  '📞 جهزني لمكالمة عميل': '📞 Prepare me to call a customer', '🛡 رد على "الجهاز غالي"': '🛡 Answer "too expensive"', '🤔 "لست مقتنعًا بأن الجهاز يعمل"': '🤔 "Not convinced it works"', '🎯 أسئلة تأهيل عميل جديد': '🎯 Qualifying questions', '🔁 خطة متابعة 30 يومًا': '🔁 30-day follow-up plan', '📣 اكتب رسالة متابعة لحملة': '📣 Write a campaign message', '✍ 3 بوستات فيسبوك': '✍ 3 Facebook posts', '🎬 سكريبت ريلز 30 ثانية': '🎬 30-second reel script', '📣 3 نصوص إعلان رسائل': '📣 3 message-ad texts', '🗓 خطة محتوى أسبوعين': '🗓 Two-week content plan', '💬 رد على تعليق "بكام؟"': '💬 Reply to "how much?"', '📈 أي إعلان شغال؟': '📈 Which ad works?', '📈 توقع الشهر القادم': '📈 Next month forecast', '🧾 التحصيل والمخاطر': '🧾 Collection and risks', '👥 قرارات الفريق': '👥 Team decisions',
   'اقترح رد': 'Suggest a reply', 'Dropy يكتب...': 'Dropy is writing...', 'راجع الرد وعدّله قبل الإرسال': 'Review and edit the reply before sending', 'اكتب مع Dropy': 'Write with Dropy',
-  'التوكن سليم، لكن التطبيق ناقصه صلاحية: {p}. ضيفها من App Review ← Permissions and features، وبعدها اعمل Generate token جديد وحطه مكان القديم': 'The token is valid but the app is missing permission: {p}. Add it under App Review → Permissions and features, then generate a new token and replace the old one',
-  'مش قادر أتأكد: التطبيق ناقصه صلاحية {p}': 'Cannot check: the app is missing permission {p}', 'ناقص: ضيف PAGE_ID في Cloudflare (رقم الصفحة)': 'Missing: add PAGE_ID in Cloudflare (the page ID)',
-  'اختياري لو لسه ما اتكلمتش مع العميل': "optional if you haven't talked to the customer yet",
-  '{n} محادثة إنستجرام من غير اسم: العميل بعت ستوري أو ريلز أو تفاعل بس من غير ما يكتب، وميتا مش بتدي الاسم في الحالة دي. الاسم هيظهر لوحده أول ما يكتب رسالة': '{n} Instagram conversation(s) without a name: the customer only sent a story, reel or reaction without typing, and Meta does not share the name in that case. The name appears automatically once they type a message',
+  'التوكن سليم، لكن التطبيق تنقصه صلاحية: {p}. أضفها من App Review ← Permissions and features، ثم أنشئ توكنًا جديدًا (Generate token) وضعه مكان القديم': 'The token is valid but the app is missing permission: {p}. Add it under App Review → Permissions and features, then generate a new token and replace the old one',
+  'تعذّر التحقق: التطبيق تنقصه صلاحية {p}': 'Cannot check: the app is missing permission {p}', 'ناقص: أضف PAGE_ID في Cloudflare (رقم الصفحة)': 'Missing: add PAGE_ID in Cloudflare (the page ID)',
+  'اختياري إذا لم تتواصل مع العميل بعد': "optional if you haven't talked to the customer yet",
+  '{n} محادثة إنستجرام دون اسم: أرسل العميل قصة أو ريلز أو تفاعلًا فقط دون كتابة رسالة، ولا تتيح ميتا الاسم في هذه الحالة. سيظهر الاسم تلقائيًا عند كتابته أول رسالة': '{n} Instagram conversation(s) without a name: the customer only sent a story, reel or reaction without typing, and Meta does not share the name in that case. The name appears automatically once they type a message',
   'واتساب (WA_TOKEN و WA_PHONE_ID)': 'WhatsApp (WA_TOKEN and WA_PHONE_ID)', 'مربوط برقم {n} ({v})': 'Connected to number {n} ({v})', 'جودة الرقم': 'Number quality',
-  'لسه ما اتربطش: ضيف WA_TOKEN (Secret) و WA_PHONE_ID (Text) في Cloudflare بعد إعداد واتساب في تطبيق ميتا': 'Not connected yet: add WA_TOKEN (Secret) and WA_PHONE_ID (Text) in Cloudflare after setting up WhatsApp in the Meta app',
-  'توكن واتساب غلط أو انتهى: اعمل توكن System User جديد وحطه مكان WA_TOKEN': 'WhatsApp token is wrong or expired: create a new System User token and replace WA_TOKEN', 'ميتا رفضت': 'Meta refused',
+  'لم يُربط بعد: أضف WA_TOKEN (Secret) و WA_PHONE_ID (Text) في Cloudflare بعد إعداد واتساب في تطبيق ميتا': 'Not connected yet: add WA_TOKEN (Secret) and WA_PHONE_ID (Text) in Cloudflare after setting up WhatsApp in the Meta app',
+  'توكن واتساب غير صحيح أو منتهي الصلاحية: أنشئ توكن System User جديدًا وضعه مكان WA_TOKEN': 'WhatsApp token is wrong or expired: create a new System User token and replace WA_TOKEN', 'ميتا رفضت': 'Meta refused',
   'المتبقي بعد المقدم': 'Remaining after deposit', 'مجموع الأقساط': 'Installments total', 'مطابق': 'Matches', 'ناقص {n}': 'Short by {n}', 'زيادة {n}': 'Over by {n}',
-  'جدول الأقساط': 'Installment schedule', 'عدّل تاريخ ومبلغ أي قسط، الأقساط مش لازم تكون متساوية': 'Edit the date and amount of any installment; they do not have to be equal',
+  'جدول الأقساط': 'Installment schedule', 'عدّل تاريخ ومبلغ أي قسط، ولا يلزم أن تكون الأقساط متساوية': 'Edit the date and amount of any installment; they do not have to be equal',
   'تاريخ الاستحقاق': 'Due date', 'حذف القسط': 'Remove installment', 'قسط آخر': 'Another installment', 'توزيع بالتساوي': 'Split equally', 'ضع الفرق على آخر قسط': 'Put the difference on the last installment',
-  'أضف قسط واحد على الأقل': 'Add at least one installment', 'حدد تاريخ كل قسط': 'Set a date for every installment', 'كل قسط لازم يكون مبلغه أكبر من صفر': 'Every installment must be more than zero',
+  'أضف قسط واحد على الأقل': 'Add at least one installment', 'حدد تاريخ كل قسط': 'Set a date for every installment', 'يجب أن يكون مبلغ كل قسط أكبر من صفر': 'Every installment must be more than zero',
   'مجموع الأقساط ({s}) لا يساوي المتبقي بعد المقدم ({r})': 'Installments total ({s}) does not equal the remaining after deposit ({r})',
   'درجة ملوحة التربة': 'Soil salinity', 'مثال: 4 dS/m أو 2500 ppm': 'e.g. 4 dS/m or 2500 ppm', 'حالة المزرعة': 'Farm condition',
-  'اكتب أو سجّل صوتيًا: حالة الزرع والأرض، المشاكل اللي العميل شايفها، أي ملاحظات': 'Type or record by voice: crop and soil condition, problems the customer sees, any notes',
-  'جارٍ تحميل المرفق...': 'Loading attachment...', 'تعذر تحميل المرفق': 'Could not load the attachment', 'واتساب مش مربوط في Cloudflare': 'WhatsApp is not connected in Cloudflare', 'فتح الملف': 'Open file',
+  'اكتب أو سجّل صوتيًا: حالة الزرع والأرض، والمشكلات التي يلاحظها العميل، وأي ملاحظات': 'Type or record by voice: crop and soil condition, problems the customer sees, any notes',
+  'جارٍ تحميل المرفق...': 'Loading attachment...', 'تعذر تحميل المرفق': 'Could not load the attachment', 'واتساب غير مربوط في Cloudflare': 'WhatsApp is not connected in Cloudflare', 'فتح الملف': 'Open file',
   'توكن System User دائم': 'permanent System User token', 'صلاحيات التوكن': 'Token permissions', 'ناقص منه': 'Missing',
-  'أسماء العملاء في المحادثات': 'Customer names in conversations', 'اتجاب اسم {n} محادثة دلوقتي': 'Fetched the name for {n} conversation(s) now', 'كل المحادثات ليها أسماء': 'All conversations have names',
-  'ميتا رافضة تدي الاسم: التطبيق ناقصه صلاحية {p}. بعد ما تتضاف اعمل Generate token جديد وحطه مكان القديم': 'Meta refuses to return names: the app is missing permission {p}. After adding it, generate a new token and replace the old one',
-  'ميتا رافضة تدي الاسم ({n} محادثة من غير اسم)': 'Meta refuses to return names ({n} conversation(s) without a name)',
+  'أسماء العملاء في المحادثات': 'Customer names in conversations', 'تم جلب أسماء {n} محادثة الآن': 'Fetched the name for {n} conversation(s) now', 'جميع المحادثات لها أسماء': 'All conversations have names',
+  'ترفض ميتا إتاحة الاسم: التطبيق تنقصه صلاحية {p}. بعد إضافتها أنشئ توكنًا جديدًا (Generate token) وضعه مكان القديم': 'Meta refuses to return names: the app is missing permission {p}. After adding it, generate a new token and replace the old one',
+  'ترفض ميتا إتاحة الاسم ({n} محادثة دون اسم)': 'Meta refuses to return names ({n} conversation(s) without a name)',
   'فحص الربط مع ميتا': 'Check Meta connection', 'جارٍ سؤال ميتا عن كل مفتاح...': 'Asking Meta about each key...', 'المستقبِل على Cloudflare يحتاج تحديث الكود أولًا': 'The Cloudflare receiver needs a code update first',
   'رمز التحقق (META_VERIFY_TOKEN)': 'Verify token (META_VERIFY_TOKEN)', 'متسجل': 'Set', 'ناقص: أضفه في Cloudflare بنفس الرمز المكتوب في ميتا': 'Missing: add it in Cloudflare with the same value entered in Meta',
-  'توكن الصفحة (PAGE_TOKEN)': 'Page token (PAGE_TOKEN)', 'شغال، وتابع لصفحة: {n}': 'Working, belongs to page: {n}', 'ناقص: أضفه في Cloudflare كـ Secret': 'Missing: add it in Cloudflare as a Secret', 'غلط أو انتهى: اعمل Generate token جديد وحطه مكانه': 'Wrong or expired: generate a new token and replace it', 'ميتا رفضته': 'Meta rejected it',
-  'سر التطبيق (META_APP_SECRET)': 'App secret (META_APP_SECRET)', 'صحيح، وميتا قبلته': 'Correct, accepted by Meta', 'ناقص: من غيره السيرفر يرفض كل الرسايل': 'Missing: without it the server rejects every message', 'غلط: انسخه تاني من App settings ← Basic ← App secret': 'Wrong: copy it again from App settings → Basic → App secret', 'مش متأكد منه لأن التوكن مش شغال، صلّح التوكن الأول': 'Cannot be checked until the token works; fix the token first',
-  'رقم الصفحة (PAGE_ID)': 'Page ID (PAGE_ID)', 'مطابق للصفحة: {n}': 'Matches page: {n}', 'ناقص: ضيف PAGE_ID = {id}': 'Missing: add PAGE_ID = {id}', 'مش مطابق: التوكن تبع صفحة {n} ({a}) لكن PAGE_ID = {e}': 'Mismatch: the token is for page {n} ({a}) but PAGE_ID = {e}',
-  'اشتراك الصفحة في الرسايل (Webhook)': 'Page message subscription (Webhook)', 'مشترك': 'Subscribed', 'ليدز الفورم (leadgen) مش مفعّلة': 'Lead form leads (leadgen) not enabled', 'ميتا رفضت السؤال': 'Meta refused the request', 'التطبيق مش مشترك في messages على الصفحة: فعّلها من Webhooks ← الصفحة ← Edit': 'The app is not subscribed to messages on the page: enable it in Webhooks → page → Edit',
-  'إنستجرام (IG_ID)': 'Instagram (IG_ID)', 'مربوط: @{u}': 'Linked: @{u}', 'مفيش حساب إنستجرام بيزنس مربوط بالصفحة': 'No Instagram business account is linked to the page', 'ميتا رفضت السؤال عن إنستجرام (ممكن صلاحية instagram_basic ناقصة)': 'Meta refused the Instagram request (instagram_basic may be missing)', 'IG_ID مش مطابق: الصح {id} (@{u})': 'IG_ID mismatch: the correct one is {id} (@{u})', 'ناقص: ضيف IG_ID = {id} (@{u})': 'Missing: add IG_ID = {id} (@{u})',
-  'آخر رسالة وصلت من ميتا': 'Last message received from Meta', 'لسه مفيش رسايل وصلت. ابعت رسالة تجربة للصفحة (ولو التطبيق Development لازم من حساب ليه دور في التطبيق)': 'No messages yet. Send a test message to the page (in Development mode it must come from an account with a role on the app)',
-  'فيه {n} حاجة محتاجة تتصلح قبل ما الرسايل تشتغل': '{n} item(s) need fixing before messages work', 'الربط سليم ✓': 'Connection is healthy ✓',
+  'توكن الصفحة (PAGE_TOKEN)': 'Page token (PAGE_TOKEN)', 'يعمل، وتابع للصفحة: {n}': 'Working, belongs to page: {n}', 'ناقص: أضفه في Cloudflare كـ Secret': 'Missing: add it in Cloudflare as a Secret', 'غير صحيح أو منتهي الصلاحية: أنشئ توكنًا جديدًا (Generate token) وضعه مكانه': 'Wrong or expired: generate a new token and replace it', 'ميتا رفضته': 'Meta rejected it',
+  'سر التطبيق (META_APP_SECRET)': 'App secret (META_APP_SECRET)', 'صحيح، وميتا قبلته': 'Correct, accepted by Meta', 'ناقص: بدونه يرفض الخادم جميع الرسائل': 'Missing: without it the server rejects every message', 'غير صحيح: انسخه مجددًا من App settings ← Basic ← App secret': 'Wrong: copy it again from App settings → Basic → App secret', 'تعذّر التحقق منه لأن التوكن لا يعمل، يُرجى إصلاح التوكن أولًا': 'Cannot be checked until the token works; fix the token first',
+  'رقم الصفحة (PAGE_ID)': 'Page ID (PAGE_ID)', 'مطابق للصفحة: {n}': 'Matches page: {n}', 'ناقص: أضف PAGE_ID = {id}': 'Missing: add PAGE_ID = {id}', 'غير مطابق: التوكن تابع لصفحة {n} ({a}) بينما PAGE_ID = {e}': 'Mismatch: the token is for page {n} ({a}) but PAGE_ID = {e}',
+  'اشتراك الصفحة في الرسائل (Webhook)': 'Page message subscription (Webhook)', 'مشترك': 'Subscribed', 'نماذج العملاء المحتملين (leadgen) غير مفعّلة': 'Lead form leads (leadgen) not enabled', 'ميتا رفضت السؤال': 'Meta refused the request', 'التطبيق غير مشترك في messages على الصفحة: فعّلها من Webhooks ← الصفحة ← Edit': 'The app is not subscribed to messages on the page: enable it in Webhooks → page → Edit',
+  'إنستجرام (IG_ID)': 'Instagram (IG_ID)', 'مربوط: @{u}': 'Linked: @{u}', 'لا يوجد حساب إنستجرام للأعمال مرتبط بالصفحة': 'No Instagram business account is linked to the page', 'رفضت ميتا الاستعلام عن إنستجرام (قد تكون صلاحية instagram_basic ناقصة)': 'Meta refused the Instagram request (instagram_basic may be missing)', 'IG_ID غير مطابق: القيمة الصحيحة {id} (@{u})': 'IG_ID mismatch: the correct one is {id} (@{u})', 'ناقص: أضف IG_ID = {id} (@{u})': 'Missing: add IG_ID = {id} (@{u})',
+  'آخر رسالة وصلت من ميتا': 'Last message received from Meta', 'لم تصل أي رسائل بعد. أرسل رسالة تجريبية إلى الصفحة (وإذا كان التطبيق في وضع Development فيجب الإرسال من حساب له دور في التطبيق)': 'No messages yet. Send a test message to the page (in Development mode it must come from an account with a role on the app)',
+  'توجد {n} مشكلة يجب إصلاحها قبل تشغيل الرسائل': '{n} item(s) need fixing before messages work', 'الربط سليم ✓': 'Connection is healthy ✓',
   'Dropy: مساعد دلتا ووتر. اضغط للسؤال، أو اسحبه لأي مكان': 'Dropy: Delta Water assistant. Click to ask, or drag it anywhere', 'اضغط للسؤال، أو اسحبني لأي مكان': 'Click to ask, or drag me anywhere', 'أنا Dropy 👋 اسحبني لأي مكان': "I'm Dropy 👋 drag me anywhere",
   'مكتبة معلومات دلتا ووتر (ما يعرفه Dropy عن الشركة والمنتجات والأسئلة الشائعة)': 'Delta Water knowledge library (what Dropy knows about the company, products and FAQs)',
   'اكتب هنا كل ما تريد أن يعرفه Dropy: عن الشركة، كل موديل ومتى يُستخدم، الأسئلة الشائعة وإجاباتها، طريقة التركيب والضمان، تجارب عملاء حقيقية... لا تكتب أسعارًا: Dropy ممنوع من ذكرها للعملاء.': 'Write everything Dropy should know: the company, each model and when to use it, FAQs and answers, installation and warranty, real customer stories... Do not write prices: Dropy must never mention them to customers.',
@@ -1292,10 +1318,10 @@ const EN = {
   'لكل شخص اسم مستخدم وكلمة مرور خاصة به، ويختار كلمة مروره بنفسه عند أول دخول. تسجيل المستخدمين الجدد تفتحه إدارة الشركة لمن تحدده': 'Everyone has their own username and password, and chooses their password at first sign-in. Company management decides who can register new users',
   'لم يختر كلمة مروره بعد': 'Has not set a password yet', 'رقم الهاتف': 'Phone number', 'كلمة مرور مؤقتة': 'Temporary password', 'كلمة مرور مؤقتة جديدة': 'New temporary password', 'حفظ وتحديد الصلاحيات': 'Save and set permissions',
   'يُطلب من صاحب الحساب اختيار كلمة مرور خاصة به عند أول دخول': 'The account holder will be asked to choose their own password at first sign-in', 'تم إنشاء الحساب. أرسل لـ{u} اسم المستخدم وكلمة المرور المؤقتة': 'Account created. Send {u} the username and temporary password',
-  'موقع المزرعة': 'Farm location', 'موقع المزرعة على خرائط جوجل': 'Farm location on Google Maps', 'الصق لينك الموقع أو الإحداثيات': 'Paste the location link or coordinates', 'موقعي الحالي': 'My current location',
+  'موقع المزرعة': 'Farm location', 'موقع المزرعة على خرائط جوجل': 'Farm location on Google Maps', 'الصق رابط الموقع أو الإحداثيات': 'Paste the location link or coordinates', 'موقعي الحالي': 'My current location',
   'من خرائط جوجل: اضغط على مكان المزرعة ثم "مشاركة" ثم "نسخ الرابط" والصقه هنا': 'In Google Maps: tap the farm, then "Share", then "Copy link" and paste it here', 'المتصفح لا يدعم تحديد الموقع': 'This browser does not support location',
   'جارٍ تحديد الموقع...': 'Getting location...', 'تم أخذ الموقع بدقة {m} متر تقريبًا': 'Location captured, accurate to about {m} m', 'يلزم السماح للمتصفح بالوصول إلى الموقع': 'Allow the browser to access your location', 'تعذر تحديد الموقع، حاول مرة أخرى': 'Could not get the location, try again',
-  'لينك موقع المزرعة غير صحيح. الصق لينك من خرائط جوجل أو إحداثيات مثل 30.0444, 31.2357': 'The farm location link is not valid. Paste a Google Maps link or coordinates such as 30.0444, 31.2357', 'فتح موقع المزرعة على خرائط جوجل': 'Open farm location in Google Maps',
+  'رابط موقع المزرعة غير صحيح. الصق رابطًا من خرائط جوجل أو إحداثيات مثل 30.0444, 31.2357': 'The farm location link is not valid. Paste a Google Maps link or coordinates such as 30.0444, 31.2357', 'فتح موقع المزرعة على خرائط جوجل': 'Open farm location in Google Maps',
   'أعمال': 'Work of', 'أعمالي': 'My work', 'كل الفريق': 'Whole team', 'إنجاز اليوم ({n})': "Today's work ({n})", 'عملاء جدد: {n}': 'New customers: {n}', 'متابعات: {n}': 'Follow-ups: {n}', 'طلبات: {n}': 'Orders: {n}',
   'تصدير أعمال اليوم': "Export today's work", 'الموظف': 'Employee', 'النتيجة': 'Outcome', 'ما كُتب في المتابعة': 'Follow-up notes', 'بدون': 'None', 'لم تُسجَّل أعمال اليوم بعد': 'No work recorded today yet',
   'أعمال اليوم': "Today's work", 'نتيجة المتابعة': 'Follow-up outcome', 'المرحلة الحالية': 'Current stage',
@@ -1346,16 +1372,16 @@ const EN = {
   'الحسابات': 'Accounts', 'التحصيل': 'Collections', 'العملاء والحالة الائتمانية': 'Customers & credit status', 'المرتجعات': 'Returns', 'تحصيل {m}': 'Collected in {m}', 'عدد العملاء: {n}': 'Customers: {n}',
   'أعلى شهر تحصيل (آخر 12 شهر)': 'Top collection month (last 12 months)', 'الأعلى على الإطلاق': 'All-time top', 'المتبقي على العملاء': 'Outstanding balance', 'المتأخرات': 'Overdue', 'التحصيل شهر بشهر': 'Collections by month', 'تفاصيل شهر': 'Month details', 'تصدير الشهر': 'Export month',
   'في الميعاد الأصلي': 'On original date', 'على تاريخ التأجيل': 'On postponed date', 'بعد الموعد': 'Late', 'وقت الشراء': 'At purchase', 'مرتجع للعملاء': 'Refunded to customers', 'التوقيت': 'Timing', 'عميل منذ': 'Customer since', 'مرات التأجيل': 'Postponements',
-  'أقل من شهر': 'Under a month', '{n} شهر': '{n} months', '{y} سنة و{m} شهر': '{y} yr {m} mo', 'عميل جديد': 'New customer', 'كثير التأجيل': 'Often postpones', 'مفيش تحصيل في الشهر ده': 'No collections this month', 'نقدي': 'Cash', 'كلي': 'Full', 'جزئي': 'Partial', 'كلي أو جزئي': 'Full or partial',
+  'أقل من شهر': 'Under a month', '{n} شهر': '{n} months', '{y} سنة و{m} شهر': '{y} yr {m} mo', 'عميل جديد': 'New customer', 'كثير التأجيل': 'Often postpones', 'لا يوجد تحصيل في هذا الشهر': 'No collections this month', 'نقدي': 'Cash', 'كلي': 'Full', 'جزئي': 'Partial', 'كلي أو جزئي': 'Full or partial',
   'مدير الحسابات': 'Accounts manager', 'الإدارة': 'Management', 'عملائك فقط': 'Your customers only',
   'ابحث بالاسم أو الكود أو الرقم': 'Search by name, code or phone', 'عملاء التقسيط والمقدم': 'Installment & deposit customers', 'عليهم متأخرات': 'With overdue amounts', 'كل العملاء المشترين': 'All buyers', 'كل الحالات الائتمانية': 'All credit statuses', 'لا يوجد عملاء مطابقون': 'No matching customers',
   'منتظم': 'Regular', 'متعسر': 'Distressed', 'مرتجع': 'Returned', 'تم السداد': 'Paid', 'إسقاط مديونية': 'Debt written off', 'لا يريد السداد': 'Refuses to pay', 'الحالة الائتمانية': 'Credit status', 'سجل الحالة الائتمانية': 'Credit status log', 'الحالة الائتمانية: {name}': 'Credit status: {name}',
-  'تغيير الحالة الائتمانية': 'Change credit status', 'اختار حالة مختلفة عن الحالية': 'Pick a status different from the current one', 'تم حفظ الحالة الائتمانية': 'Credit status saved', 'غيّر الحالة الائتمانية للعميل {name}': 'changed the credit status of {name}',
+  'تغيير الحالة الائتمانية': 'Change credit status', 'اختر حالة مختلفة عن الحالية': 'Pick a status different from the current one', 'تم حفظ الحالة الائتمانية': 'Credit status saved', 'غيّر الحالة الائتمانية للعميل {name}': 'changed the credit status of {name}',
   'التقرير الشامل Excel': 'Full report Excel', 'التقرير الشامل PDF': 'Full report PDF', 'التقرير الشامل للحسابات': 'Full accounts report', 'كود العميل (ID)': 'Customer code (ID)', 'أرقام التليفون': 'Phone numbers', 'المحافظة أو الدولة': 'Governorate or country', 'مصدر الاتصال': 'Contact source',
   'إجمالي المشتريات': 'Total purchases', 'المشتريات': 'Purchases', 'المسدد': 'Paid', 'أيام التأخير': 'Days late', 'أيام التأخير من الأصلي': 'Days late (original)', 'أيام التأخير من الحالي': 'Days late (current)', 'شهور التأخير': 'Months late', 'أقرب استحقاق': 'Next due', 'آخر تأجيل وسببه': 'Last postponement & reason',
   'آخر تحصيل': 'Last collection', 'ملاحظات الأقساط': 'Installment notes', 'مرتجع للعميل': 'Refunded to customer', 'سجّله': 'Recorded by', 'بخصم': 'With deduction', 'بدون خصم': 'No deduction', 'قيمة الخصم': 'Deduction amount', 'اكتب قيمة الخصم': 'Enter the deduction amount',
   'لتسجيل مرتجع: افتح الطلبية واضغط "تسجيل مرتجع".': 'To record a return: open the order and tap "Record return".', 'لا توجد مرتجعات': 'No returns', 'مرتجعة': 'Returned', 'موقوف (مرتجع)': 'Stopped (returned)', 'سجّل مرتجع': 'recorded a return',
-  'تسجيل مرتجع': 'Record return', 'تسجيل مرتجع للطلبية {no}': 'Record return for order {no}', 'تاريخ المرتجع': 'Return date', 'المبلغ المرتجع للعميل': 'Amount refunded to customer', 'الأجهزة المرتجعة': 'Returned devices', 'مرتجع قبل كده': 'already returned', 'سبب المرتجع': 'Return reason',
+  'تسجيل مرتجع': 'Record return', 'تسجيل مرتجع للطلبية {no}': 'Record return for order {no}', 'تاريخ المرتجع': 'Return date', 'المبلغ المرتجع للعميل': 'Amount refunded to customer', 'الأجهزة المرتجعة': 'Returned devices', 'مرتجع سابقًا': 'already returned', 'سبب المرتجع': 'Return reason',
   'إيقاف الأقساط المتبقية على الطلبية': 'Stop the remaining installments on this order', 'تغيير الحالة الائتمانية للعميل إلى "مرتجع"': 'Set the customer credit status to "Returned"', 'حفظ المرتجع': 'Save return', 'حدد الأجهزة المرتجعة': 'Select the returned devices', 'يرجى كتابة سبب المرتجع': 'Please enter the return reason',
   'تم تسجيل المرتجع': 'Return recorded', 'مرتجع الطلبية': 'Return of order', 'سجّل مرتجع على طلبية العميل {name}': "recorded a return on {name}'s order",
   'حساب العميل': 'Customer account', 'حساب العميل: {name}': 'Customer account: {name}', 'تفاصيل الحساب وكشف الحساب': 'Account details & statement', 'كشف حساب Excel': 'Statement Excel', 'كشف حساب PDF': 'Statement PDF', 'كشف حساب': 'Statement', 'كشف حساب عميل': 'Customer statement',
@@ -1365,18 +1391,18 @@ const EN = {
   'كشف حساب وورد': 'Statement Word', 'التقرير الشامل وورد': 'Full report Word', 'ملف العميل': 'Customer file', 'ملف العميل وورد': 'Customer file (Word)', 'تم تنزيل ملف العميل': 'Customer file downloaded', 'فتح الطلبية': 'Open order', 'فتح القسط': 'Open installment',
   'أقساط مستحقة في {d} ({n})': 'Installments due on {d} ({n})', 'الأقساط والاستحقاقات': 'Installments & due dates', 'سجل السداد والتحصيل': 'Payment & collection log', 'تغييرات تواريخ الأقساط': 'Installment date changes', 'متابعات الأقساط': 'Installment follow-ups',
   'من تاريخ': 'From date', 'إلى تاريخ': 'To date', 'القرار': 'Decision', 'طلبه': 'Requested by', 'اعتمده': 'Approved by', 'كتبها': 'Written by', 'بواسطة': 'By', 'من': 'From', 'إلى': 'To', 'النتيجة': 'Outcome', 'المتابعة القادمة': 'Next follow-up', 'تاريخ المتابعة القادمة': 'Next follow-up date', 'تاريخ التسجيل': 'Registered on', 'لا يوجد': 'None', 'معتمد': 'Approved', 'بانتظار الاعتماد': 'Pending approval',
-  'تفاعل': 'Reaction', 'النص الأصلي': 'Original text', 'معدّلة': 'Edited', 'لم تصل': 'Not delivered', 'اتقرت': 'Read', 'وصلت': 'Delivered', 'اتبعتت': 'Sent',
-  'مستنية موافقة ميتا على صلاحية Business Asset User Profile Access ({n} محادثة من غير اسم). الرسايل شغالة عادي، والأسماء هتظهر لوحدها بعد الموافقة': 'Waiting for Meta to approve Business Asset User Profile Access ({n} conversations without a name). Messages work normally; names will appear automatically after approval',
-  'مراحل العملاء (اللي بتتبعت للإعلانات)': 'Customer stages (sent to ads)', 'أداء كل إعلان: المحادثات والمراحل والدول': 'Each ad: conversations, stages and countries', 'اتحولوا للسيلز': 'Sent to sales', 'مفقود / سبام': 'Lost / spam', 'العملاء حسب الدولة': 'Customers by country', 'العملاء': 'Customers', 'غير محددة': 'Unknown', 'الإعلانات والدول': 'Ads by country', 'الدول': 'Countries', 'مراحل العملاء': 'Customer stages', 'الدولة': 'Country', 'غالبًا {c} (من توقيت حسابه)': 'Probably {c} (from the account time zone)',
-  'الطريقة الأولى اترفضت': 'First method was rejected', 'بالرقم بس': 'by phone only',
+  'تفاعل': 'Reaction', 'النص الأصلي': 'Original text', 'معدّلة': 'Edited', 'لم تصل': 'Not delivered', 'قُرئت': 'Read', 'وصلت': 'Delivered', 'أُرسلت': 'Sent',
+  'بانتظار موافقة ميتا على صلاحية Business Asset User Profile Access ({n} محادثة دون اسم). الرسائل تعمل بشكل طبيعي، وستظهر الأسماء تلقائيًا بعد الموافقة': 'Waiting for Meta to approve Business Asset User Profile Access ({n} conversations without a name). Messages work normally; names will appear automatically after approval',
+  'مراحل العملاء (المُرسَلة إلى الإعلانات)': 'Customer stages (sent to ads)', 'أداء كل إعلان: المحادثات والمراحل والدول': 'Each ad: conversations, stages and countries', 'حُوِّلوا إلى المبيعات': 'Sent to sales', 'مفقود / سبام': 'Lost / spam', 'العملاء حسب الدولة': 'Customers by country', 'العملاء': 'Customers', 'غير محددة': 'Unknown', 'الإعلانات والدول': 'Ads by country', 'الدول': 'Countries', 'مراحل العملاء': 'Customer stages', 'الدولة': 'Country', 'غالبًا {c} (من توقيت حسابه)': 'Probably {c} (from the account time zone)',
+  'رُفضت الطريقة الأولى': 'First method was rejected', 'بالرقم فقط': 'by phone only',
   'متابعة': 'Follow-up', 'مسجل': 'Lead', 'مؤهل': 'Qualified', 'غير مؤهل': 'Not qualified', 'تم التحويل': 'Converted', 'مفقود': 'Lost', 'سبام': 'Spam',
-  'مرحلة العميل': 'Customer stage', 'كل المراحل': 'All stages', 'من غير مرحلة': 'No stage', 'بيتبعت للإعلانات على إنه {e}': 'Sent to ads as {e}', 'بيتحفظ في السيستم بس': 'Saved in the CRM only', 'اتحددت تلقائيًا': 'Set automatically', 'ميتا': 'Meta',
-  'اتحفظت المرحلة: {s}': 'Stage saved: {s}', 'اتحفظت المرحلة واتبعتت لميتا علشان الإعلان يتعلم ✓': 'Stage saved and sent to Meta so ads can learn ✓', 'اتحفظت المرحلة (ميتا عندها الحدث ده من قبل)': 'Stage saved (Meta already has this event)',
-  'اتحفظت المرحلة، بس ميتا رفضت الحدث': 'Stage saved, but Meta rejected the event', 'اتحفظت المرحلة في السيستم. الإبلاغ لميتا مش متوصل لسه (محتاج DATASET_ID)': 'Stage saved in the CRM. Reporting to Meta is not connected yet (needs DATASET_ID)',
-  'تم التحويل: قيمة الشراء': 'Converted: purchase value', 'قيمة الشراء (ج.م)': 'Purchase value (EGP)', 'اختياري. ميتا بتستخدم القيمة علشان تجيب عملاء بيشتروا بقيمة قريبة. القيمة مش بتظهر للعميل.': 'Optional. Meta uses the value to find customers who buy at a similar value. The customer never sees it.',
-  'إبلاغ الإعلانات بمراحل العملاء (Conversions API)': 'Reporting customer stages to ads (Conversions API)', 'شغال: مسجل ومؤهل وتم التحويل بيتبعتوا لميتا': 'Working: Lead, Qualified and Converted are sent to Meta',
-  'واتساب: ضيف WABA_ID في Cloudflare علشان عملاء إعلانات الواتساب يتبعتوا كمان': 'WhatsApp: add WABA_ID in Cloudflare so WhatsApp ad customers are sent too', 'وضع الاختبار شغال (CAPI_TEST_CODE)، الأحداث بتظهر في Test events بس': 'Test mode is on (CAPI_TEST_CODE); events only show in Test events',
-  'مش متوصل: المراحل بتتحفظ في السيستم بس ومش بتوصل للإعلانات. محتاج DATASET_ID في Cloudflare (مجموعة بيانات من مدير الأحداث مربوطة بالصفحة والإنستجرام)': 'Not connected: stages are saved in the CRM only and do not reach ads. Needs DATASET_ID in Cloudflare (a dataset from Events Manager linked to the Page and Instagram)',
+  'مرحلة العميل': 'Customer stage', 'كل المراحل': 'All stages', 'دون مرحلة': 'No stage', 'يُرسَل إلى الإعلانات بوصفه {e}': 'Sent to ads as {e}', 'يُحفظ في النظام فقط': 'Saved in the CRM only', 'حُدِّدت تلقائيًا': 'Set automatically', 'ميتا': 'Meta',
+  'حُفظت المرحلة: {s}': 'Stage saved: {s}', 'حُفظت المرحلة وأُرسلت إلى ميتا ليتعلّم الإعلان ✓': 'Stage saved and sent to Meta so ads can learn ✓', 'حُفظت المرحلة (الحدث مسجّل لدى ميتا مسبقًا)': 'Stage saved (Meta already has this event)',
+  'حُفظت المرحلة، لكن ميتا رفضت الحدث': 'Stage saved, but Meta rejected the event', 'حُفظت المرحلة في النظام. إبلاغ ميتا غير مفعّل بعد (يتطلب DATASET_ID)': 'Stage saved in the CRM. Reporting to Meta is not connected yet (needs DATASET_ID)',
+  'تم التحويل: قيمة الشراء': 'Converted: purchase value', 'قيمة الشراء (ج.م)': 'Purchase value (EGP)', 'اختياري. تستخدم ميتا هذه القيمة لجلب عملاء يشترون بقيمة مماثلة، ولا تظهر للعميل.': 'Optional. Meta uses the value to find customers who buy at a similar value. The customer never sees it.',
+  'إبلاغ الإعلانات بمراحل العملاء (Conversions API)': 'Reporting customer stages to ads (Conversions API)', 'مفعّل: تُرسَل مراحل مسجل ومؤهل وتم التحويل إلى ميتا': 'Working: Lead, Qualified and Converted are sent to Meta',
+  'واتساب: أضف WABA_ID في Cloudflare ليُرسَل عملاء إعلانات واتساب أيضًا': 'WhatsApp: add WABA_ID in Cloudflare so WhatsApp ad customers are sent too', 'وضع الاختبار مفعّل (CAPI_TEST_CODE)، وتظهر الأحداث في Test events فقط': 'Test mode is on (CAPI_TEST_CODE); events only show in Test events',
+  'غير مربوط: تُحفظ المراحل في النظام فقط ولا تصل إلى الإعلانات. يتطلب DATASET_ID في Cloudflare (مجموعة بيانات من مدير الأحداث مرتبطة بالصفحة وحساب إنستجرام)': 'Not connected: stages are saved in the CRM only and do not reach ads. Needs DATASET_ID in Cloudflare (a dataset from Events Manager linked to the Page and Instagram)',
   'تم تنزيل كشف الحساب': 'Statement downloaded', 'بيانات العميل': 'Customer details', 'الملخص المالي (ج.م)': 'Financial summary (EGP)', 'البيانات': 'Details', 'الأقساط': 'Installments', 'تحصيل': 'Collections', 'آخر متابعة': 'Last follow-up', 'من الأصلي': 'from original',
 };
 
@@ -4650,7 +4676,7 @@ function bindWaters(root) {
 const soilField = d => `<div class="field"><label>${t('درجة ملوحة التربة')}</label><input class="inp" dir="ltr" data-f="soilSalinity" value="${esc(d.soilSalinity || '')}" placeholder="${t('مثال: 4 dS/m أو 2500 ppm')}"></div>`;
 const farmStateField = (d, p) => `<div class="field"><label>${t('حالة المزرعة')}</label>
   <div class="mic-box mic-inline"><button type="button" class="mic" id="${p}farmMic" aria-label="${t('تسجيل صوتي')}">🎙</button><div class="mic-status" id="${p}farmSt"></div></div>
-  <textarea class="inp" data-f="farmState" id="${p}farmTxt" rows="3" placeholder="${t('اكتب أو سجّل صوتيًا: حالة الزرع والأرض، المشاكل اللي العميل شايفها، أي ملاحظات')}">${esc(d.farmState || '')}</textarea></div>`;
+  <textarea class="inp" data-f="farmState" id="${p}farmTxt" rows="3" placeholder="${t('اكتب أو سجّل صوتيًا: حالة الزرع والأرض، والمشكلات التي يلاحظها العميل، وأي ملاحظات')}">${esc(d.farmState || '')}</textarea></div>`;
 const readWaters = root => $$('#wrows .multi-row', root).map(r => ({ source: $('[data-ws]', r).value, salinity: $('[data-wsal]', r).value.trim() })).filter(w => w.source || w.salinity);
 // رفع تحليل المياه أو التربة: صورة أو PDF
 const fileKindSelect = (id, sel = 'water') => `<select class="inp" id="${id}">${optsT(Object.entries(FILE_KINDS), sel)}</select>`;
@@ -4702,7 +4728,7 @@ const readCustomFields = (root, base = {}) => {
 };
 // حقل موقع المزرعة: لصق لينك خرائط جوجل أو الإحداثيات، أو أخذ موقع الموبايل الحالي وأنت في المزرعة
 const mapField = d => `<div class="field"><label>${t('موقع المزرعة على خرائط جوجل')}</label>
-  <div class="map-field"><input class="inp" dir="ltr" data-f="mapLink" id="mapin" value="${esc(d.mapLink || '')}" placeholder="${t('الصق لينك الموقع أو الإحداثيات')}">
+  <div class="map-field"><input class="inp" dir="ltr" data-f="mapLink" id="mapin" value="${esc(d.mapLink || '')}" placeholder="${t('الصق رابط الموقع أو الإحداثيات')}">
   <button type="button" class="btn sm" id="mapgps">📍 ${t('موقعي الحالي')}</button><a class="btn sm" id="mapgo" target="_blank" rel="noopener noreferrer">🗺 ${t('فتح')}</a></div>
   <small class="muted" id="mapmsg">${t('من خرائط جوجل: اضغط على مكان المزرعة ثم "مشاركة" ثم "نسخ الرابط" والصقه هنا')}</small></div>`;
 function bindMap(root) {
@@ -4729,7 +4755,7 @@ function bindMap(root) {
   };
   sync();
 }
-const mapError = v => v && !mapUrl(v) ? t('لينك موقع المزرعة غير صحيح. الصق لينك من خرائط جوجل أو إحداثيات مثل 30.0444, 31.2357') : '';
+const mapError = v => v && !mapUrl(v) ? t('رابط موقع المزرعة غير صحيح. الصق رابطًا من خرائط جوجل أو إحداثيات مثل 30.0444, 31.2357') : '';
 const missingRequired = (root, domainId, values) => activeFields(domainId).filter(f => f.required && $(`[data-cf="${f.id}"]`, root) && !String(values[f.id] ?? '').trim());
 
 // opts.onSaved(c): يُستدعى بعد حفظ العميل (مثل ربط محادثة السوشيال بالعميل الجديد)
@@ -4796,7 +4822,7 @@ function openWizard(market = 'egypt', preset = {}, opts = {}) {
       () => `<div class="grid2"><div class="field"><label>${t('المساحة (فدان)')}</label><input class="inp" type="number" min="0" data-f="area" value="${esc(d.area)}"></div>
         <div class="field"><label>${t('نوع الري')}</label><select class="inp" data-f="irrigation">${optsT(DB.lists.irrigation, d.irrigation, t('اختر'))}</select></div></div>
         ${waterFields(d)}${soilField(d)}
-        <div class="field"><label>${t('نوع المحصول')} <small class="muted">(${t('اختياري لو لسه ما اتكلمتش مع العميل')})</small></label>${cropPicker()}</div>
+        <div class="field"><label>${t('نوع المحصول')} <small class="muted">(${t('اختياري إذا لم تتواصل مع العميل بعد')})</small></label>${cropPicker()}</div>
         ${farmStateField(d, 'w')}
         <div class="field"><label>${t('تحليل المياه أو التربة (اختياري)')}</label><div class="grid2">${fileKindSelect('wkind')}<input class="inp" type="file" id="wfile" accept="${FILE_ACCEPT}" multiple></div><div class="chips mt" id="wfiles"></div><small class="muted">${t('صورة أو ملف PDF، ويمكن إضافته لاحقًا من ملف العميل')}</small></div>
         <div class="grid2">${customFieldInputs('land', d)}</div>`,
@@ -5147,7 +5173,7 @@ function openEditCustomer(id, onDone) {
     let changed = updateCustomer(c.id, patch);
     if (adChanged) {
       if (social) c.social = social; else delete c.social;
-      audit('edit', 'customer', c.id, 'تحديد الإعلان اللي جه منه العميل {name}: {ad}', { name: c.name, ad: social?.adTitle || social?.adId || t('رسالة مباشرة') });
+      audit('edit', 'customer', c.id, 'تحديد الإعلان الذي جاء منه العميل {name}: {ad}', { name: c.name, ad: social?.adTitle || social?.adId || t('رسالة مباشرة') });
       changed = true;
     }
     const partner = syncPartner(c);
@@ -5752,7 +5778,7 @@ function openOrderForm(customerId) {
     <div class="field"><label>${t('عنوان التسليم')}</label><input class="inp" id="ora" value="${esc(preset ? custAddress(preset) : '')}"></div>
     <div class="grid3"><div class="field"><label>${t('نسبة عمولة الموزع %')}</label><input class="inp" type="number" min="0" max="100" step="any" id="ocom" value="0"></div><div class="field"><label>${t('مشترك مع زميل')}</label><select class="inp" id="oshare">${opts(sellers().filter(u => u.id !== (preset?.ownerId || ME.id)).map(u => [u.id, u.name]), (preset?.assistantIds || [])[0] || '', t('بدون'))}</select></div><div class="field"><label>${t('نسبة الزميل %')}</label><input class="inp" type="number" min="0" max="100" step="any" id="osp" value="0"></div></div>
     <div class="field"><label>${t('ملاحظات')}</label><textarea class="inp" id="onote" rows="2" placeholder="${t('أي ملاحظات للحسابات أو للتوريد')}"></textarea></div>
-    <p class="muted">${t('بعد الإرسال الطلبية تروح للحسابات للمراجعة ثم لاعتماد الإدارة، ومش هتقدر تعدّلها.')}</p>`,
+    <p class="muted">${t('بعد الإرسال تُحال الطلبية إلى الحسابات للمراجعة ثم لاعتماد الإدارة، ولن يمكنك تعديلها.')}</p>`,
     footer: `<button class="btn primary" id="sv">${t('إرسال الطلبية للمراجعة')}</button>`,
   });
   let payType = 'cash';
@@ -5852,7 +5878,7 @@ function openOrderForm(customerId) {
     submitOrderForReview(o);
     saveDB();
     m.close();
-    toast(t('تم إرسال الطلبية {no} للمراجعة. ابعتها لجروب طلبياتك من زرار الواتساب', { no: o.no }), 'ok');
+    toast(t('تم إرسال الطلبية {no} للمراجعة. أرسلها إلى مجموعة الطلبيات من زر واتساب', { no: o.no }), 'ok');
     route();
     openOrder(o.id);
   };
@@ -5911,10 +5937,10 @@ function openOrder(id, onChange) {
     const q = openModal({ title, body: `<div class="field"><label>${t(required ? 'السبب' : 'ملاحظة (اختياري)')}${required ? ' <span class="req">*</span>' : ''}</label><textarea class="inp" id="nt" rows="3"></textarea></div>`, footer: `<button class="btn primary" id="nok">${t('تأكيد')}</button>` });
     $('#nok', q.el).onclick = () => { const v = $('#nt', q.el).value.trim(); if (required && !v) { toast(t('يرجى كتابة السبب'), 'err'); return; } q.close(); cb(v); };
   };
-  on('#fwd', () => askNote(t('إرسال الطلبية {no} لاعتماد الإدارة', { no: o.no }), false, v => { forwardOrder(o, v); toast(t('اتبعتت للإدارة'), 'ok'); done(); }));
+  on('#fwd', () => askNote(t('إرسال الطلبية {no} لاعتماد الإدارة', { no: o.no }), false, v => { forwardOrder(o, v); toast(t('أُرسلت إلى الإدارة'), 'ok'); done(); }));
   on('#ok', () => askNote(t('اعتماد الطلبية {no}', { no: o.no }), false, v => { approveOrder(o, v); toast(t('تم اعتماد الطلبية'), 'ok'); done(); }));
   on('#back', () => askNote(t('إرجاع الطلبية {no} للحسابات', { no: o.no }), true, v => { returnOrderToAccounts(o, v); done(); }));
-  on('#cvOk', () => askNote(t('موافقة على تحويل الطلبية {no} إلى تقسيط', { no: o.no }), false, v => { decideConvert(o, true, v); toast(t('اتحولت الطلبية لتقسيط'), 'ok'); done(); }));
+  on('#cvOk', () => askNote(t('موافقة على تحويل الطلبية {no} إلى تقسيط', { no: o.no }), false, v => { decideConvert(o, true, v); toast(t('حُوِّلت الطلبية إلى تقسيط'), 'ok'); done(); }));
   on('#cvNo', () => askNote(t('رفض تحويل الطلبية {no} إلى تقسيط', { no: o.no }), true, v => { decideConvert(o, false, v); done(); }));
   on('#del', () => { setStatus('delivered'); toast(t('تم التسليم وأُنشئت متابعات ما بعد البيع'), 'ok'); done(); });
   on('#re', () => { setStatus('active'); done(); });
@@ -5991,7 +6017,7 @@ function returnOrderToAccounts(o, note) {
 function mountPlanEditor(box, getRest, { count = 3, first = addMonths(today(), 1) } = {}) {
   let plan = [], edited = false;
   box.innerHTML = `<div class="grid2"><div class="field"><label>${t('عدد الأقساط')}</label><input class="inp" type="number" min="1" max="60" data-pe="cnt" value="${count}"></div><div class="field"><label>${t('تاريخ أول قسط')}</label><input class="inp" type="date" data-pe="first" value="${first}"></div></div>
-    <div class="inst-head"><b>${t('جدول الأقساط')}</b> <small class="muted">${t('عدّل تاريخ ومبلغ أي قسط، الأقساط مش لازم تكون متساوية')}</small></div>
+    <div class="inst-head"><b>${t('جدول الأقساط')}</b> <small class="muted">${t('عدّل تاريخ ومبلغ أي قسط، ولا يلزم أن تكون الأقساط متساوية')}</small></div>
     <div data-pe="tbl"></div>
     <div class="inst-actions"><button type="button" class="btn sm" data-pe="add">+ ${t('قسط آخر')}</button><button type="button" class="btn sm" data-pe="eq">⚖ ${t('توزيع بالتساوي')}</button><button type="button" class="btn sm" data-pe="fix">${t('ضع الفرق على آخر قسط')}</button></div>
     <div class="inst-sum" data-pe="sum"></div>`;
@@ -6026,7 +6052,7 @@ function mountPlanEditor(box, getRest, { count = 3, first = addMonths(today(), 1
     error() {
       if (!plan.length) return t('أضف قسط واحد على الأقل');
       if (plan.some(p => !p.due)) return t('حدد تاريخ كل قسط');
-      if (plan.some(p => !(+p.amount > 0))) return t('كل قسط لازم يكون مبلغه أكبر من صفر');
+      if (plan.some(p => !(+p.amount > 0))) return t('يجب أن يكون مبلغ كل قسط أكبر من صفر');
       if (Math.round((getRest() - sum()) * 100) / 100 !== 0) return t('مجموع الأقساط ({s}) لا يساوي المتبقي بعد المقدم ({r})', { s: money(sum()), r: money(getRest()) });
       return '';
     },
@@ -6037,7 +6063,7 @@ function mountPlanEditor(box, getRest, { count = 3, first = addMonths(today(), 1
 function openConvertRequest(o, onDone) {
   const m = openModal({
     title: t('طلب تحويل الطلبية {no} إلى تقسيط', { no: o.no }), wide: true,
-    body: `<p class="muted" style="margin-top:0">${t('الطلبية مسجلة نقدًا بقيمة {v}. اكتب سبب التحويل والجدول المقترح، والطلب هيروح للإدارة للموافقة. الطلبية هتفضل موضح فيها إنها بدأت نقدًا.', { v: `${money(o.total)} ${curLabel(o)}` })}</p>
+    body: `<p class="muted" style="margin-top:0">${t('الطلبية مسجلة نقدًا بقيمة {v}. اكتب سبب التحويل والجدول المقترح، وسيُرسَل الطلب إلى الإدارة للموافقة، وسيبقى موضحًا في الطلبية أنها بدأت نقدًا.', { v: `${money(o.total)} ${curLabel(o)}` })}</p>
       <div class="field"><label>${t('سبب التحويل لتقسيط')} <span class="req">*</span></label><textarea class="inp" id="cvR" rows="2"></textarea></div>
       <div class="field"><label>${t('قيمة المقدم')}</label><input class="inp" type="number" min="0" id="cvD" value="0"></div>
       <div id="cvPlan"></div>`,
@@ -6056,7 +6082,7 @@ function openConvertRequest(o, onDone) {
     audit('update', 'order', o.id, 'طلب تحويل الطلبية {no} إلى تقسيط', { no: o.no }, [{ field: 'السبب', from: '', to: reason }]);
     notifyOrder(o, 'conv_req', reason, orderEveryone(o));
     saveDB(); m.close();
-    toast(t('اتبعت الطلب للإدارة'), 'ok');
+    toast(t('أُرسل الطلب إلى الإدارة'), 'ok');
     onDone && onDone();
   };
 }
@@ -6298,20 +6324,20 @@ function openInstallment(oid, iid, onChange) {
       <h4 class="mt">${t('سجل التحصيل')}</h4>${pays.length ? `<table class="tbl"><thead><tr><th>${t('التاريخ')}</th><th>${t('النوع')}</th><th>${t('المبلغ')}</th><th>${t('السبب أو الملاحظة')}</th><th>${t('سجّله')}</th></tr></thead><tbody>${pays.map(p => `<tr><td>${fmtDate(p.date)}</td><td>${t(p.kind === 'full' ? 'كلي' : 'جزئي')}</td><td>${money(p.amount)} ${cur}</td><td>${esc(p.reason || '')}</td><td>${p.by ? esc(userName(p.by)) : `<span class="muted">${t('قبل السجل')}</span>`}</td></tr>`).join('')}</tbody></table>` : `<div class="muted">${t('لم يُسجَّل أي تحصيل بعد')}</div>`}
       <h4 class="mt">${t('سجل تغيير تاريخ الاستحقاق')}</h4>${(i.postpones || []).length ? `<table class="tbl"><thead><tr><th>${t('من')}</th><th>${t('إلى')}</th><th>${t('السبب')}</th><th>${t('طلبه')}</th><th>${t('القرار')}</th></tr></thead><tbody>${i.postpones.map(p => `<tr><td>${fmtDate(p.from)}</td><td>${fmtDate(p.to)}</td><td>${esc(p.reason)}</td><td>${esc(userName(p.by))}<div class="muted">${fmtDT(p.at)}</div></td><td>${p.status === 'pending' ? `<span class="pill p-orange">${t('بانتظار الاعتماد')}</span>` : `<span class="pill ${p.status === 'approved' ? 'p-green' : 'p-red'}">${t(p.status === 'approved' ? 'معتمد' : 'مرفوض')}</span><div class="muted">${esc(userName(p.decidedBy))} · ${fmtDT(p.decidedAt)}${p.note ? ` · ${esc(p.note)}` : ''}</div>`}</td></tr>`).join('')}</tbody></table>` : `<div class="muted">${t('لم يتغير تاريخ هذا القسط')}</div>`}
       <h4 class="mt">${t('سجل متابعة القسط')}</h4>${(i.notes || []).length ? i.notes.slice().reverse().map(n => `<div class="inst-note"><b>${esc(userName(n.by))}</b> <span class="muted">${fmtDT(n.at)}</span><div>${esc(n.text)}</div></div>`).join('') : `<div class="muted">${t('لا توجد متابعات على هذا القسط بعد')}</div>`}
-      ${canNoteInst(o) ? `<div class="field mt"><label>${t('إضافة متابعة')}</label><textarea class="inp" id="inNote" rows="2" placeholder="${t('مثال: اتصلت بالعميل يوم ... وقال هيسدد يوم ...، أو سبب التأخير')}"></textarea></div>` : ''}`,
+      ${canNoteInst(o) ? `<div class="field mt"><label>${t('إضافة متابعة')}</label><textarea class="inp" id="inNote" rows="2" placeholder="${t('مثال: تم الاتصال بالعميل يوم ... وأفاد بأنه سيسدد يوم ...، أو سبب التأخير')}"></textarea></div>` : ''}`,
     footer: `${canNoteInst(o) ? `<button class="btn" id="inAdd">💬 ${t('حفظ المتابعة')}</button>` : ''}${fin && instRemain(i) > 0 && o.status !== 'cancelled' ? `<button class="btn primary" id="inPay">💰 ${t('تسجيل سداد')}</button>${pend ? '' : `<button class="btn" id="inPost">📅 ${t('تغيير تاريخ الاستحقاق')}</button>`}` : ''}<button class="btn" id="inOrder">🧾 ${t('فتح الطلبية')}</button>`,
   });
   const done = () => { m.close(); onChange ? onChange() : route(); };
   const on = (sel, fn) => { const el = $(sel, m.el); if (el) el.onclick = fn; };
   on('#inOrder', () => { m.close(); openOrder(o.id, onChange); });
-  on('#inAdd', () => { const v = $('#inNote', m.el).value.trim(); if (!v) { toast(t('اكتب المتابعة'), 'err'); return; } addInstNote(o, i, v); toast(t('اتحفظت المتابعة'), 'ok'); done(); });
+  on('#inAdd', () => { const v = $('#inNote', m.el).value.trim(); if (!v) { toast(t('اكتب المتابعة'), 'err'); return; } addInstNote(o, i, v); toast(t('حُفظت المتابعة'), 'ok'); done(); });
   on('#inPay', () => { m.close(); openPaymentForm(o, i, onChange); });
   on('#inPost', () => { m.close(); openPostponeForm(o, i, onChange); });
   const ask = (title, required, cb) => {
     const q = openModal({ title, body: `<div class="field"><label>${t(required ? 'السبب' : 'ملاحظة (اختياري)')}${required ? ' <span class="req">*</span>' : ''}</label><textarea class="inp" id="nt" rows="2"></textarea></div>`, footer: `<button class="btn primary" id="nok">${t('تأكيد')}</button>` });
     $('#nok', q.el).onclick = () => { const v = $('#nt', q.el).value.trim(); if (required && !v) { toast(t('يرجى كتابة السبب'), 'err'); return; } q.close(); cb(v); };
   };
-  on('#ppOk', () => ask(t('اعتماد التاريخ الجديد للقسط'), false, v => { decidePostpone(o, i, pend.id, true, v); toast(t('اتعتمد التاريخ الجديد'), 'ok'); done(); }));
+  on('#ppOk', () => ask(t('اعتماد التاريخ الجديد للقسط'), false, v => { decidePostpone(o, i, pend.id, true, v); toast(t('اعتُمد التاريخ الجديد'), 'ok'); done(); }));
   on('#ppNo', () => ask(t('رفض تغيير تاريخ القسط'), true, v => { decidePostpone(o, i, pend.id, false, v); done(); }));
 }
 // نموذج تسجيل السداد (أ. علي): كلي أو جزئي
@@ -6323,7 +6349,7 @@ function openPaymentForm(o, i, onChange) {
       <div class="field"><label>${t('نوع السداد')}</label><div class="chips" id="pk"><button type="button" class="chip on" data-k="full">${t('سداد كلي')}</button><button type="button" class="chip" data-k="partial">${t('سداد جزئي')}</button></div></div>
       <div class="grid2"><div class="field"><label>${t('تاريخ السداد')}</label><input class="inp" type="date" id="pd" value="${today()}" max="${today()}"></div><div class="field"><label>${t('المبلغ المسدد')}</label><input class="inp" type="number" min="0" step="any" id="pa" value="${rem}" disabled></div></div>
       <div id="pPart" hidden><div class="field"><label>${t('سبب عدم سداد القسط كاملًا')} <span class="req">*</span></label><textarea class="inp" id="pr" rows="2"></textarea></div>
-      <div class="field"><label>${t('تاريخ تأجيل الباقي')} <span class="req">*</span></label><input class="inp" type="date" id="pp" min="${today()}" value="${addDays(today(), 14)}"><small class="muted">${t('التاريخ الجديد للباقي بيروح لاعتماد الإدارة، والتاريخ الأصلي بيفضل محفوظ')}</small></div></div>`,
+      <div class="field"><label>${t('تاريخ تأجيل الباقي')} <span class="req">*</span></label><input class="inp" type="date" id="pp" min="${today()}" value="${addDays(today(), 14)}"><small class="muted">${t('يُرسَل التاريخ الجديد للمبلغ المتبقي لاعتماد الإدارة، ويبقى التاريخ الأصلي محفوظًا')}</small></div></div>`,
     footer: `<button class="btn primary" id="psv">${t('حفظ السداد')}</button>`,
   });
   let kind = 'full';
@@ -6338,7 +6364,7 @@ function openPaymentForm(o, i, onChange) {
     if (kind === 'partial') {
       const amount = r2($('#pa', m.el).value), reason = $('#pr', m.el).value.trim(), to = $('#pp', m.el).value;
       if (!(amount > 0)) { toast(t('اكتب المبلغ المسدد'), 'err'); return; }
-      if (amount >= rem) { toast(t('المبلغ يساوي الباقي أو أكثر، اختار سداد كلي'), 'err'); return; }
+      if (amount >= rem) { toast(t('المبلغ يساوي المتبقي أو يزيد عليه، اختر سدادًا كليًا'), 'err'); return; }
       if (!reason) { toast(t('اكتب سبب عدم سداد القسط كاملًا'), 'err'); return; }
       if (!to) { toast(t('حدد تاريخ تأجيل الباقي'), 'err'); return; }
       recordInstPayment(o, i, { kind, amount, date, reason, postponeTo: to });
@@ -6353,16 +6379,16 @@ function openPostponeForm(o, i, onChange) {
     title: t('تغيير تاريخ استحقاق قسط {d}', { d: fmtDate(i.due) }),
     body: `<div class="grid2"><div class="field"><label>${t('التاريخ الحالي')}</label><input class="inp" value="${fmtDate(i.due)}" disabled></div><div class="field"><label>${t('التاريخ الجديد')} <span class="req">*</span></label><input class="inp" type="date" id="ptd" value="${addDays(i.due > today() ? i.due : today(), 14)}"></div></div>
       <div class="field"><label>${t('سبب التغيير')} <span class="req">*</span></label><textarea class="inp" id="ptr" rows="2"></textarea></div>
-      <small class="muted">${t('التغيير مش هيتطبق غير بعد اعتماد صاحب الشركة، والتاريخ الأصلي وكل التغييرات بتفضل محفوظة في سجل القسط.')}</small>`,
+      <small class="muted">${t('لن يُطبَّق التغيير إلا بعد اعتماد صاحب الشركة، ويبقى التاريخ الأصلي وجميع التغييرات محفوظة في سجل القسط.')}</small>`,
     footer: `<button class="btn primary" id="ptsv">${t('إرسال للاعتماد')}</button>`,
   });
   $('#ptsv', m.el).onclick = () => {
     const to = $('#ptd', m.el).value, reason = $('#ptr', m.el).value.trim();
     if (!to) { toast(t('حدد التاريخ الجديد'), 'err'); return; }
-    if (to === i.due) { toast(t('التاريخ الجديد زي الحالي'), 'err'); return; }
+    if (to === i.due) { toast(t('التاريخ الجديد مطابق للحالي'), 'err'); return; }
     if (!reason) { toast(t('اكتب سبب التغيير'), 'err'); return; }
     requestPostpone(o, i, to, reason);
-    m.close(); toast(t('اتبعت للإدارة للاعتماد'), 'ok');
+    m.close(); toast(t('أُرسل إلى الإدارة للاعتماد'), 'ok');
     openInstallment(o.id, i.id, onChange);
   };
 }
@@ -6401,7 +6427,7 @@ function openCreditForm(c, onDone) {
   $$('#crs .chip', m.el).forEach(b => b.onclick = () => { k = b.dataset.k; $$('#crs .chip', m.el).forEach(x => x.classList.toggle('on', x === b)); });
   $('#crsv', m.el).onclick = () => {
     const r = $('#crr', m.el).value.trim();
-    if (k === creditOf(c)) { toast(t('اختار حالة مختلفة عن الحالية'), 'err'); return; }
+    if (k === creditOf(c)) { toast(t('اختر حالة مختلفة عن الحالية'), 'err'); return; }
     if (!r) { toast(t('يرجى كتابة السبب'), 'err'); return; }
     setCreditStatus(c, k, r); m.close(); toast(t('تم حفظ الحالة الائتمانية'), 'ok'); onDone && onDone();
   };
@@ -6413,7 +6439,7 @@ function openReturnForm(o, onDone) {
   const m = openModal({
     title: t('تسجيل مرتجع للطلبية {no}', { no: o.no }), wide: true,
     body: `<div class="grid2"><div class="field"><label>${t('تاريخ المرتجع')}</label><input class="inp" type="date" id="rtd" value="${today()}" max="${today()}"></div><div class="field"><label>${t('المبلغ المرتجع للعميل')}</label><input class="inp" type="number" min="0" step="any" id="rta" value="0"></div></div>
-      <div class="field"><label>${t('الأجهزة المرتجعة')}</label>${o.items.map((it, k) => { const left = (+it.qty || 0) - (done0[k] || 0); return `<div class="grid2" style="align-items:center"><div>${esc(deviceName(it.type, it.size))} <span class="muted">(${t('الكمية')} ${it.qty}${done0[k] ? ` · ${t('مرتجع قبل كده')} ${done0[k]}` : ''})</span></div><input class="inp" type="number" min="0" max="${left}" data-rq="${k}" value="${left}" ${left ? '' : 'disabled'}></div>`; }).join('')}</div>
+      <div class="field"><label>${t('الأجهزة المرتجعة')}</label>${o.items.map((it, k) => { const left = (+it.qty || 0) - (done0[k] || 0); return `<div class="grid2" style="align-items:center"><div>${esc(deviceName(it.type, it.size))} <span class="muted">(${t('الكمية')} ${it.qty}${done0[k] ? ` · ${t('مرتجع سابقًا')} ${done0[k]}` : ''})</span></div><input class="inp" type="number" min="0" max="${left}" data-rq="${k}" value="${left}" ${left ? '' : 'disabled'}></div>`; }).join('')}</div>
       <div class="field"><label>${t('الخصم')}</label><div class="chips" id="rtk"><button type="button" class="chip on" data-k="0">${t('بدون خصم')}</button><button type="button" class="chip" data-k="1">${t('بخصم')}</button></div></div>
       <div class="field" id="rtdw" hidden><label>${t('قيمة الخصم')} (${cur})</label><input class="inp" type="number" min="0" step="any" id="rtdv" value="0"></div>
       <div class="field"><label>${t('سبب المرتجع')} <span class="req">*</span></label><textarea class="inp" id="rtr" rows="2"></textarea></div>
@@ -6618,7 +6644,7 @@ function repDebts() {
   });
   return Object.values(reps).map(r => ({ ...r, custs: Object.values(r.custs).filter(x => x.remain > 0).sort((a, b) => b.late - a.late || b.remain - a.remain) })).filter(r => r.remain > 0 || r.total > 0).sort((a, b) => b.late - a.late || b.remain - a.remain);
 }
-const REP_HEAD = ['رجل البيع', 'عملاء عليهم مديونية', 'إجمالي المبيعات', 'المحصّل', 'إجمالي المديونية', 'المتأخرات', 'عملاء متأخرين', 'أقصى أيام تأخير'];
+const REP_HEAD = ['رجل البيع', 'عملاء عليهم مديونية', 'إجمالي المبيعات', 'المحصّل', 'إجمالي المديونية', 'المتأخرات', 'عملاء متأخرون', 'أقصى أيام تأخير'];
 const REP_CUST_HEAD = ['العميل', 'كود العميل', 'التليفون', 'إجمالي المشتريات', 'المسدد', 'المديونية', 'المتأخرات', 'أقساط متأخرة', 'أيام التأخير', 'أقرب استحقاق قادم', 'الحالة الائتمانية'];
 const repRow = r => [userName(r.id), r.custs.length, Math.round(r.total), Math.round(r.collected), Math.round(r.remain), Math.round(r.late), r.custs.filter(x => x.late > 0).length, r.maxLate];
 const repCustRows = r => r.custs.map(x => [x.c.name, x.c.code, plain(custPhones(x.c).join(' / ')), Math.round(x.total), Math.round(x.collected), Math.round(x.remain), Math.round(x.late), x.lateInsts, x.maxLate, fmtDate(x.next), t(CREDIT_STATUS[creditOf(x.c)])]);
@@ -6629,11 +6655,11 @@ function drawFinReps(fb) {
   const sum = k => list.reduce((s, r) => s + r[k], 0);
   fb.innerHTML = `<div class="filters">${can('orders.view_all') || canFinance() ? `<select class="inp" id="frr">${repOptions(st.rep)}</select>` : ''}<span class="spacer"></span><button class="btn sm" id="frrx">⬇ ${t('تقرير Excel')}</button><button class="btn sm" id="frrp">📄 ${t('تقرير وورد')}</button></div>
     <div class="kpis"><div class="kpi"><div class="l">${t('إجمالي المديونية')}</div><div class="v">${money(sum('remain'))} <small>${t('ج.م')}</small></div></div>
-      <div class="kpi alert"><div class="l">${t('إجمالي المتأخرات')}</div><div class="v">${money(sum('late'))} <small>${t('ج.م')}</small></div><div class="d">${t('أقساط فات ميعادها اللي اتفق عليه مع العميل ولسه ما اتدفعتش')}</div></div>
+      <div class="kpi alert"><div class="l">${t('إجمالي المتأخرات')}</div><div class="v">${money(sum('late'))} <small>${t('ج.م')}</small></div><div class="d">${t('أقساط تجاوزت الموعد المتفق عليه مع العميل ولم تُسدَّد بعد')}</div></div>
       <div class="kpi"><div class="l">${t('عملاء عليهم مديونية')}</div><div class="v">${list.reduce((s, r) => s + r.custs.length, 0)}</div></div>
-      <div class="kpi warn"><div class="l">${t('عملاء متأخرين')}</div><div class="v">${list.reduce((s, r) => s + r.custs.filter(x => x.late > 0).length, 0)}</div></div></div>
+      <div class="kpi warn"><div class="l">${t('عملاء متأخرون')}</div><div class="v">${list.reduce((s, r) => s + r.custs.filter(x => x.late > 0).length, 0)}</div></div></div>
     ${list.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr>${REP_HEAD.map(h => `<th>${t(h)}</th>`).join('')}</tr></thead><tbody>${list.map(r => `<tr class="click" data-rep="${r.id}"><td><b>${esc(userName(r.id))}</b></td><td>${r.custs.length}</td><td>${money(r.total)}</td><td>${money(r.collected)}</td><td><b>${money(r.remain)}</b></td><td>${r.late ? `<span class="pill p-red">${money(r.late)}</span>` : '—'}</td><td>${r.custs.filter(x => x.late > 0).length || '—'}</td><td>${r.maxLate || '—'}</td></tr>`).join('')}</tbody></table></div>
-      <p class="muted mt">${t('دوس على رجل البيع تشوف عملاءه بالتفصيل.')}</p>` : `<div class="card empty">${t('مفيش مديونيات')}</div>`}`;
+      <p class="muted mt">${t('اضغط على رجل البيع لعرض تفاصيل عملائه.')}</p>` : `<div class="card empty">${t('لا توجد مديونيات')}</div>`}`;
   const fr = $('#frr', fb); if (fr) fr.onchange = e => { st.rep = e.target.value; drawFinReps(fb); };
   $$('[data-rep]', fb).forEach(tr => tr.onclick = () => openRepDebt(all.find(r => r.id === tr.dataset.rep), () => drawFinReps(fb)));
   const title = st.rep ? `${t('مديونية ومتأخرات')} ${userName(st.rep)}` : t('مديونية ومتأخرات رجال البيع');
@@ -6653,7 +6679,7 @@ function drawFinReps(fb) {
 function openRepDebt(r, onChange) {
   if (!r) return;
   const m = openModal({ title: `${t('عملاء')} ${esc(userName(r.id))} · ${t('المديونية')} ${money(r.remain)} · ${t('المتأخرات')} ${money(r.late)}`, wide: true,
-    body: r.custs.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr>${REP_CUST_HEAD.filter((_, i) => i !== 1 && i !== 2).map(h => `<th>${t(h)}</th>`).join('')}</tr></thead><tbody>${r.custs.map(x => `<tr class="click" data-cust="${x.c.id}"><td>${esc(x.c.name)}<div class="muted">${esc(x.c.code)} · ${phoneLink(x.c.phone1)}</div></td><td>${money(x.total)}</td><td>${money(x.collected)}</td><td><b>${money(x.remain)}</b></td><td>${x.late ? `<span class="pill p-red">${money(x.late)}</span>` : '—'}</td><td>${x.lateInsts || '—'}</td><td>${x.maxLate || '—'}</td><td>${fmtDate(x.next) || '—'}</td><td>${creditPill(x.c)}</td></tr>`).join('')}</tbody></table></div>` : `<div class="empty">${t('مفيش عملاء عليهم مديونية')}</div>` });
+    body: r.custs.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr>${REP_CUST_HEAD.filter((_, i) => i !== 1 && i !== 2).map(h => `<th>${t(h)}</th>`).join('')}</tr></thead><tbody>${r.custs.map(x => `<tr class="click" data-cust="${x.c.id}"><td>${esc(x.c.name)}<div class="muted">${esc(x.c.code)} · ${phoneLink(x.c.phone1)}</div></td><td>${money(x.total)}</td><td>${money(x.collected)}</td><td><b>${money(x.remain)}</b></td><td>${x.late ? `<span class="pill p-red">${money(x.late)}</span>` : '—'}</td><td>${x.lateInsts || '—'}</td><td>${x.maxLate || '—'}</td><td>${fmtDate(x.next) || '—'}</td><td>${creditPill(x.c)}</td></tr>`).join('')}</tbody></table></div>` : `<div class="empty">${t('لا يوجد عملاء عليهم مديونية')}</div>` });
   $$('[data-cust]', m.el).forEach(tr => tr.onclick = () => { m.close(); openStatement(custById(tr.dataset.cust), onChange); });
 }
 
@@ -6749,7 +6775,7 @@ function drawFinDash(fb) {
   const inMonth = mList.filter(e => e.type !== 'refund'), sumT = tm => inMonth.filter(e => e.timing === tm).reduce((s, e) => s + egp(e), 0);
   const allOpen = ords.filter(o => o.status !== 'cancelled').flatMap(o => (o.installments || []).filter(i => instRemain(i) > 0).map(i => ({ o, i })));
   const outstanding = allOpen.reduce((s, x) => s + instRemain(x.i) * fx(x.o), 0), overdue = allOpen.filter(x => x.i.due < today()).reduce((s, x) => s + instRemain(x.i) * fx(x.o), 0);
-  fb.innerHTML = `${pickRep ? `<div class="filters"><select class="inp" id="fdr" aria-label="${t('رجل البيع')}">${repOptions(st.rep)}</select>${st.rep ? `<span class="muted">${t('بيظهر تحصيل ومديونية {u} بس', { u: esc(userName(st.rep)) })}</span>` : ''}</div>` : ''}<div class="kpis">
+  fb.innerHTML = `${pickRep ? `<div class="filters"><select class="inp" id="fdr" aria-label="${t('رجل البيع')}">${repOptions(st.rep)}</select>${st.rep ? `<span class="muted">${t('يُعرض تحصيل {u} ومديونيته فقط', { u: esc(userName(st.rep)) })}</span>` : ''}</div>` : ''}<div class="kpis">
       <div class="kpi"><div class="l">${t('تحصيل {m}', { m: ymLabel(st.month) })}</div><div class="v">${money(inMonth.reduce((s, e) => s + egp(e), 0))} <small>${t('ج.م')}</small></div><div class="d">${t('عدد العملاء: {n}', { n: new Set(inMonth.map(e => e.c?.id)).size })}</div></div>
       <div class="kpi"><div class="l">${t('أعلى شهر تحصيل (آخر 12 شهر)')}</div><div class="v">${money(byMonth(best))} <small>${t('ج.م')}</small></div><div class="d">${ymLabel(best)}${bestEver !== best ? ` · ${t('الأعلى على الإطلاق')}: ${ymLabel(bestEver)}` : ''}</div></div>
       <div class="kpi"><div class="l">${t('المتبقي على العملاء')}</div><div class="v">${money(outstanding)} <small>${t('ج.م')}</small></div></div>
@@ -6757,7 +6783,7 @@ function drawFinDash(fb) {
     <div class="card mt"><h3>${t('التحصيل شهر بشهر')}</h3>${barChart(rows)}</div>
     <div class="card mt"><div class="filters" style="margin:0"><b>${t('تفاصيل شهر')}</b><input class="inp" type="month" id="fm" value="${st.month}" style="width:auto"><span class="spacer"></span>${canExport() ? `<button class="btn sm" id="fmx">⬇ ${t('تصدير الشهر')}</button>` : ''}</div>
       <div class="fin-sum">${Object.entries(TIMING).map(([k, l]) => `<div><div class="l">${t(l)}</div><div class="v">${money(sumT(k))}</div></div>`).join('')}<div class="${mList.some(e => e.type === 'refund') ? 'bad' : ''}"><div class="l">${t('مرتجع للعملاء')}</div><div class="v">${money(-mList.filter(e => e.type === 'refund').reduce((s, e) => s + egp(e), 0))}</div></div></div>
-      ${mList.length ? `<div class="tbl-wrap mt"><table class="tbl"><thead><tr><th>${t('التاريخ')}</th><th>${t('العميل')}</th><th>${t('الطلب')}</th><th>${t('رجل البيع')}</th><th>${t('النوع')}</th><th>${t('المبلغ')}</th><th>${t('التوقيت')}</th><th>${t('عميل منذ')}</th><th>${t('مرات التأجيل')}</th></tr></thead><tbody>${mList.map(e => { const since = monthsBetween(firstOrderDate(e.c?.id) || e.date, e.date); return `<tr class="click" data-cust="${e.c?.id || ''}"><td>${fmtDate(e.date)}</td><td>${esc(e.c?.name || '')}</td><td>${e.o.no}</td><td>${esc(userName(e.o.repId))}</td><td>${t(LEDGER_TYPE[e.type])}${e.kind ? ` <span class="muted">(${t(e.kind === 'full' ? 'كلي' : 'جزئي')})</span>` : ''}</td><td><b>${money(e.amount)}</b> ${curLabel(e.o)}</td><td><span class="pill ${TIMING_PILL[e.timing]}">${t(TIMING[e.timing])}</span></td><td>${since < 3 ? `<span class="pill p-blue sm">${t('عميل جديد')}</span> ` : ''}${sinceText(since)}</td><td>${e.postponeCount ? `${e.postponeCount}${e.postponeCount >= 2 ? ` <span class="pill p-orange sm">${t('كثير التأجيل')}</span>` : ''}` : '—'}</td></tr>`; }).join('')}</tbody></table></div>` : `<div class="empty mt">${t('مفيش تحصيل في الشهر ده')}</div>`}</div>`;
+      ${mList.length ? `<div class="tbl-wrap mt"><table class="tbl"><thead><tr><th>${t('التاريخ')}</th><th>${t('العميل')}</th><th>${t('الطلب')}</th><th>${t('رجل البيع')}</th><th>${t('النوع')}</th><th>${t('المبلغ')}</th><th>${t('التوقيت')}</th><th>${t('عميل منذ')}</th><th>${t('مرات التأجيل')}</th></tr></thead><tbody>${mList.map(e => { const since = monthsBetween(firstOrderDate(e.c?.id) || e.date, e.date); return `<tr class="click" data-cust="${e.c?.id || ''}"><td>${fmtDate(e.date)}</td><td>${esc(e.c?.name || '')}</td><td>${e.o.no}</td><td>${esc(userName(e.o.repId))}</td><td>${t(LEDGER_TYPE[e.type])}${e.kind ? ` <span class="muted">(${t(e.kind === 'full' ? 'كلي' : 'جزئي')})</span>` : ''}</td><td><b>${money(e.amount)}</b> ${curLabel(e.o)}</td><td><span class="pill ${TIMING_PILL[e.timing]}">${t(TIMING[e.timing])}</span></td><td>${since < 3 ? `<span class="pill p-blue sm">${t('عميل جديد')}</span> ` : ''}${sinceText(since)}</td><td>${e.postponeCount ? `${e.postponeCount}${e.postponeCount >= 2 ? ` <span class="pill p-orange sm">${t('كثير التأجيل')}</span>` : ''}` : '—'}</td></tr>`; }).join('')}</tbody></table></div>` : `<div class="empty mt">${t('لا يوجد تحصيل في هذا الشهر')}</div>`}</div>`;
   $('#fm', fb).onchange = e => { st.month = e.target.value || today().slice(0, 7); drawFinDash(fb); };
   const fdr = $('#fdr', fb); if (fdr) fdr.onchange = e => { st.rep = e.target.value; drawFinDash(fb); };
   $$('[data-cust]', fb).forEach(tr => tr.onclick = () => { const c = custById(tr.dataset.cust); if (c) openStatement(c, () => drawFinDash(fb)); });
@@ -7570,7 +7596,7 @@ function openOrderEdit(o, onDone) {
     body: `<div class="grid2"><div class="field"><label>${t('تاريخ الطلب')}</label><input class="inp" type="date" id="od" value="${o.date}"></div><div class="field"><label>${t('عن طريق الموزع')}</label><select class="inp" id="odist">${opts(DB.distributors.map(d => [d.id, d.name]), o.distributorId || '', t('بدون موزع'))}</select></div></div>
     ${items.map((it, i) => `<div class="grid3" style="grid-template-columns:minmax(0,3fr) minmax(0,1fr) minmax(0,1.3fr)"><div class="field"><label>${t('الجهاز')}</label><select class="inp" data-i="${i}" data-k="productId">${opts(DB.products.map(p => [p.id, `${tv(p.type)} - ${tv(p.size)}`]), it.productId, `${tv(it.type)} ${tv(it.size)}`)}</select></div><div class="field"><label>${t('الكمية')}</label><input class="inp" type="number" min="1" data-i="${i}" data-k="qty" value="${it.qty}"></div><div class="field"><label>${t('سعر الوحدة')}</label><input class="inp" type="number" min="0" data-i="${i}" data-k="price" value="${it.price}"></div></div>`).join('')}
     <div class="grid2"><div class="field"><label>${t('الخصم')}</label><div style="display:flex;gap:6px"><input class="inp" type="number" min="0" step="any" id="disc" value="${o.discount || 0}" style="flex:1;min-width:0"><select class="inp" id="dkind" style="width:auto" aria-label="${t('نوع الخصم')}"><option value="amt">${t('مبلغ')}</option><option value="pct">%</option></select></div></div>${isIntlOrder(o) ? '<div></div>' : `<div class="field"><label>${t('قيمة المقدم')}</label><input class="inp" type="number" min="0" id="dep" value="${o.deposit || 0}"></div>`}</div>
-    ${o.installments.length ? `<h4>${t('جدول السداد')}</h4>${o.installments.map((x, i) => `<div class="grid2"><div class="field"><label>${t('الاستحقاق')}</label><input class="inp" type="date" value="${x.due}" disabled title="${t('تاريخ الاستحقاق بيتغير من نافذة القسط باعتماد الإدارة')}"></div><div class="field"><label>${t('المبلغ')}</label><input class="inp" type="number" min="0" data-ins="${i}" data-k="amount" value="${x.amount}" ${x.paid ? 'disabled' : ''}></div></div>`).join('')}` : ''}`,
+    ${o.installments.length ? `<h4>${t('جدول السداد')}</h4>${o.installments.map((x, i) => `<div class="grid2"><div class="field"><label>${t('الاستحقاق')}</label><input class="inp" type="date" value="${x.due}" disabled title="${t('يُعدَّل تاريخ الاستحقاق من نافذة القسط باعتماد الإدارة')}"></div><div class="field"><label>${t('المبلغ')}</label><input class="inp" type="number" min="0" data-ins="${i}" data-k="amount" value="${x.amount}" ${x.paid ? 'disabled' : ''}></div></div>`).join('')}` : ''}`,
     footer: `<button class="btn primary" id="sv">${t('حفظ التعديلات')}</button>`,
   });
   $('#sv', m.el).onclick = () => {
@@ -8804,7 +8830,7 @@ function openLeaderPick(tm, userId, onDone) {
 // كل التحليل هنا بقواعد ثابتة (أرقام، إيميلات، محافظات، محاصيل، ملوحة، مساحة، كلمات مفتاحية): مجاني ولا يعتمد على ذكاء اصطناعي.
 
 const SOCIAL_CHANNELS = { fb: 'ماسنجر', ig: 'إنستجرام', wa: 'واتساب' };
-const SOCIAL_STATUS = { new: 'جديدة', open: 'مفتوحة', converted: 'تحوّلت لعميل', ignored: 'متجاهلة' };
+const SOCIAL_STATUS = { new: 'غير مقروءة', open: 'مقروءة', converted: 'تحوّلت إلى عميل', ignored: 'متجاهَلة' };
 const SOCIAL_SOURCE = { fb: 'ماسنجر', ig: 'إنستجرام', wa: 'واتساب' };
 // مرحلة العميل زي ميتا. مسجل ومؤهل وتم التحويل بيتبعتوا لميتا (LeadSubmitted / QualifiedLead / Purchase) علشان الإعلان يجيب ناس شبههم
 const SOCIAL_STAGES = { followup: 'متابعة', lead: 'مسجل', qualified: 'مؤهل', unqualified: 'غير مؤهل', converted: 'تم التحويل', lost: 'مفقود', spam: 'سبام' };
@@ -8863,7 +8889,7 @@ function socialPhoneAlerts(changed) {
   try { localStorage.setItem(SOCIAL_SEEN_KEY(), JSON.stringify(seen)); } catch {}
   if (!fresh.length) return;
   chime();
-  fresh.slice(0, 3).forEach(c => toast(t('{name} بعت رقمه على {ch}: {p}', { name: c.name || t('عميل'), ch: t(SOCIAL_CHANNELS[c.channel]), p: c.phones.map(p => p.p).join('، ') }), 'ok'));
+  fresh.slice(0, 3).forEach(c => toast(t('{name} أرسل رقمه على {ch}: {p}', { name: c.name || t('عميل'), ch: t(SOCIAL_CHANNELS[c.channel]), p: c.phones.map(p => p.p).join('، ') }), 'ok'));
 }
 async function socialTick() {
   if (!ME || !canSocial() || !socialReady() || document.visibilityState !== 'visible') return;
@@ -8996,12 +9022,12 @@ function viewSocial(root, sub) {
       ${cfg.url && cloudMode ? `<button class="btn" id="socDash">📊 ${t('لوحة الأداء')}</button>` : ''}
       ${canManageSocial() ? `<button class="btn" id="socSet">⚙ ${t('إعدادات الربط والفريق')}</button>` : ''}
       ${cfg.url ? `<button class="btn" id="socRe">⟳ ${t('تحديث')}</button>` : ''}
-      <div class="hint">${t('رسائل ماسنجر وإنستجرام وواتساب (بدون التعليقات) في سلة واحدة: من أي إعلان جاء العميل، ورقمه وإيميله، والشات كاملًا بالصور والفويس. فريق السوشيال: {m}', { m: socialMembers().map(userName).join('، ') || '—' })}</div></div>
+      <div class="hint">${t('رسائل ماسنجر وإنستجرام وواتساب (دون التعليقات) في صندوق واحد: من أي إعلان جاء العميل، ورقمه وبريده الإلكتروني، والمحادثة كاملة بالصور والرسائل الصوتية. فريق السوشيال: {m}', { m: socialMembers().map(userName).join('، ') || '—' })}</div></div>
     ${!cfg.url ? `<div class="card empty">${canManageSocial() ? t('لم يتم ربط ميتا بعد. اضغط "إعدادات الربط والفريق" وأدخل رابط المستقبِل على Cloudflare بعد إعداده (الخطوات في ملف الإعداد).') : t('لم يتم ربط رسائل السوشيال بعد. تواصل مع الإدارة.')}</div>`
     : !cloudMode ? `<div class="card empty">${t('رسائل السوشيال تعمل من الرابط المنشور للنظام فقط.')}</div>`
     : `<div id="socialStats"></div>
-    <div class="filters mt"><div class="tabs" id="socTabs">${[['active', 'الجديدة والمفتوحة'], ['new', 'الجديدة'], ['mine', 'المحوّلة إليّ'], ['converted', 'تحوّلت لعملاء'], ['ignored', 'المتجاهلة'], ['all', 'الكل']].map(([k, l]) => `<button class="tab ${socialState.tab === k ? 'on' : ''}" data-st="${k}">${t(l)}</button>`).join('')}</div>
-      <select class="inp" id="socStage" aria-label="${t('مرحلة العميل')}">${opts([['', t('كل المراحل')], ['none', t('من غير مرحلة')], ...Object.entries(SOCIAL_STAGES).map(([k, v]) => [k, t(v)])], socialState.stage)}</select>
+    <div class="filters mt"><div class="tabs" id="socTabs">${[['active', 'صندوق الوارد'], ['new', 'غير المقروءة'], ['mine', 'المحوّلة إليّ'], ['converted', 'تحوّلت إلى عملاء'], ['ignored', 'المتجاهلة'], ['all', 'الكل']].map(([k, l]) => `<button class="tab ${socialState.tab === k ? 'on' : ''}" data-st="${k}">${t(l)}</button>`).join('')}</div>
+      <select class="inp" id="socStage" aria-label="${t('مرحلة العميل')}">${opts([['', t('كل المراحل')], ['none', t('دون مرحلة')], ...Object.entries(SOCIAL_STAGES).map(([k, v]) => [k, t(v)])], socialState.stage)}</select>
       <input class="inp search" id="socQ" type="search" placeholder="${t('بحث بالاسم أو رقم التليفون أو الإعلان')}" value="${esc(socialState.q)}"></div>
     <div class="soc-chtabs" id="socChTabs"></div>
     <div class="social-wrap mt"><div class="social-list card" id="socialList"><div class="muted" style="padding:12px">${t('جارٍ تحميل المحادثات...')}</div></div><div class="social-thread card" id="socialThread"></div></div>`}`;
@@ -9068,10 +9094,22 @@ function drawSocialList() {
   if (!box) return;
   drawSocialChTabs();
   const list = [...socialState.convs.values()].filter(c => socialMatches(c)).sort((a, b) => b.last_at - a.last_at);
-  box.innerHTML = list.length ? list.slice(0, 300).map(c => `<button class="soc-item ${c.id === socialState.sel ? 'on' : ''} ${c.status === 'new' ? 'unread' : ''}" data-cv="${esc(c.id)}">
-      ${socialAvatar(c)}<div class="soc-main"><div class="soc-top"><b>${esc(c.name || t('عميل بدون اسم'))}</b><span class="muted">${socialTime(c.last_at)}</span></div>
-      <div class="soc-last">${c.last_dir === 'out' ? `<span class="muted">${t('أنت')}: </span>` : ''}${esc(c.last_text || '')}</div>
-      <div class="soc-tags">${stagePillHtml(c)}${c.ad_title || c.ad_id ? `<span class="pill p-harvest">📣 ${esc(c.ad_title || t('إعلان'))}</span>` : ''}${(c.phones || []).length ? `<span class="pill p-green">📞 ${c.phones.length}</span>` : ''}${c.status !== 'new' ? `<span class="pill p-gray">${t(SOCIAL_STATUS[c.status])}</span>` : ''}${c.assignee ? `<span class="pill p-blue">${esc(userName(c.assignee))}</span>` : ''}</div></div></button>`).join('')
+  // صف المحادثة بشكل صندوق ميتا: الصورة وعليها القناة، الاسم وآخر رسالة ووقتها، ونقطة زرقاء لغير المقروءة، ثم وسوم صغيرة في سطر واحد
+  const chip = (cls, dot, text, title) => `<span class="soc-chip ${cls}"${title ? ` title="${esc(title)}"` : ''}>${dot ? `<i class="dot ${dot}"></i>` : ''}<span class="tx">${esc(text)}</span></span>`;
+  box.innerHTML = list.length ? list.slice(0, 300).map(c => {
+    const unread = c.status === 'new';
+    const tags = [
+      c.stage ? chip('', STAGE_PILL[c.stage] || 'p-gray', t(SOCIAL_STAGES[c.stage] || c.stage)) : '',
+      c.ad_title || c.ad_id ? chip('ad', 'p-red', c.ad_title || `${t('إعلان')} ${c.ad_id}`, c.ad_title || c.ad_id) : '',
+      (c.phones || []).length ? chip('', '', `📞 ${c.phones.length}`) : '',
+      c.status === 'converted' ? chip('', 'p-green', t(SOCIAL_STATUS.converted)) : c.status === 'ignored' ? chip('', 'p-gray', t(SOCIAL_STATUS.ignored)) : '',
+      c.assignee ? chip('', '', userName(c.assignee)) : '',
+    ].join('');
+    return `<button class="soc-item ${c.id === socialState.sel ? 'on' : ''} ${unread ? 'unread' : ''}" data-cv="${esc(c.id)}">
+      ${socialAvatar(c)}<div class="soc-main"><div class="soc-top"><b>${esc(c.name || t('عميل بدون اسم'))}</b></div>
+      <div class="soc-lastrow"><div class="soc-last">${c.last_dir === 'out' ? `${t('أنت')}: ` : ''}${esc(c.last_text || '')}</div><span class="soc-time">${socialTime(c.last_at)}</span>${unread ? `<i class="soc-unread" title="${esc(t('غير مقروءة'))}"></i>` : ''}</div>
+      ${tags ? `<div class="soc-tags">${tags}</div>` : ''}</div></button>`;
+  }).join('')
     : `<div class="empty" style="padding:20px">${t(socialState.loaded ? 'لا توجد محادثات هنا' : 'جارٍ تحميل المحادثات...')}</div>`;
   $$('.soc-item', box).forEach(b => b.onclick = () => {
     history.replaceState(null, '', `#/social/${encodeURIComponent(b.dataset.cv)}`);
@@ -9093,6 +9131,15 @@ async function openSocialThread(id) {
     socialState.convs.set(id, out.conv);
     socialState.thread = out;
     drawSocialThread();
+    // فتح المحادثة يجعلها مقروءة مثل صندوق ميتا، وتعود غير مقروءة عند وصول رسالة جديدة من العميل
+    if (out.conv?.status === 'new' && !socialState.readOnly) {
+      socialApi(`conv/${encodeURIComponent(id)}`, { method: 'POST', body: { status: 'open' } }).then(r => {
+        if (!r?.conv) return;
+        socialState.convs.set(id, r.conv);
+        if (socialState.thread?.conv?.id === id) socialState.thread.conv = r.conv;
+        drawSocialList(); updateSocialBadge();
+      }).catch(() => {});
+    }
   } catch (err) {
     box.innerHTML = `<div class="err-msg" style="margin:12px">${esc(err.message)}</div>`;
   }
@@ -9107,17 +9154,17 @@ async function setConvStage(c, stage, linked) {
     const out = await updateConv(c.id, { stage, by: ME.id, phone, email, ...extra });
     if (!out) return;
     const ev = STAGE_META[stage];
-    if (!ev) { toast(t('اتحفظت المرحلة: {s}', { s: t(SOCIAL_STAGES[stage]) }), 'ok'); return; }
+    if (!ev) { toast(t('حُفظت المرحلة: {s}', { s: t(SOCIAL_STAGES[stage]) }), 'ok'); return; }
     const r = out.capi?.[ev];
-    if (r?.at && !before[ev]?.at) toast(t('اتحفظت المرحلة واتبعتت لميتا علشان الإعلان يتعلم ✓'), 'ok');
-    else if (r?.at) toast(t('اتحفظت المرحلة (ميتا عندها الحدث ده من قبل)'), 'ok');
-    else if (r?.err) toast(`${t('اتحفظت المرحلة، بس ميتا رفضت الحدث')}: ${r.err}`, 'err');
-    else toast(t('اتحفظت المرحلة في السيستم. الإبلاغ لميتا مش متوصل لسه (محتاج DATASET_ID)'), '');
+    if (r?.at && !before[ev]?.at) toast(t('حُفظت المرحلة وأُرسلت إلى ميتا ليتعلّم الإعلان ✓'), 'ok');
+    else if (r?.at) toast(t('حُفظت المرحلة (الحدث مسجّل لدى ميتا مسبقًا)'), 'ok');
+    else if (r?.err) toast(`${t('حُفظت المرحلة، لكن ميتا رفضت الحدث')}: ${r.err}`, 'err');
+    else toast(t('حُفظت المرحلة في النظام. إبلاغ ميتا غير مفعّل بعد (يتطلب DATASET_ID)'), '');
   };
   if (stage !== 'converted') return done({});
   const sales = linked ? DB.orders.filter(o => o.customerId === linked.id && countsAsSale(o)) : [];
   const sum = Math.round(sales.reduce((s, o) => s + orderValue(o), 0));
-  const md = openModal({ title: t('تم التحويل: قيمة الشراء'), body: `<div class="field"><label>${t('قيمة الشراء (ج.م)')}</label><input class="inp" type="number" min="0" id="cvVal" value="${sum || ''}"></div><small class="muted">${t('اختياري. ميتا بتستخدم القيمة علشان تجيب عملاء بيشتروا بقيمة قريبة. القيمة مش بتظهر للعميل.')}</small>`, footer: `<button class="btn primary" id="cvOk">${t('حفظ')}</button>` });
+  const md = openModal({ title: t('تم التحويل: قيمة الشراء'), body: `<div class="field"><label>${t('قيمة الشراء (ج.م)')}</label><input class="inp" type="number" min="0" id="cvVal" value="${sum || ''}"></div><small class="muted">${t('اختياري. تستخدم ميتا هذه القيمة لجلب عملاء يشترون بقيمة مماثلة، ولا تظهر للعميل.')}</small>`, footer: `<button class="btn primary" id="cvOk">${t('حفظ')}</button>` });
   $('#cvOk', md.el).onclick = async () => { const value = +$('#cvVal', md.el).value || 0; md.close(); await done({ value, currency: 'EGP' }); };
 }
 async function updateConv(id, patch, okMsg) {
@@ -9137,7 +9184,7 @@ function msgTick(m, c) {
   if (m.status === 'failed') return ` <span class="soc-tick fail" title="${esc(t('لم تصل'))}">!</span>`;
   const read = m.status === 'read' || (c.read_at && m.at <= c.read_at);
   const del = read || m.status === 'delivered' || (c.delivered_at && m.at <= c.delivered_at);
-  return ` <span class="soc-tick ${read ? 'read' : ''}" title="${esc(t(read ? 'اتقرت' : del ? 'وصلت' : 'اتبعتت'))}">${del ? '✓✓' : '✓'}</span>`;
+  return ` <span class="soc-tick ${read ? 'read' : ''}" title="${esc(t(read ? 'قُرئت' : del ? 'وصلت' : 'أُرسلت'))}">${del ? '✓✓' : '✓'}</span>`;
 }
 // المحادثة المفتوحة تتحدّث لوحدها لما يجيلها جديد (رسالة، وصلت/اتقرت، تفاعل، تعديل)، من غير ما يضيع الرد اللي بتكتبه
 async function refreshOpenThread() {
@@ -9174,18 +9221,18 @@ function drawSocialThread() {
       ${kv(t('الدولة'), convCountry(c) ? esc(countryLabel(convCountry(c))) : tzHint(c.tz) ? `<span class="muted">${esc(t('غالبًا {c} (من توقيت حسابه)', { c: tzHint(c.tz) }))}</span>` : '')}
       ${kv(t('أرقام الهاتف'), (c.phones || []).length ? c.phones.map((p, i) => `<div class="soc-phone"><span dir="ltr" class="num">${esc(p.p)}</span> ${p.country && !p.guessed ? `<span class="pill p-blue">${esc(countryLabel(p.country))}</span>` : `${p.guessed ? `<span class="pill p-orange" title="${esc(t('رقم محلي بدون رمز الدولة، فالدولة تخمين يحتاج تأكيدًا'))}">${esc(countryLabel(p.country))}؟</span>` : ''}${countryPick(p, i)}`}</div>`).join('') : '')}
       ${kv(t('البريد الإلكتروني'), (c.emails || []).map(emailLink).join('<br>'))}
-      ${kv(t('الموقع من الشات'), esc([ins.gov, ins.country ? countryLabel(ins.country) : ''].filter(Boolean).join(' · ')))}
+      ${kv(t('الموقع من المحادثة'), esc([ins.gov, ins.country ? countryLabel(ins.country) : ''].filter(Boolean).join(' · ')))}
       ${kv(t('المحاصيل'), esc(ins.crops.map(tv).join('، ')))}
       ${kv(t('درجة الملوحة'), ins.salinity ? `<span dir="ltr">${esc(ins.salinity)}</span>` : '')}
       ${kv(t('المساحة'), ins.area ? `${esc(ins.area)} ${t('فدان')}` : '')}
       ${kv(t('اهتمام العميل'), ins.intents.map(n => `<span class="pill p-after">${esc(t(n))}</span>`).join(' '))}
       ${kv(t('المسؤول عن المحادثة'), c.assignee ? esc(userName(c.assignee)) : '')}
     </div>
-    ${linked ? `<div class="soc-note ok">✓ ${t('مرتبطة بالعميل')} <b>${esc(linked.name)}</b> (${esc(linked.code)}) <button class="btn sm" id="socOpenC">${t('فتح ملف العميل')}</button>${(() => { const imgs = chatImages(msgs), left = imgs.filter(im => !(linked.social?.savedMedia || []).includes(im.key)).length; return imgs.length ? left ? `<button class="btn sm" id="socSaveImgs">📷 ${t('حفظ صور الشات في ملف العميل ({n})', { n: left })}</button>` : `<span class="muted">📷 ${t('صور الشات محفوظة في ملفه')}</span>` : ''; })()}${socialCfg().capi ? `<span class="muted">· ${t('ميتا')}: ${linked.social?.capi?.Lead || linked.social?.capi?.LeadSubmitted ? `${t('عميل محتمل')} ✓` : `${t('عميل محتمل')} …`}${linked.social?.capi?.Purchase ? ` · ${t('شراء')} ✓` : ''}</span>` : ''}</div>`
+    ${linked ? `<div class="soc-note ok">✓ ${t('مرتبطة بالعميل')} <b>${esc(linked.name)}</b> (${esc(linked.code)}) <button class="btn sm" id="socOpenC">${t('فتح ملف العميل')}</button>${(() => { const imgs = chatImages(msgs), left = imgs.filter(im => !(linked.social?.savedMedia || []).includes(im.key)).length; return imgs.length ? left ? `<button class="btn sm" id="socSaveImgs">📷 ${t('حفظ صور المحادثة في ملف العميل ({n})', { n: left })}</button>` : `<span class="muted">📷 ${t('صور المحادثة محفوظة في ملفه')}</span>` : ''; })()}${socialCfg().capi ? `<span class="muted">· ${t('ميتا')}: ${linked.social?.capi?.Lead || linked.social?.capi?.LeadSubmitted ? `${t('عميل محتمل')} ✓` : `${t('عميل محتمل')} …`}${linked.social?.capi?.Purchase ? ` · ${t('شراء')} ✓` : ''}</span>` : ''}</div>`
       : dup ? `<div class="soc-note">${t('هذا الرقم مسجل باسم "{name}" لدى {owner}', { name: esc(dup.name), owner: esc(userName(dup.ownerId)) })} ${customerVisible(dup) ? `<button class="btn sm" id="socOpenDup">${t('فتح ملف العميل')}</button>` : ''}<button class="btn sm" id="socLinkDup">${t('ربط المحادثة بهذا العميل')}</button></div>` : ''}
-    <div class="soc-stage"><b>${t('مرحلة العميل')}:</b> <div class="chips" id="socStages">${Object.entries(SOCIAL_STAGES).map(([k, v]) => `<button type="button" class="chip ${c.stage === k ? 'on' : ''}" data-stg="${k}" title="${STAGE_META[k] ? esc(t('بيتبعت للإعلانات على إنه {e}', { e: STAGE_META[k] })) : esc(t('بيتحفظ في السيستم بس'))}">${t(v)}${STAGE_META[k] ? ' ⓜ' : ''}</button>`).join('')}</div>
-      ${c.stage ? `<span class="muted">${c.stage_by === 'auto' ? t('اتحددت تلقائيًا') : esc(userName(c.stage_by))} · ${c.stage_at ? esc(fmtDT(new Date(c.stage_at).toISOString())) : ''}</span>` : ''}
-      ${Object.keys(c.capi || {}).length ? `<div class="muted">${t('ميتا')}: ${Object.entries(c.capi).map(([e, r]) => `${esc({ LeadSubmitted: t('مسجل'), QualifiedLead: t('مؤهل'), Purchase: t('تم التحويل') }[e] || e)} ${r.at ? `<span title="${esc(r.note ? `${t('الطريقة الأولى اترفضت')}: ${r.note}` : '')}">✓${r.mode === 'phone' ? ` (${t('بالرقم بس')})` : ''}</span>` : `✗ <span title="${esc(r.err || '')}">${esc(String(r.err || '').slice(0, 60))}</span>`}`).join(' · ')}</div>` : ''}</div>
+    <div class="soc-stage"><b>${t('مرحلة العميل')}:</b> <div class="chips" id="socStages">${Object.entries(SOCIAL_STAGES).map(([k, v]) => `<button type="button" class="chip ${c.stage === k ? 'on' : ''}" data-stg="${k}" title="${STAGE_META[k] ? esc(t('يُرسَل إلى الإعلانات بوصفه {e}', { e: STAGE_META[k] })) : esc(t('يُحفظ في النظام فقط'))}">${t(v)}${STAGE_META[k] ? ' ⓜ' : ''}</button>`).join('')}</div>
+      ${c.stage ? `<span class="muted">${c.stage_by === 'auto' ? t('حُدِّدت تلقائيًا') : esc(userName(c.stage_by))} · ${c.stage_at ? esc(fmtDT(new Date(c.stage_at).toISOString())) : ''}</span>` : ''}
+      ${Object.keys(c.capi || {}).length ? `<div class="muted">${t('ميتا')}: ${Object.entries(c.capi).map(([e, r]) => `${esc({ LeadSubmitted: t('مسجل'), QualifiedLead: t('مؤهل'), Purchase: t('تم التحويل') }[e] || e)} ${r.at ? `<span title="${esc(r.note ? `${t('رُفضت الطريقة الأولى')}: ${r.note}` : '')}">✓${r.mode === 'phone' ? ` (${t('بالرقم فقط')})` : ''}</span>` : `✗ <span title="${esc(r.err || '')}">${esc(String(r.err || '').slice(0, 60))}</span>`}`).join(' · ')}</div>` : ''}</div>
     <div class="soc-actions">
       ${!linked && !dup ? `<button class="btn primary" id="socConvert">＋ ${t('تحويل لعميل في النظام')}</button>` : ''}
       <select class="inp" id="socAssign" aria-label="${t('تحويل لزميل في فريق السوشيال')}"><option value="">${t('تحويل لزميل...')}</option>${members.filter(id => id !== c.assignee).map(id => `<option value="${id}">${esc(userName(id))}</option>`).join('')}</select>
@@ -9290,7 +9337,7 @@ async function hydrateWaMedia(root) {
       if (!el.isConnected) continue;
       el.outerHTML = mediaHtml(el.dataset.type, url, el.dataset.name);
     } catch (err) {
-      if (el.isConnected) el.innerHTML = `<span class="muted">⚠ ${t('تعذر تحميل المرفق')}: ${esc(err.message === 'whatsapp not configured' ? t('واتساب مش مربوط في Cloudflare') : err.message)}</span>`;
+      if (el.isConnected) el.innerHTML = `<span class="muted">⚠ ${t('تعذر تحميل المرفق')}: ${esc(err.message === 'whatsapp not configured' ? t('واتساب غير مربوط في Cloudflare') : err.message)}</span>`;
     }
   }
 }
@@ -9299,7 +9346,7 @@ const chatImages = msgs => msgs.filter(m => m.dir === 'in' && m.attach).flatMap(
 async function saveChatImages(cust, conv, images, quiet) {
   const saved = new Set(cust.social?.savedMedia || []);
   const todo = images.filter(im => !saved.has(im.key));
-  if (!todo.length) { if (!quiet) toast(t('كل صور الشات محفوظة بالفعل في ملف العميل')); return 0; }
+  if (!todo.length) { if (!quiet) toast(t('جميع صور المحادثة محفوظة بالفعل في ملف العميل')); return 0; }
   const base = String(socialCfg().url || '').replace(/\/+$/, '');
   let ok = 0;
   for (const im of todo) {
@@ -9319,10 +9366,10 @@ async function saveChatImages(cust, conv, images, quiet) {
       c.social = { ...(c.social || {}), savedMedia: [...new Set([...(c.social?.savedMedia || []), im.key])] };
       ok++;
     } catch (err) {
-      toast(t('تعذر حفظ صورة من الشات: {e}', { e: err.message }), 'err');
+      toast(t('تعذر حفظ صورة من المحادثة: {e}', { e: err.message }), 'err');
     }
   }
-  if (ok) { saveDB(); toast(t('حُفظت {n} صورة من الشات في ملف العميل (صور الزرع)', { n: ok }), 'ok'); }
+  if (ok) { saveDB(); toast(t('حُفظت {n} صورة من المحادثة في ملف العميل (صور الزرع)', { n: ok }), 'ok'); }
   return ok;
 }
 // ملخص الشات المكتوب في أول متابعة للعميل، فيراه رجل البيع فور تحويله إليه
@@ -9384,26 +9431,26 @@ function metaCheckHtml(checks) {
   checks = checks.map(c => namesPending(c) ? { ...c, status: 'warn', detail: { ...d(c), pendingReview: true } } : c);
   const lines = {
     verify: c => [t('رمز التحقق (META_VERIFY_TOKEN)'), c.status === 'ok' ? t('متسجل') : t('ناقص: أضفه في Cloudflare بنفس الرمز المكتوب في ميتا')],
-    token: c => [t('توكن الصفحة (PAGE_TOKEN)'), c.status === 'ok' ? t('شغال، وتابع لصفحة: {n}', { n: d(c).page?.name || d(c).page?.id || '' }) + (d(c).systemUser ? ` · ${t('توكن System User دائم')}` : '')
-      : d(c).reason === 'missing' ? t('ناقص: أضفه في Cloudflare كـ Secret') : d(c).reason === 'invalid' ? t('غلط أو انتهى: اعمل Generate token جديد وحطه مكانه')
-      : d(c).reason === 'permission' ? t('التوكن سليم، لكن التطبيق ناقصه صلاحية: {p}. ضيفها من App Review ← Permissions and features، وبعدها اعمل Generate token جديد وحطه مكان القديم', { p: d(c).perms.join(', ') }) : `${t('ميتا رفضته')}: ${d(c).message || ''}`],
-    secret: c => [t('سر التطبيق (META_APP_SECRET)'), c.status === 'ok' ? t('صحيح، وميتا قبلته') : d(c).reason === 'missing' ? t('ناقص: من غيره السيرفر يرفض كل الرسايل') : d(c).reason === 'wrong' ? t('غلط: انسخه تاني من App settings ← Basic ← App secret') : t('مش متأكد منه لأن التوكن مش شغال، صلّح التوكن الأول')],
-    page: c => [t('رقم الصفحة (PAGE_ID)'), d(c).reason === 'missing' ? t('ناقص: ضيف PAGE_ID في Cloudflare (رقم الصفحة)') : c.status === 'ok' ? t('مطابق للصفحة: {n}', { n: d(c).name }) : c.status === 'warn' ? t('ناقص: ضيف PAGE_ID = {id}', { id: d(c).actual }) : t('مش مطابق: التوكن تبع صفحة {n} ({a}) لكن PAGE_ID = {e}', { n: d(c).name, a: d(c).actual, e: d(c).expected })],
-    webhook: c => [t('اشتراك الصفحة في الرسايل (Webhook)'), c.status === 'ok' ? `${t('مشترك')}${d(c).fields?.length ? `: ${d(c).fields.join(', ')}` : ''}${d(c).leadgen ? '' : ` · ${t('ليدز الفورم (leadgen) مش مفعّلة')}`}`
-      : d(c).reason === 'error' ? (d(c).perms?.length ? t('مش قادر أتأكد: التطبيق ناقصه صلاحية {p}', { p: d(c).perms.join(', ') }) : `${t('ميتا رفضت السؤال')}: ${d(c).message || ''}`) : t('التطبيق مش مشترك في messages على الصفحة: فعّلها من Webhooks ← الصفحة ← Edit')],
-    instagram: c => [t('إنستجرام (IG_ID)'), c.status === 'ok' ? t('مربوط: @{u}', { u: d(c).username }) : d(c).reason === 'not linked' ? t('مفيش حساب إنستجرام بيزنس مربوط بالصفحة') : d(c).reason === 'error' ? (d(c).perms?.length ? t('مش قادر أتأكد: التطبيق ناقصه صلاحية {p}', { p: d(c).perms.join(', ') }) : t('ميتا رفضت السؤال عن إنستجرام (ممكن صلاحية instagram_basic ناقصة)'))
-      : d(c).configured ? t('IG_ID مش مطابق: الصح {id} (@{u})', { id: d(c).id, u: d(c).username }) : t('ناقص: ضيف IG_ID = {id} (@{u})', { id: d(c).id, u: d(c).username })],
+    token: c => [t('توكن الصفحة (PAGE_TOKEN)'), c.status === 'ok' ? t('يعمل، وتابع للصفحة: {n}', { n: d(c).page?.name || d(c).page?.id || '' }) + (d(c).systemUser ? ` · ${t('توكن System User دائم')}` : '')
+      : d(c).reason === 'missing' ? t('ناقص: أضفه في Cloudflare كـ Secret') : d(c).reason === 'invalid' ? t('غير صحيح أو منتهي الصلاحية: أنشئ توكنًا جديدًا (Generate token) وضعه مكانه')
+      : d(c).reason === 'permission' ? t('التوكن سليم، لكن التطبيق تنقصه صلاحية: {p}. أضفها من App Review ← Permissions and features، ثم أنشئ توكنًا جديدًا (Generate token) وضعه مكان القديم', { p: d(c).perms.join(', ') }) : `${t('ميتا رفضته')}: ${d(c).message || ''}`],
+    secret: c => [t('سر التطبيق (META_APP_SECRET)'), c.status === 'ok' ? t('صحيح، وميتا قبلته') : d(c).reason === 'missing' ? t('ناقص: بدونه يرفض الخادم جميع الرسائل') : d(c).reason === 'wrong' ? t('غير صحيح: انسخه مجددًا من App settings ← Basic ← App secret') : t('تعذّر التحقق منه لأن التوكن لا يعمل، يُرجى إصلاح التوكن أولًا')],
+    page: c => [t('رقم الصفحة (PAGE_ID)'), d(c).reason === 'missing' ? t('ناقص: أضف PAGE_ID في Cloudflare (رقم الصفحة)') : c.status === 'ok' ? t('مطابق للصفحة: {n}', { n: d(c).name }) : c.status === 'warn' ? t('ناقص: أضف PAGE_ID = {id}', { id: d(c).actual }) : t('غير مطابق: التوكن تابع لصفحة {n} ({a}) بينما PAGE_ID = {e}', { n: d(c).name, a: d(c).actual, e: d(c).expected })],
+    webhook: c => [t('اشتراك الصفحة في الرسائل (Webhook)'), c.status === 'ok' ? `${t('مشترك')}${d(c).fields?.length ? `: ${d(c).fields.join(', ')}` : ''}${d(c).leadgen ? '' : ` · ${t('نماذج العملاء المحتملين (leadgen) غير مفعّلة')}`}`
+      : d(c).reason === 'error' ? (d(c).perms?.length ? t('تعذّر التحقق: التطبيق تنقصه صلاحية {p}', { p: d(c).perms.join(', ') }) : `${t('ميتا رفضت السؤال')}: ${d(c).message || ''}`) : t('التطبيق غير مشترك في messages على الصفحة: فعّلها من Webhooks ← الصفحة ← Edit')],
+    instagram: c => [t('إنستجرام (IG_ID)'), c.status === 'ok' ? t('مربوط: @{u}', { u: d(c).username }) : d(c).reason === 'not linked' ? t('لا يوجد حساب إنستجرام للأعمال مرتبط بالصفحة') : d(c).reason === 'error' ? (d(c).perms?.length ? t('تعذّر التحقق: التطبيق تنقصه صلاحية {p}', { p: d(c).perms.join(', ') }) : t('رفضت ميتا الاستعلام عن إنستجرام (قد تكون صلاحية instagram_basic ناقصة)'))
+      : d(c).configured ? t('IG_ID غير مطابق: القيمة الصحيحة {id} (@{u})', { id: d(c).id, u: d(c).username }) : t('ناقص: أضف IG_ID = {id} (@{u})', { id: d(c).id, u: d(c).username })],
     whatsapp: c => [t('واتساب (WA_TOKEN و WA_PHONE_ID)'), c.status === 'ok' ? t('مربوط برقم {n} ({v})', { n: d(c).number, v: d(c).name }) + (d(c).quality ? ` · ${t('جودة الرقم')}: ${d(c).quality}` : '')
-      : d(c).reason === 'not set' ? t('لسه ما اتربطش: ضيف WA_TOKEN (Secret) و WA_PHONE_ID (Text) في Cloudflare بعد إعداد واتساب في تطبيق ميتا')
-      : d(c).reason === 'invalid' ? t('توكن واتساب غلط أو انتهى: اعمل توكن System User جديد وحطه مكان WA_TOKEN') : `${t('ميتا رفضت')}: ${d(c).message || ''}`],
-    names: c => [t('أسماء العملاء في المحادثات'), c.status === 'ok' ? (d(c).fixed ? t('اتجاب اسم {n} محادثة دلوقتي', { n: d(c).fixed }) : t('كل المحادثات ليها أسماء'))
-      : d(c).pendingReview ? t('مستنية موافقة ميتا على صلاحية Business Asset User Profile Access ({n} محادثة من غير اسم). الرسايل شغالة عادي، والأسماء هتظهر لوحدها بعد الموافقة', { n: d(c).missing })
-      : d(c).reason === 'consent' ? t('{n} محادثة إنستجرام من غير اسم: العميل بعت ستوري أو ريلز أو تفاعل بس من غير ما يكتب، وميتا مش بتدي الاسم في الحالة دي. الاسم هيظهر لوحده أول ما يكتب رسالة', { n: d(c).missing })
-      : d(c).perms?.length ? t('ميتا رافضة تدي الاسم: التطبيق ناقصه صلاحية {p}. بعد ما تتضاف اعمل Generate token جديد وحطه مكان القديم', { p: d(c).perms.join(', ') })
-      : `${t('ميتا رافضة تدي الاسم ({n} محادثة من غير اسم)', { n: d(c).missing })}: ${d(c).message || ''}`],
-    received: c => [t('آخر رسالة وصلت من ميتا'), c.status === 'ok' ? fmtDT(new Date(d(c).at).toISOString()) : t('لسه مفيش رسايل وصلت. ابعت رسالة تجربة للصفحة (ولو التطبيق Development لازم من حساب ليه دور في التطبيق)')],
-    capi: c => [t('إبلاغ الإعلانات بمراحل العملاء (Conversions API)'), c.status === 'ok' ? `${t('شغال: مسجل ومؤهل وتم التحويل بيتبعتوا لميتا')}${d(c).waba ? '' : `\n${t('واتساب: ضيف WABA_ID في Cloudflare علشان عملاء إعلانات الواتساب يتبعتوا كمان')}`}${d(c).test ? `\n${t('وضع الاختبار شغال (CAPI_TEST_CODE)، الأحداث بتظهر في Test events بس')}` : ''}`
-      : t('مش متوصل: المراحل بتتحفظ في السيستم بس ومش بتوصل للإعلانات. محتاج DATASET_ID في Cloudflare (مجموعة بيانات من مدير الأحداث مربوطة بالصفحة والإنستجرام)')],
+      : d(c).reason === 'not set' ? t('لم يُربط بعد: أضف WA_TOKEN (Secret) و WA_PHONE_ID (Text) في Cloudflare بعد إعداد واتساب في تطبيق ميتا')
+      : d(c).reason === 'invalid' ? t('توكن واتساب غير صحيح أو منتهي الصلاحية: أنشئ توكن System User جديدًا وضعه مكان WA_TOKEN') : `${t('ميتا رفضت')}: ${d(c).message || ''}`],
+    names: c => [t('أسماء العملاء في المحادثات'), c.status === 'ok' ? (d(c).fixed ? t('تم جلب أسماء {n} محادثة الآن', { n: d(c).fixed }) : t('جميع المحادثات لها أسماء'))
+      : d(c).pendingReview ? t('بانتظار موافقة ميتا على صلاحية Business Asset User Profile Access ({n} محادثة دون اسم). الرسائل تعمل بشكل طبيعي، وستظهر الأسماء تلقائيًا بعد الموافقة', { n: d(c).missing })
+      : d(c).reason === 'consent' ? t('{n} محادثة إنستجرام دون اسم: أرسل العميل قصة أو ريلز أو تفاعلًا فقط دون كتابة رسالة، ولا تتيح ميتا الاسم في هذه الحالة. سيظهر الاسم تلقائيًا عند كتابته أول رسالة', { n: d(c).missing })
+      : d(c).perms?.length ? t('ترفض ميتا إتاحة الاسم: التطبيق تنقصه صلاحية {p}. بعد إضافتها أنشئ توكنًا جديدًا (Generate token) وضعه مكان القديم', { p: d(c).perms.join(', ') })
+      : `${t('ترفض ميتا إتاحة الاسم ({n} محادثة دون اسم)', { n: d(c).missing })}: ${d(c).message || ''}`],
+    received: c => [t('آخر رسالة وصلت من ميتا'), c.status === 'ok' ? fmtDT(new Date(d(c).at).toISOString()) : t('لم تصل أي رسائل بعد. أرسل رسالة تجريبية إلى الصفحة (وإذا كان التطبيق في وضع Development فيجب الإرسال من حساب له دور في التطبيق)')],
+    capi: c => [t('إبلاغ الإعلانات بمراحل العملاء (Conversions API)'), c.status === 'ok' ? `${t('مفعّل: تُرسَل مراحل مسجل ومؤهل وتم التحويل إلى ميتا')}${d(c).waba ? '' : `\n${t('واتساب: أضف WABA_ID في Cloudflare ليُرسَل عملاء إعلانات واتساب أيضًا')}`}${d(c).test ? `\n${t('وضع الاختبار مفعّل (CAPI_TEST_CODE)، وتظهر الأحداث في Test events فقط')}` : ''}`
+      : t('غير مربوط: تُحفظ المراحل في النظام فقط ولا تصل إلى الإعلانات. يتطلب DATASET_ID في Cloudflare (مجموعة بيانات من مدير الأحداث مرتبطة بالصفحة وحساب إنستجرام)')],
   };
   // سطر إضافي تحت التوكن: الصلاحيات اللي فيه فعلًا والناقص منها
   const tok = checks.find(c => c.id === 'token');
@@ -9414,7 +9461,7 @@ function metaCheckHtml(checks) {
   }
   const bad = checks.filter(c => c.status === 'bad').length;
   return `<div class="meta-check mt">${checks.map(c => { const [label, text] = (lines[c.id] || (x => [x.id, '']))(c); return `<div class="meta-row ${c.status}"><span>${icon[c.status] || '•'}</span><div><b>${esc(label)}</b><div class="muted">${esc(text)}</div></div></div>`; }).join('')}
-    <p class="mt"><b>${bad ? t('فيه {n} حاجة محتاجة تتصلح قبل ما الرسايل تشتغل', { n: bad }) : t('الربط سليم ✓')}</b></p></div>`;
+    <p class="mt"><b>${bad ? t('توجد {n} مشكلة يجب إصلاحها قبل تشغيل الرسائل', { n: bad }) : t('الربط سليم ✓')}</b></p></div>`;
 }
 
 // ------- إعدادات الربط والفريق (للإدارة) -------
@@ -9432,10 +9479,13 @@ function openSocialSettings() {
       <div class="field"><label>${t('فريق السوشيال (يرى الرسائل ويرد عليها ويحوّلها، ويصله إشعار عند وصول رقم)')}</label><div class="chips" id="ssMem">${users.map(u => `<button type="button" class="chip ${members.has(u.id) ? 'on' : ''}" data-u="${u.id}">${esc(u.name)}</button>`).join('')}</div></div>
       <div class="field"><label>${t('مراجعو حملات المتابعة (يعتمدون الرسائل قبل إرسالها)')}</label><div class="chips" id="ssRev">${users.map(u => `<button type="button" class="chip ${campaignReviewers().includes(u.id) ? 'on' : ''}" data-u="${u.id}">${esc(u.name)}</button>`).join('')}</div></div>
       <label class="chk"><input type="checkbox" id="ssCapi" ${cfg.capi ? 'checked' : ''}> ${t('إبلاغ ميتا تلقائيًا بعملاء الرسائل: عند تسجيلهم (عميل محتمل) وعند شرائهم بقيمة الشراء، فتجلب الإعلانات عملاء يشبهونهم')}</label>
-      <small class="muted">${t('يعمل بعد إضافة DATASET_ID و PAGE_ID و IG_ID في Cloudflare (ملف الإعداد). الرقم والإيميل يُرسلان مشفّرين.')}</small>
-      <div class="field mt"><label>📊 ${t('تقرير الإعلانات اليومي على الإيميل (كل يوم الساعة 10 بالليل) يوصل لـ')}</label><div class="chips" id="ssAds">${users.filter(u => validEmail(u.email)).map(u => `<button type="button" class="chip ${adsReportTo().includes(u.id) ? 'on' : ''}" data-u="${u.id}">${esc(u.name)}</button>`).join('') || `<span class="muted">${t('مفيش مستخدمين عندهم إيميل. ضيف الإيميل من إدارة المستخدمين')}</span>`}</div>
-        <small class="muted">${t('تحليل كل إعلان (الصرف، المحادثات، المؤهلين، اللي اتحولوا لرجال البيع، المشتريين، التكلفة والعائد) ونصايح للإعلانات، ومعاه ملف إكسيل بالتفاصيل وأسماء العملاء. اللي يظهر هنا بس اللي عندهم إيميل.')}</small>
-        <div class="mt"><button class="btn sm" id="ssAdsNow" type="button">✉ ${t('ابعت تقرير النهارده دلوقتي')}</button> <span id="ssAdsMsg" class="muted"></span></div></div>
+      <small class="muted">${t('يعمل بعد إضافة DATASET_ID و PAGE_ID و IG_ID في Cloudflare (ملف الإعداد). يُرسَل الرقم والبريد الإلكتروني مشفّرين.')}</small>
+      <div class="field mt"><label>📊 ${t('يُرسَل تقرير الإعلانات اليومي بالبريد الإلكتروني (يوميًا الساعة 10 مساءً) إلى')}</label><div class="chips" id="ssAds">${users.filter(u => validEmail(u.email)).map(u => `<button type="button" class="chip ${adsReportTo().includes(u.id) ? 'on' : ''}" data-u="${u.id}">${esc(u.name)}</button>`).join('') || `<span class="muted">${t('لا يوجد مستخدمون لديهم بريد إلكتروني. أضف البريد من إدارة المستخدمين')}</span>`}</div>
+        <small class="muted">${t('تحليل كل إعلان (الصرف، والمحادثات، والمؤهلون، والمحوَّلون إلى رجال البيع، والمشترون، والتكلفة والعائد) مع توصيات للإعلانات، ومرفق به ملف إكسيل بالتفاصيل وأسماء العملاء. لا يظهر هنا إلا من لديهم بريد إلكتروني.')}</small>
+        <div class="mt"><button class="btn sm" id="ssAdsNow" type="button">✉ ${t('إرسال تقرير اليوم الآن')}</button> <span id="ssAdsMsg" class="muted"></span></div></div>
+      <div class="field mt"><label>🗂 ${t('استيراد المحادثات القديمة')}</label>
+        <small class="muted">${t('يجلب من ميتا سجل محادثات ماسنجر وإنستجرام السابقة كاملًا مع الصور، وتُضاف كمحادثات مقروءة دون تكرار ما هو موجود. أما واتساب فلا تتيح ميتا استرجاع الرسائل السابقة لتاريخ الربط.')}</small>
+        <div class="mt"><button class="btn sm" id="ssHist" type="button">⬇ ${t('بدء الاستيراد')}</button> <button class="btn sm" id="ssHistStop" type="button" style="display:none">${t('إيقاف')}</button> <span id="ssHistMsg" class="muted"></span></div></div>
       <div class="field mt"><label>${t('الردود الجاهزة')}</label><textarea class="inp" id="ssTpl" rows="6" placeholder="${t('سطر لكل رد: اسم الرد | نص الرد. يمكن استخدام {الاسم} لاسم العميل و{اسمي} لاسمك')}">${esc(tpls)}</textarea></div>
       <div class="mt"><button class="btn" id="ssTest">${t('اختبار الاتصال')}</button> <button class="btn" id="ssMeta">🔍 ${t('فحص الربط مع ميتا')}</button> <span id="ssMsg" class="muted"></span></div>
       <div id="ssMetaOut"></div>`,
@@ -9445,13 +9495,37 @@ function openSocialSettings() {
   $('#ssAdsNow', m.el).onclick = async () => {
     const msg = $('#ssAdsMsg', m.el), btn = $('#ssAdsNow', m.el);
     const to = $$('#ssAds .chip.on', m.el).map(b => b.dataset.u);
-    if (!to.length) { msg.textContent = t('اختار مين يستلم الأول'); return; }
+    if (!to.length) { msg.textContent = t('اختر المستلمين أولًا'); return; }
     // الإعدادات بتتحفظ الأول علشان خدمة جوجل تقرأ المستلمين الجداد
     DB.settings.social = { ...socialCfg(), adsReportTo: to }; saveDB();
     btn.disabled = true; msg.textContent = t('جارٍ تجهيز التقرير وإرساله...');
-    try { await cloudSync(true).catch(() => {}); const out = await cloudPost('adsreport'); msg.textContent = `✓ ${t('اتبعت لـ {n}', { n: out.sent || to.length })}`; }
-    catch (err) { msg.textContent = `✗ ${err.message === 'unknown action' ? t('خدمة جوجل محتاجة تحديث (Code.gs) الأول') : err.message}`; }
+    try { await cloudSync(true).catch(() => {}); const out = await cloudPost('adsreport'); msg.textContent = `✓ ${t('أُرسل إلى {n}', { n: out.sent || to.length })}`; }
+    catch (err) { msg.textContent = `✗ ${err.message === 'unknown action' ? t('يلزم تحديث خدمة جوجل (Code.gs) أولًا') : err.message}`; }
     btn.disabled = false;
+  };
+  // الاستيراد على دفعات صغيرة (كل دفعة 5 محادثات) حتى لا يتجاوز حدود الخادم، ويمكن إيقافه واستئنافه بأمان
+  let histStop = false;
+  $('#ssHistStop', m.el).onclick = () => { histStop = true; };
+  $('#ssHist', m.el).onclick = async () => {
+    const msg = $('#ssHistMsg', m.el), btn = $('#ssHist', m.el), stop = $('#ssHistStop', m.el);
+    histStop = false; btn.disabled = true; stop.style.display = '';
+    let convs = 0, created = 0, added = 0, failed = '';
+    for (const [platform, label] of [['messenger', t('ماسنجر')], ['instagram', t('إنستجرام')]]) {
+      let after = '';
+      for (let i = 0; i < 400 && !histStop; i++) {
+        msg.textContent = t('جارٍ استيراد {ch}: {n} محادثة، {m} رسالة جديدة...', { ch: label, n: convs, m: added });
+        let out;
+        try { out = await socialApi('history', { method: 'POST', body: { platform, after } }); }
+        catch (err) { failed = `${label}: ${err.message}`; break; }
+        convs += out.convs || 0; created += out.created || 0; added += out.added || 0;
+        if (!out.next) break;
+        after = out.next;
+      }
+      if (histStop) break;
+    }
+    btn.disabled = false; stop.style.display = 'none';
+    msg.textContent = `${histStop ? t('توقف الاستيراد') : '✓ ' + t('اكتمل الاستيراد')}: ${t('{n} محادثة، منها {c} جديدة، و{m} رسالة أُضيفت', { n: convs, c: created, m: added })}${failed ? ` · ✗ ${failed === 'unknown' || /not found/i.test(failed) ? t('يلزم تحديث خادم Cloudflare أولًا') : failed}` : ''}`;
+    if (added) { audit('social', 'social', null, 'استيراد المحادثات القديمة من ميتا: {n} رسالة', { n: added }); socialState.at = 0; socialState.convs.clear(); refreshSocial(true); }
   };
   $('#ssTest', m.el).onclick = async () => {
     const msg = $('#ssMsg', m.el);
@@ -9502,11 +9576,11 @@ async function loadSocialAds() {
   return socialAdCache;
 }
 const adKeyOf = a => `${a.id || ''}|${a.title || a.name || ''}`;
-const adLabel = a => `${a.name || a.title || `${t('إعلان')} ${a.id}`}${a.campaign ? ` · ${a.campaign}` : ''}${a.status === 'ACTIVE' ? ` · ${t('شغال')}` : ''}${a.n ? ` (${t('{n} محادثة', { n: a.n })})` : ''}`;
+const adLabel = a => `${a.name || a.title || `${t('إعلان')} ${a.id}`}${a.campaign ? ` · ${a.campaign}` : ''}${a.status === 'ACTIVE' ? ` · ${t('نشط')}` : ''}${a.n ? ` (${t('{n} محادثة', { n: a.n })})` : ''}`;
 function adPickField(d) {
-  if (d.social?.convId) return `<div class="field"><label>${t('جه من أنهي إعلان؟')}</label><div class="muted">${esc(d.social.adTitle || d.social.adId || t('رسالة مباشرة (ليست من إعلان)'))} · ${t('مربوط بمحادثته')}</div></div>`;
+  if (d.social?.convId) return `<div class="field"><label>${t('من أي إعلان جاء العميل؟')}</label><div class="muted">${esc(d.social.adTitle || d.social.adId || t('رسالة مباشرة (ليست من إعلان)'))} · ${t('مربوط بمحادثته')}</div></div>`;
   const cur = d.social && (d.social.adId || d.social.adTitle) ? `${d.social.adId || ''}|${d.social.adTitle || ''}` : '';
-  return `<div class="field" id="adWrap" ${SOCIAL_SRC_CH[d.source] ? '' : 'hidden'}><label>${t('جه من أنهي إعلان؟')}</label><select class="inp" data-f="socialAdKey" id="adPick"><option value="">${t('رسالة مباشرة / مش عارف')}</option>${cur ? `<option value="${esc(cur)}" selected>${esc(d.social.adTitle || d.social.adId)}</option>` : ''}</select><small class="muted">${t('علشان لوحة الإعلانات تحسب العميل ده على إعلانه')}</small></div>`;
+  return `<div class="field" id="adWrap" ${SOCIAL_SRC_CH[d.source] ? '' : 'hidden'}><label>${t('من أي إعلان جاء العميل؟')}</label><select class="inp" data-f="socialAdKey" id="adPick"><option value="">${t('رسالة مباشرة / غير معروف')}</option>${cur ? `<option value="${esc(cur)}" selected>${esc(d.social.adTitle || d.social.adId)}</option>` : ''}</select><small class="muted">${t('لتحتسب لوحة الإعلانات هذا العميل على إعلانه')}</small></div>`;
 }
 function bindAdPick(root) {
   const src = $('[data-f="source"]', root), wrap = $('#adWrap', root), sel = $('#adPick', root);
@@ -9518,7 +9592,7 @@ function bindAdPick(root) {
     const cur = sel.value;
     const seen = new Set();
     const items = list.filter(a => { const k = adKeyOf(a); if (seen.has(k)) return false; seen.add(k); return true; });
-    sel.innerHTML = `<option value="">${t('رسالة مباشرة / مش عارف')}</option>${cur && !items.some(a => adKeyOf(a) === cur) ? `<option value="${esc(cur)}" selected>${esc(cur.split('|').slice(1).join('|') || cur.split('|')[0])}</option>` : ''}${items.map(a => `<option value="${esc(adKeyOf(a))}" ${adKeyOf(a) === cur ? 'selected' : ''}>${esc(adLabel(a))}</option>`).join('')}`;
+    sel.innerHTML = `<option value="">${t('رسالة مباشرة / غير معروف')}</option>${cur && !items.some(a => adKeyOf(a) === cur) ? `<option value="${esc(cur)}" selected>${esc(cur.split('|').slice(1).join('|') || cur.split('|')[0])}</option>` : ''}${items.map(a => `<option value="${esc(adKeyOf(a))}" ${adKeyOf(a) === cur ? 'selected' : ''}>${esc(adLabel(a))}</option>`).join('')}`;
   });
 }
 // بيرجّع بيانات social الجديدة (أو اللي قبلها لو مفيش تغيير)، ويشيل socialAdKey من البيانات
@@ -9536,7 +9610,7 @@ function applyAdPick(data, prev) {
 // ------- لوحة أداء الإعلانات والسوشيال: كل إعلان جاب كام محادثة ورقم ومسجل ومؤهل، واتحوّل كام لرجال البيع ومين اشترى وبكام،
 // والصرف من حساب الإعلانات (لو متوصل) علشان تكلفة كل عميل والعائد. كل رقم بيفتح أسماء العملاء، وكل اسم بيفتح الشات بتاعه -------
 const socialDash = { range: '7', from: '', to: '', data: null, ads: null, adsErr: '', key: '', channel: '', campaign: '', sort: 'spend', dir: -1, jq: '', jStage: '', jAd: '', jRep: '', jShown: 50 };
-const SOCIAL_RANGES = [['1', 'اليوم'], ['y', 'أمس'], ['7', 'آخر 7 أيام'], ['30', 'آخر 30 يومًا'], ['month', 'هذا الشهر'], ['lmonth', 'الشهر اللي فات'], ['custom', 'فترة محددة']];
+const SOCIAL_RANGES = [['1', 'اليوم'], ['y', 'أمس'], ['7', 'آخر 7 أيام'], ['30', 'آخر 30 يومًا'], ['month', 'هذا الشهر'], ['lmonth', 'الشهر الماضي'], ['custom', 'فترة محددة']];
 function socialDashPeriod() {
   const d = socialDash, end = new Date(); end.setHours(24, 0, 0, 0);
   if (d.range === 'custom' && d.from) {
@@ -9655,28 +9729,28 @@ function socialDashInsights(s) {
   const withSpend = s.ads.filter(a => a.spend > 0);
   const spendAll = s.tot.spend;
   const best = withSpend.filter(a => a.qual > 0).sort((a, b) => a.cpQual - b.cpQual)[0];
-  if (best) out.push(['good', t('أرخص عميل مؤهل جه من "{a}": {c} ج.م للعميل المؤهل ({n} مؤهلين). زوّد ميزانيته تدريجيًا (20% كل يومين) طول ما التكلفة ثابتة.', { a: best.title, c: money(best.cpQual), n: best.qual })]);
+  if (best) out.push(['good', t('أقل تكلفة لعميل مؤهل جاءت من "{a}": {c} ج.م للعميل المؤهل ({n} مؤهلين). يُنصح بزيادة ميزانيته تدريجيًا (20% كل يومين) ما دامت التكلفة ثابتة.', { a: best.title, c: money(best.cpQual), n: best.qual })]);
   const buyer = s.ads.filter(a => a.buyers > 0).sort((a, b) => (b.roas ?? 0) - (a.roas ?? 0) || b.value - a.value)[0];
   if (buyer) out.push(['good', t('أعلى عائد: "{a}" — {b} عميل اشترى بـ {v} ج.م{r}.', { a: buyer.title, b: buyer.buyers, v: money(buyer.value), r: buyer.roas != null ? ` (${t('العائد {x} ضعف الصرف', { x: buyer.roas.toFixed(1) })})` : '' })]);
-  withSpend.filter(a => a.spend >= Math.max(spendAll * 0.15, 1) && !a.qual && !a.transferred).forEach(a => out.push(['bad', t('"{a}" صرف {s} ج.م ({p} من الصرف) ومجابش ولا عميل مؤهل ولا اتحوّل لرجال البيع. راجع الجمهور والرسالة أو وقفه.', { a: a.title, s: money(a.spend), p: pct(a.spend, spendAll) })]));
-  s.ads.filter(a => a.convs >= 10 && a.phones / a.convs < 0.2).forEach(a => out.push(['warn', t('"{a}": {n} محادثة بس {p} بس بعتوا أرقامهم. الإعلان بيجيب فضول أكتر من نية شراء: وضّح في الإعلان إنه للمزارع والمساحات، واطلب الرقم في أول رد.', { a: a.title, n: a.convs, p: pct(a.phones, a.convs) })]));
-  s.ads.filter(a => a.transferred >= 5 && !a.buyers).forEach(a => out.push(['warn', t('"{a}": اتحوّل منه {n} عميل لرجال البيع ومحدش اشترى لسه. تابع مع رجال البيع جودة العملاء دول قبل ما تزوّد الصرف.', { a: a.title, n: a.transferred })]));
-  withSpend.filter(a => a.frequency >= 3.5).forEach(a => out.push(['warn', t('"{a}": التكرار {f} (نفس الشخص شاف الإعلان {f} مرات). الجمهور تعب: جدّد التصميم أو وسّع الجمهور.', { a: a.title, f: a.frequency.toFixed(1) })]));
-  withSpend.filter(a => a.impressions >= 3000 && a.ctr > 0 && a.ctr < 0.8).forEach(a => out.push(['warn', t('"{a}": نسبة الضغط {c}% ضعيفة. جرّب صورة/فيديو أقوى وأول سطر فيه المشكلة (ملوحة المياه) والنتيجة.', { a: a.title, c: a.ctr.toFixed(2) })]));
-  s.ads.filter(a => a.created && Date.now() - new Date(a.created).getTime() < 3 * 86400000).forEach(a => out.push(['info', t('"{a}" جديد (أقل من 3 أيام): سيبه يخلص مرحلة التعلّم قبل ما تحكم عليه أو تغيّره.', { a: a.title })]));
+  withSpend.filter(a => a.spend >= Math.max(spendAll * 0.15, 1) && !a.qual && !a.transferred).forEach(a => out.push(['bad', t('"{a}" صرف {s} ج.م ({p} من الصرف) دون أي عميل مؤهل أو محوَّل إلى رجال البيع. يُنصح بمراجعة الجمهور والرسالة أو إيقافه.', { a: a.title, s: money(a.spend), p: pct(a.spend, spendAll) })]));
+  s.ads.filter(a => a.convs >= 10 && a.phones / a.convs < 0.2).forEach(a => out.push(['warn', t('"{a}": {n} محادثة، ولم يرسل أرقامهم إلا {p}. الإعلان يجذب الفضول أكثر من نية الشراء: يُنصح بتوضيح أنه للمزارع والمساحات، وطلب الرقم في أول رد.', { a: a.title, n: a.convs, p: pct(a.phones, a.convs) })]));
+  s.ads.filter(a => a.transferred >= 5 && !a.buyers).forEach(a => out.push(['warn', t('"{a}": حُوِّل منه {n} عميل إلى رجال البيع ولم يشترِ أحد بعد. يُنصح بمتابعة جودة هؤلاء العملاء مع رجال البيع قبل زيادة الصرف.', { a: a.title, n: a.transferred })]));
+  withSpend.filter(a => a.frequency >= 3.5).forEach(a => out.push(['warn', t('"{a}": التكرار {f} (شاهد الشخص نفسه الإعلان {f} مرات). يبدو أن الجمهور قد تشبّع: يُنصح بتجديد التصميم أو توسيع الجمهور.', { a: a.title, f: a.frequency.toFixed(1) })]));
+  withSpend.filter(a => a.impressions >= 3000 && a.ctr > 0 && a.ctr < 0.8).forEach(a => out.push(['warn', t('"{a}": نسبة الضغط {c}% منخفضة. يُنصح بتجربة صورة أو فيديو أقوى، وأن يتضمن السطر الأول المشكلة (ملوحة المياه) والنتيجة.', { a: a.title, c: a.ctr.toFixed(2) })]));
+  s.ads.filter(a => a.created && Date.now() - new Date(a.created).getTime() < 3 * 86400000).forEach(a => out.push(['info', t('"{a}" جديد (أقل من 3 أيام): يُنصح بتركه حتى ينهي مرحلة التعلّم قبل الحكم عليه أو تعديله.', { a: a.title })]));
   const noStage = s.tot.convs - Object.values(s.stages).reduce((x, y) => x + y, 0);
-  if (s.tot.convs >= 10 && noStage / s.tot.convs > 0.5) out.push(['warn', t('{p} من المحادثات من غير مرحلة. لما الفريق يحدد مسجل/مؤهل، ميتا بتتعلّم وتجيب عملاء أحسن بنفس الصرف.', { p: pct(noStage, s.tot.convs) })]);
-  if (s.median != null && s.median > 60) out.push(['warn', t('متوسط أول رد {w}. الرد خلال أول ساعة بيرفع نسبة اللي بيبعتوا أرقامهم بشكل واضح.', { w: fmtWait(s.median) })]);
+  if (s.tot.convs >= 10 && noStage / s.tot.convs > 0.5) out.push(['warn', t('{p} من المحادثات دون مرحلة. عندما يحدد الفريق المرحلة (مسجل/مؤهل) تتعلّم ميتا وتجلب عملاء أفضل بالصرف نفسه.', { p: pct(noStage, s.tot.convs) })]);
+  if (s.median != null && s.median > 60) out.push(['warn', t('متوسط أول رد {w}. الرد خلال الساعة الأولى يرفع بوضوح نسبة من يرسلون أرقامهم.', { w: fmtWait(s.median) })]);
   const cs = Object.entries(s.countries).filter(([k]) => k).sort((a, b) => b[1] - a[1]);
-  if (cs.length > 1 && s.tot.convs >= 10) out.push(['info', t('أكتر الدول: {c}. لو فيه دول مش مستهدفة بتاخد نسبة كبيرة، استبعدها من الاستهداف.', { c: cs.slice(0, 4).map(([k, n]) => `${countryLabel(k)} ${pct(n, s.tot.convs)}`).join('، ') })]);
-  if (!s.hasSpend) out.push(['info', t('حساب الإعلانات مش متوصل، فالتكلفة والعائد مش ظاهرين. ضيف AD_ACCOUNT_ID في Cloudflare (وتوكن فيه ads_read).')]);
+  if (cs.length > 1 && s.tot.convs >= 10) out.push(['info', t('أكثر الدول: {c}. إذا كانت دول غير مستهدفة تستحوذ على نسبة كبيرة، فيُنصح باستبعادها من الاستهداف.', { c: cs.slice(0, 4).map(([k, n]) => `${countryLabel(k)} ${pct(n, s.tot.convs)}`).join('، ') })]);
+  if (!s.hasSpend) out.push(['info', t('حساب الإعلانات غير مربوط، لذا لا تظهر التكلفة والعائد. أضف AD_ACCOUNT_ID في Cloudflare (مع توكن يتضمن صلاحية ads_read).')]);
   return out;
 }
 
 function viewSocialDash(root) {
   const d = socialDash, period = socialDashPeriod();
   root.innerHTML = `<div class="sd">
-    <div class="sd-head"><div><h1>${t('لوحة أداء الإعلانات والسوشيال')}</h1><div class="muted">${t('من الإعلان للمحادثة للعميل الجاد لرجل البيع للبيع. كل رقم بيفتح أسماء العملاء، وكل اسم بيفتح الشات.')}</div></div><span class="spacer"></span>
+    <div class="sd-head"><div><h1>${t('لوحة أداء الإعلانات والسوشيال')}</h1><div class="muted">${t('من الإعلان إلى المحادثة إلى العميل الجاد إلى رجل البيع إلى البيع. كل رقم يعرض أسماء العملاء، وكل اسم يفتح المحادثة.')}</div></div><span class="spacer"></span>
       <button class="btn" id="sdBack">💬 ${t('الرسائل')}</button><button class="btn" id="sdRe" title="${t('تحديث من ميتا')}">⟳</button><button class="btn" id="sdXls">⬇ ${t('إكسيل')}</button><button class="btn primary" id="sdDoc">📄 ${t('تقرير وورد')}</button></div>
     <div class="sd-bar"><div class="tabs" id="sdRange">${SOCIAL_RANGES.map(([k, l]) => `<button class="tab ${d.range === k ? 'on' : ''}" data-r="${k}">${t(l)}</button>`).join('')}</div>
       <span id="sdCustom" ${d.range === 'custom' ? '' : 'hidden'}><input class="inp" type="date" id="sdFrom" value="${d.from}" aria-label="${t('من')}"> <input class="inp" type="date" id="sdTo" value="${d.to}" aria-label="${t('إلى')}"></span>
@@ -9715,57 +9789,57 @@ function viewSocialDash(root) {
     .catch(err => { const b = $('#sdBody', root); if (b) b.innerHTML = `<div class="err-msg">${esc(t('تعذر تحميل البيانات: {e}', { e: err.message }))}</div>`; });
 }
 
-const SD_TRANSFER_LABEL = 'عملاء جادين تم تحويلهم لرجال البيع';
+const SD_TRANSFER_LABEL = 'عملاء جادّون تم تحويلهم إلى رجال البيع';
 function drawSocialDash(box, s, period, redraw) {
   const d = socialDash, T = s.tot;
   const kpi = (icon, label, value, sub, list, cls = '') => `<button class="sd-kpi ${cls}" ${list ? `data-list="${list}"` : 'disabled'}><span class="sd-ic">${icon}</span><span class="sd-kl">${label}</span><span class="sd-kv">${value}</span><span class="sd-ks">${sub || ''}</span></button>`;
   const costSub = (v, l) => s.hasSpend ? `${l}: ${sdMoney(v)} ${t('ج.م')}` : '';
-  const funnel = [[t('محادثات'), T.convs, 'all'], [t('بعتوا أرقامهم'), T.phones, 'phones'], [t('مسجل'), T.lead + T.qualified + T.converted, 'lead+'], [t('مؤهل'), T.qualified + T.converted, 'qualified+'], [t(SD_TRANSFER_LABEL), T.transferred, 'transferred'], [t('اشتروا'), T.buyers, 'buyers']];
+  const funnel = [[t('محادثات'), T.convs, 'all'], [t('أرسلوا أرقامهم'), T.phones, 'phones'], [t('مسجل'), T.lead + T.qualified + T.converted, 'lead+'], [t('مؤهل'), T.qualified + T.converted, 'qualified+'], [t(SD_TRANSFER_LABEL), T.transferred, 'transferred'], [t('اشتروا'), T.buyers, 'buyers']];
   const maxF = Math.max(1, funnel[0][1]);
   const insights = socialDashInsights(s);
-  const dayRows = Object.entries(s.days).map(([k, v]) => ({ label: k.slice(8) + '/' + k.slice(5, 7), value: v.convs, tip: `${fmtDate(k)}: ${t('{a} محادثة، {b} أرقام، {q} مؤهل، {tr} اتحولوا لرجال البيع', { a: v.convs, b: v.phones, q: v.qualified, tr: v.transferred })}${s.hasSpend ? ` · ${t('صرف')} ${money(v.spend)}` : ''}` }));
+  const dayRows = Object.entries(s.days).map(([k, v]) => ({ label: k.slice(8) + '/' + k.slice(5, 7), value: v.convs, tip: `${fmtDate(k)}: ${t('{a} محادثة، {b} أرقام، {q} مؤهل، {tr} حُوِّلوا إلى رجال البيع', { a: v.convs, b: v.phones, q: v.qualified, tr: v.transferred })}${s.hasSpend ? ` · ${t('صرف')} ${money(v.spend)}` : ''}` }));
   const spendRows = Object.entries(s.days).map(([k, v]) => ({ label: k.slice(8) + '/' + k.slice(5, 7), value: Math.round(v.spend), tip: `${fmtDate(k)}: ${money(v.spend)} ${t('ج.م')}` }));
   const sv = x => x[d.sort] == null ? -1e15 : x[d.sort];
   const sorted = s.ads.slice().sort((a, b) => (sv(b) - sv(a)) * (d.dir < 0 ? 1 : -1) || b.convs - a.convs);
   const th = (k, l) => `<th class="sd-sort ${d.sort === k ? 'on' : ''}" data-sort="${k}">${l}${d.sort === k ? (d.dir < 0 ? ' ▼' : ' ▲') : ''}</th>`;
   const cell = (a, n, metric, strong) => n ? `<td><button class="sd-n ${strong ? 'b' : ''}" data-list="ad|${esc(a.key)}|${metric}">${n}</button></td>` : '<td class="muted">0</td>';
-  const statusPill = st => st ? `<span class="pill ${st === 'ACTIVE' ? 'p-green' : /PAUSED|ARCHIVED|DELETED/.test(st) ? 'p-gray' : 'p-orange'}">${esc({ ACTIVE: t('شغال'), PAUSED: t('متوقف'), CAMPAIGN_PAUSED: t('الحملة متوقفة'), ADSET_PAUSED: t('المجموعة متوقفة'), PENDING_REVIEW: t('تحت المراجعة'), DISAPPROVED: t('مرفوض'), WITH_ISSUES: t('فيه مشكلة'), ARCHIVED: t('مؤرشف'), DELETED: t('محذوف') }[st] || st)}</span>` : '';
+  const statusPill = st => st ? `<span class="pill ${st === 'ACTIVE' ? 'p-green' : /PAUSED|ARCHIVED|DELETED/.test(st) ? 'p-gray' : 'p-orange'}">${esc({ ACTIVE: t('نشط'), PAUSED: t('متوقف'), CAMPAIGN_PAUSED: t('الحملة متوقفة'), ADSET_PAUSED: t('المجموعة متوقفة'), PENDING_REVIEW: t('تحت المراجعة'), DISAPPROVED: t('مرفوض'), WITH_ISSUES: t('توجد مشكلة'), ARCHIVED: t('مؤرشف'), DELETED: t('محذوف') }[st] || st)}</span>` : '';
   const journey = s.journey.filter(r => (!d.jStage || (d.jStage === 'none' ? !r.stage : d.jStage === 'transferred' ? !!r.cust : d.jStage === 'buyers' ? r.bought : r.stage === d.jStage)) && (!d.jAd || r.ad === d.jAd) && (!d.jRep || r.rep === d.jRep) && sdMatch(r, d.jq));
   box.innerHTML = `
-    ${s.hasSpend ? '' : `<div class="sd-note">ⓘ ${esc(socialDash.adsErr && !['not configured', 'unknown'].includes(socialDash.adsErr) ? t('حساب الإعلانات رد بخطأ: {e}', { e: socialDash.adsErr }) : t('الصرف والتكلفة لكل عميل محتاجين ربط حساب الإعلانات (AD_ACCOUNT_ID في Cloudflare). باقي الأرقام شغالة.'))}</div>`}
+    ${s.hasSpend ? '' : `<div class="sd-note">ⓘ ${esc(socialDash.adsErr && !['not configured', 'unknown'].includes(socialDash.adsErr) ? t('حساب الإعلانات رد بخطأ: {e}', { e: socialDash.adsErr }) : t('يتطلب عرض الصرف والتكلفة لكل عميل ربط حساب الإعلانات (AD_ACCOUNT_ID في Cloudflare). بقية الأرقام تعمل.'))}</div>`}
     <div class="sd-kpis">
       ${kpi('💬', t('محادثات جديدة'), T.convs, esc(period.label), 'all')}
-      ${kpi('📞', t('بعتوا أرقامهم'), T.phones, `${pct(T.phones, T.convs)} ${t('من المحادثات')}`, 'phones')}
+      ${kpi('📞', t('أرسلوا أرقامهم'), T.phones, `${pct(T.phones, T.convs)} ${t('من المحادثات')}`, 'phones')}
       ${kpi('⭐', t('مؤهلين'), T.qualified + T.converted, costSub(T.cpQual, t('تكلفة المؤهل')), 'qualified+', 'k-purple')}
       ${kpi('🤝', t(SD_TRANSFER_LABEL), T.transferred, `${pct(T.transferred, T.convs)}${s.hasSpend ? ` · ${costSub(T.cpTrans, t('التكلفة'))}` : ''}`, 'transferred', 'k-blue')}
       ${kpi('🛒', t('اشتروا'), T.buyers, `${money(T.value)} ${t('ج.م')}`, 'buyers', 'k-green')}
-      ${kpi('💰', t('صرف الإعلانات'), s.hasSpend ? `${money(T.spend)}` : '—', s.hasSpend ? `${t('ج.م')}${s.currency !== 'EGP' ? ` · ${t('الحساب بالـ {c}', { c: s.currency })}` : ''}` : t('مش متوصل'), '')}
+      ${kpi('💰', t('صرف الإعلانات'), s.hasSpend ? `${money(T.spend)}` : '—', s.hasSpend ? `${t('ج.م')}${s.currency !== 'EGP' ? ` · ${t('الحساب بالـ {c}', { c: s.currency })}` : ''}` : t('غير مربوط'), '')}
       ${kpi('🎯', t('تكلفة المحادثة'), s.hasSpend ? sdMoney(T.cpConv) : '—', s.hasSpend ? `${t('تكلفة العميل المشتري')}: ${sdMoney(T.cpBuy)}` : '', '')}
-      ${kpi('📈', t('العائد على الصرف'), T.roas != null ? `${T.roas.toFixed(1)}x` : '—', s.hasSpend ? t('كل جنيه صرف رجّع {x} جنيه مبيعات', { x: T.roas != null ? T.roas.toFixed(1) : '0' }) : '', '')}
+      ${kpi('📈', t('العائد على الصرف'), T.roas != null ? `${T.roas.toFixed(1)}x` : '—', s.hasSpend ? t('كل جنيه مصروف حقق {x} جنيه مبيعات', { x: T.roas != null ? T.roas.toFixed(1) : '0' }) : '', '')}
       ${kpi('⏱', t('متوسط أول رد'), fmtWait(s.median), s.fastShare == null ? '' : t('{p} خلال ساعة', { p: pct(s.fastShare * 100, 100) }), '')}
     </div>
     <div class="sd-grid2">
       <div class="card"><div class="sd-ttl">${t('مسار العملاء (القمع)')}</div>
         <div class="sd-funnel">${funnel.map(([l, n, list], i) => `<button class="sd-fr" data-list="${list}"><span class="sd-fl">${l}</span><span class="sd-fb"><i style="width:${Math.max(2, n / maxF * 100)}%"></i></span><b>${n}</b><span class="muted">${i ? pct(n, funnel[i - 1][1]) : ''}</span></button>`).join('')}</div></div>
       <div class="card"><div class="sd-ttl">💡 ${t('تحليل وتوصيات للميديا باير')}</div>
-        <ul class="sd-ins">${insights.length ? insights.map(([k, x]) => `<li class="${k}">${esc(x)}</li>`).join('') : `<li class="info">${t('مفيش بيانات كفاية في الفترة دي للتحليل')}</li>`}</ul></div>
+        <ul class="sd-ins">${insights.length ? insights.map(([k, x]) => `<li class="${k}">${esc(x)}</li>`).join('') : `<li class="info">${t('لا تتوفر بيانات كافية للتحليل في هذه الفترة')}</li>`}</ul></div>
     </div>
-    <div class="card"><div class="sd-ttl">${t('مراحل العملاء (اللي بتتبعت للإعلانات)')} <span class="muted">· ${t('دوس على أي مرحلة تشوف العملاء بأساميهم')}</span></div>
-      <div class="stage-row mt">${Object.entries(SOCIAL_STAGES).map(([k, l]) => `<button class="stage-box ${STAGE_PILL[k]}" data-list="stage|${k}"><div class="v">${s.stages[k] || 0}</div><div class="l">${t(l)}${STAGE_META[k] ? ' ⓜ' : ''}</div></button>`).join('')}<button class="stage-box p-gray" data-list="stage|none"><div class="v">${T.convs - Object.values(s.stages).reduce((x, y) => x + y, 0)}</div><div class="l">${t('من غير مرحلة')}</div></button></div></div>
-    <div class="card"><div class="sd-ttl">${t('أداء كل إعلان')} <span class="muted">· ${t('{n} إعلان', { n: s.ads.length })} · ${t('دوس على العنوان للترتيب، وعلى أي رقم تشوف العملاء')}</span></div>
-      <div class="tbl-wrap sd-tbl"><table class="tbl"><thead><tr><th>${t('الإعلان')}</th>${s.hasSpend ? `${th('spend', t('الصرف'))}${th('impressions', t('مرات الظهور'))}${th('ctr', t('نسبة الضغط'))}` : ''}${th('convs', t('محادثات'))}${th('phones', t('أرقام'))}${th('lead', t('مسجل'))}${th('qual', t('مؤهل'))}${th('transferred', t('اتحولوا لرجال البيع'))}${th('buyers', t('اشتروا'))}${th('value', t('المبيعات'))}${s.hasSpend ? `${th('cpConv', t('تكلفة المحادثة'))}${th('cpQual', t('تكلفة المؤهل'))}${th('cpTrans', t('تكلفة العميل الجاد'))}${th('roas', t('العائد'))}` : ''}<th>${t('رجال البيع')}</th></tr></thead>
-      <tbody>${sorted.length ? sorted.map(a => { return `<tr><td class="wrap sd-ad">${a.thumb ? `<img src="${esc(a.thumb)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : ''}<div><b>${esc(a.title)}</b> ${statusPill(a.status)}<div class="muted">${esc([a.campaign, a.adset].filter(Boolean).join(' › '))}${a.created ? ` · ${t('اتعمل')} ${fmtDate(a.created.slice(0, 10))}` : ''}</div><div class="muted">🌍 ${esc(countryTop(a.countries))}</div></div></td>
+    <div class="card"><div class="sd-ttl">${t('مراحل العملاء (المُرسَلة إلى الإعلانات)')} <span class="muted">· ${t('اضغط على أي مرحلة لعرض أسماء العملاء')}</span></div>
+      <div class="stage-row mt">${Object.entries(SOCIAL_STAGES).map(([k, l]) => `<button class="stage-box ${STAGE_PILL[k]}" data-list="stage|${k}"><div class="v">${s.stages[k] || 0}</div><div class="l">${t(l)}${STAGE_META[k] ? ' ⓜ' : ''}</div></button>`).join('')}<button class="stage-box p-gray" data-list="stage|none"><div class="v">${T.convs - Object.values(s.stages).reduce((x, y) => x + y, 0)}</div><div class="l">${t('دون مرحلة')}</div></button></div></div>
+    <div class="card"><div class="sd-ttl">${t('أداء كل إعلان')} <span class="muted">· ${t('{n} إعلان', { n: s.ads.length })} · ${t('اضغط على العنوان للترتيب، وعلى أي رقم لعرض العملاء')}</span></div>
+      <div class="tbl-wrap sd-tbl"><table class="tbl"><thead><tr><th>${t('الإعلان')}</th>${s.hasSpend ? `${th('spend', t('الصرف'))}${th('impressions', t('مرات الظهور'))}${th('ctr', t('نسبة الضغط'))}` : ''}${th('convs', t('محادثات'))}${th('phones', t('أرقام'))}${th('lead', t('مسجل'))}${th('qual', t('مؤهل'))}${th('transferred', t('حُوِّلوا إلى رجال البيع'))}${th('buyers', t('اشتروا'))}${th('value', t('المبيعات'))}${s.hasSpend ? `${th('cpConv', t('تكلفة المحادثة'))}${th('cpQual', t('تكلفة المؤهل'))}${th('cpTrans', t('تكلفة العميل الجاد'))}${th('roas', t('العائد'))}` : ''}<th>${t('رجال البيع')}</th></tr></thead>
+      <tbody>${sorted.length ? sorted.map(a => { return `<tr><td class="wrap sd-ad">${a.thumb ? `<img src="${esc(a.thumb)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : ''}<div><b>${esc(a.title)}</b> ${statusPill(a.status)}<div class="muted">${esc([a.campaign, a.adset].filter(Boolean).join(' › '))}${a.created ? ` · ${t('أُنشئ')} ${fmtDate(a.created.slice(0, 10))}` : ''}</div><div class="muted">🌍 ${esc(countryTop(a.countries))}</div></div></td>
         ${s.hasSpend ? `<td><b>${money(a.spend)}</b></td><td>${money(a.impressions)}</td><td>${a.ctr ? `${a.ctr.toFixed(2)}%` : '—'}</td>` : ''}
         ${cell(a, a.convs, 'all')}${cell(a, a.phones, 'phones')}${cell(a, a.stages.lead || 0, 'stage-lead')}${cell(a, a.qual, 'qualified+', true)}${cell(a, a.transferred, 'transferred', true)}${cell(a, a.buyers, 'buyers', true)}<td>${money(a.value)}</td>
         ${s.hasSpend ? `<td>${sdMoney(a.cpConv)}</td><td>${sdMoney(a.cpQual)}</td><td>${sdMoney(a.cpTrans)}</td><td>${a.roas != null ? `<b class="${a.roas >= 1 ? 'pos' : 'neg'}">${a.roas.toFixed(1)}x</b>` : '—'}</td>` : ''}
         <td class="wrap">${Object.entries(a.reps).map(([id, n]) => `<span class="pill p-blue">${esc(userName(id))} ${n}</span>`).join(' ') || '<span class="muted">—</span>'}</td></tr>`; }).join('')
         : `<tr><td colspan="16" class="muted">${t('لا توجد محادثات في هذه الفترة')}</td></tr>`}</tbody></table></div></div>
     <div class="sd-grid2">
-      <div class="card"><div class="sd-ttl">${t('رجال البيع: العملاء الجادين اللي اتحولولهم')}</div>
-        <div class="tbl-wrap"><table class="tbl"><thead><tr><th>${t('رجل البيع')}</th><th>${t('اتحوّلوله')}</th><th>${t('اشتروا')}</th><th>${t('نسبة الإغلاق')}</th><th>${t('المبيعات')}</th><th>${t('أكتر إعلانات')}</th></tr></thead>
-        <tbody>${s.reps.length ? s.reps.map(r => `<tr><td><b>${esc(userName(r.id))}</b></td><td><button class="sd-n b" data-list="rep|${esc(r.id)}">${r.transferred}</button></td><td>${r.buyers}</td><td>${pct(r.buyers, r.transferred)}</td><td>${money(r.value)}</td><td class="wrap muted">${esc(Object.entries(r.ads).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([k, n]) => `${k} (${n})`).join('، '))}</td></tr>`).join('') : `<tr><td colspan="6" class="muted">${t('محدش اتحوّل لرجال البيع في الفترة دي')}</td></tr>`}</tbody></table></div></div>
+      <div class="card"><div class="sd-ttl">${t('رجال البيع: العملاء الجادّون المحوَّلون إليهم')}</div>
+        <div class="tbl-wrap"><table class="tbl"><thead><tr><th>${t('رجل البيع')}</th><th>${t('حُوِّلوا إليه')}</th><th>${t('اشتروا')}</th><th>${t('نسبة الإغلاق')}</th><th>${t('المبيعات')}</th><th>${t('أكثر الإعلانات')}</th></tr></thead>
+        <tbody>${s.reps.length ? s.reps.map(r => `<tr><td><b>${esc(userName(r.id))}</b></td><td><button class="sd-n b" data-list="rep|${esc(r.id)}">${r.transferred}</button></td><td>${r.buyers}</td><td>${pct(r.buyers, r.transferred)}</td><td>${money(r.value)}</td><td class="wrap muted">${esc(Object.entries(r.ads).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([k, n]) => `${k} (${n})`).join('، '))}</td></tr>`).join('') : `<tr><td colspan="6" class="muted">${t('لم يُحوَّل أي عميل إلى رجال البيع في هذه الفترة')}</td></tr>`}</tbody></table></div></div>
       <div class="card"><div class="sd-ttl">${t('الحملات')}</div>
-        <div class="tbl-wrap"><table class="tbl"><thead><tr><th>${t('الحملة')}</th>${s.hasSpend ? `<th>${t('الصرف')}</th>` : ''}<th>${t('محادثات')}</th><th>${t('مؤهل')}</th><th>${t('اتحولوا لرجال البيع')}</th><th>${t('اشتروا')}</th><th>${t('المبيعات')}</th>${s.hasSpend ? `<th>${t('تكلفة المؤهل')}</th>` : ''}</tr></thead>
+        <div class="tbl-wrap"><table class="tbl"><thead><tr><th>${t('الحملة')}</th>${s.hasSpend ? `<th>${t('الصرف')}</th>` : ''}<th>${t('محادثات')}</th><th>${t('مؤهل')}</th><th>${t('حُوِّلوا إلى رجال البيع')}</th><th>${t('اشتروا')}</th><th>${t('المبيعات')}</th>${s.hasSpend ? `<th>${t('تكلفة المؤهل')}</th>` : ''}</tr></thead>
         <tbody>${s.camps.map(c => `<tr><td class="wrap"><b>${esc(c.name)}</b> <span class="muted">(${c.ads})</span></td>${s.hasSpend ? `<td>${money(c.spend)}</td>` : ''}<td>${c.convs}</td><td>${c.qual}</td><td>${c.transferred}</td><td>${c.buyers}</td><td>${money(c.value)}</td>${s.hasSpend ? `<td>${sdMoney(sdCost(c.spend, c.qual))}</td>` : ''}</tr>`).join('')}</tbody></table></div></div>
     </div>
     <div class="sd-grid2">
@@ -9776,14 +9850,14 @@ function drawSocialDash(box, s, period, redraw) {
       <div class="card"><div class="sd-ttl">${t('العملاء حسب الدولة')}</div>${hbars(Object.entries(s.countries).sort((a, b) => b[1] - a[1]).slice(0, 15).map(([k, n]) => [k ? countryLabel(k) : t('دولة غير محددة'), n, String(n)]), { fmt: String, h1: t('الدولة'), h2: t('العملاء') })}</div>
       <div class="card"><div class="sd-ttl">${t('القنوات')}</div>${T.convs ? stackBar([[t('ماسنجر'), s.channels.fb || 0], [t('إنستجرام'), s.channels.ig || 0], [t('واتساب'), s.channels.wa || 0]], String) : `<div class="empty">${t('لا توجد بيانات في هذه الفترة')}</div>`}</div>
     </div>
-    <div class="card" id="sdJourney"><div class="sd-ttl">${t('تتبّع مسار العملاء')} <span class="muted">· ${t('{n} عميل', { n: journey.length })} · ${t('دوس على الاسم يفتح الشات')}</span></div>
+    <div class="card" id="sdJourney"><div class="sd-ttl">${t('تتبّع مسار العملاء')} <span class="muted">· ${t('{n} عميل', { n: journey.length })} · ${t('اضغط على الاسم لفتح المحادثة')}</span></div>
       <div class="filters mt"><input class="inp" type="search" id="jq" placeholder="${t('بحث بالاسم أو رقم التليفون')}" value="${esc(d.jq)}">
-        <select class="inp" id="jStage">${opts([['', t('كل المراحل')], ['none', t('من غير مرحلة')], ...Object.entries(SOCIAL_STAGES).map(([k, v]) => [k, t(v)]), ['transferred', t(SD_TRANSFER_LABEL)], ['buyers', t('اشتروا')]], d.jStage)}</select>
+        <select class="inp" id="jStage">${opts([['', t('كل المراحل')], ['none', t('دون مرحلة')], ...Object.entries(SOCIAL_STAGES).map(([k, v]) => [k, t(v)]), ['transferred', t(SD_TRANSFER_LABEL)], ['buyers', t('اشتروا')]], d.jStage)}</select>
         <select class="inp" id="jAd"><option value="">${t('كل الإعلانات')}</option>${s.ads.filter(a => a.rows.length).map(a => `<option value="${esc(a.key)}" ${a.key === d.jAd ? 'selected' : ''}>${esc(a.title.slice(0, 60))}</option>`).join('')}</select>
         <select class="inp" id="jRep"><option value="">${t('كل رجال البيع')}</option>${s.reps.map(r => `<option value="${esc(r.id)}" ${r.id === d.jRep ? 'selected' : ''}>${esc(userName(r.id))}</option>`).join('')}</select>
         <button class="btn" id="jXls">⬇ ${t('إكسيل بالأسماء')}</button></div>
       ${sdTable(journey.slice(0, d.jShown))}
-      ${journey.length > d.jShown ? `<button class="btn mt" id="jMore">${t('عرض المزيد ({n} باقيين)', { n: journey.length - d.jShown })}</button>` : ''}</div>`;
+      ${journey.length > d.jShown ? `<button class="btn mt" id="jMore">${t('عرض المزيد ({n} متبقٍ)', { n: journey.length - d.jShown })}</button>` : ''}</div>`;
   // كل رقم أو مرحلة بتفتح أسماء العملاء
   $$('[data-list]', box).forEach(b => b.onclick = () => openSdList(s, b.dataset.list));
   $$('.sd-sort', box).forEach(h => h.onclick = () => { if (d.sort === h.dataset.sort) d.dir *= -1; else { d.sort = h.dataset.sort; d.dir = -1; } redraw(); });
@@ -9805,7 +9879,7 @@ function sdMatch(r, q) {
   return normHeader(`${r.name} ${r.adTitle} ${r.cust?.name || ''}`).includes(normHeader(q));
 }
 function sdTable(rows) {
-  if (!rows.length) return `<div class="empty">${t('مفيش عملاء هنا')}</div>`;
+  if (!rows.length) return `<div class="empty">${t('لا يوجد عملاء هنا')}</div>`;
   return `<div class="tbl-wrap"><table class="tbl sd-j"><thead><tr><th>${t('العميل')}</th><th>${t('القناة')}</th><th>${t('الإعلان')}</th><th>${t('أول رسالة')}</th><th>${t('الرقم')}</th><th>${t('الدولة')}</th><th>${t('المرحلة')}</th><th>${t('رجل البيع')}</th><th>${t('اشترى')}</th></tr></thead>
     <tbody>${rows.map(r => `<tr><td><button class="sd-name" ${r.id ? `data-chat="${esc(r.id)}"` : `data-cust="${esc(r.cust?.id || '')}"`}>${r.cv ? socialAvatar(r.cv) : ''}<b>${esc(r.name)}</b></button>${r.cust ? `<div class="muted" style="font-size:12px">${t('عميل')} ${esc(r.cust.code || '')}${r.kind === 'manual' ? ` · ${t('مسجل يدويًا')}` : ''}</div>` : ''}</td>
       <td>${r.channel ? t(SOCIAL_CHANNELS[r.channel] || r.channel) : '—'}</td><td class="wrap" style="max-width:240px">${esc(r.adTitle)}</td><td>${r.at ? fmtDT(new Date(r.at).toISOString()) : ''}</td><td dir="ltr" class="num">${esc(r.phone || '')}</td><td>${esc(r.country ? countryLabel(r.country) : '')}</td>
@@ -9819,7 +9893,7 @@ function bindSdTable(root, close) {
 function sdRowsFor(s, spec) {
   const [kind, a, b] = spec.split('|');
   const filt = { all: r => r.kind === 'conv', phones: r => r.kind === 'conv' && (r.cv.phones || []).length, 'lead+': r => SD_POSITIVE.includes(r.stage), 'qualified+': r => r.stage === 'qualified' || r.stage === 'converted', transferred: r => !!r.cust, buyers: r => r.bought };
-  if (kind === 'stage') return { rows: s.journey.filter(r => a === 'none' ? r.kind === 'conv' && !r.stage : r.stage === a), title: a === 'none' ? t('من غير مرحلة') : t(SOCIAL_STAGES[a]) };
+  if (kind === 'stage') return { rows: s.journey.filter(r => a === 'none' ? r.kind === 'conv' && !r.stage : r.stage === a), title: a === 'none' ? t('دون مرحلة') : t(SOCIAL_STAGES[a]) };
   if (kind === 'rep') return { rows: s.journey.filter(r => r.cust && r.rep === a), title: `${t(SD_TRANSFER_LABEL)}: ${userName(a)}` };
   if (kind === 'ad') {
     const ad = s.ads.find(x => x.key === a); if (!ad) return { rows: [], title: '' };
@@ -9827,7 +9901,7 @@ function sdRowsFor(s, spec) {
     const f = st ? (r => r.stage === st) : filt[b] || filt.all;
     return { rows: ad.rows.filter(f), title: `${ad.title} · ${{ all: t('محادثات'), phones: t('أرقام'), 'qualified+': t('مؤهل'), transferred: t(SD_TRANSFER_LABEL), buyers: t('اشتروا') }[b] || t(SOCIAL_STAGES[st] || '')}` };
   }
-  return { rows: s.journey.filter(filt[kind] || filt.all), title: { all: t('محادثات جديدة'), phones: t('بعتوا أرقامهم'), 'lead+': t('مسجل'), 'qualified+': t('مؤهلين'), transferred: t(SD_TRANSFER_LABEL), buyers: t('اشتروا') }[kind] || '' };
+  return { rows: s.journey.filter(filt[kind] || filt.all), title: { all: t('محادثات جديدة'), phones: t('أرسلوا أرقامهم'), 'lead+': t('مسجل'), 'qualified+': t('مؤهلين'), transferred: t(SD_TRANSFER_LABEL), buyers: t('اشتروا') }[kind] || '' };
 }
 function openSdList(s, spec) {
   const { rows, title } = sdRowsFor(s, spec);
@@ -9848,10 +9922,10 @@ function exportSdList(rows, title) {
 // ------- إكسيل منسق: لوحة ملخص + الإعلانات + الحملات + رجال البيع + مسار العملاء بالأسماء + الأيام + الدول -------
 function exportSocialDash(s, period) {
   const T = s.tot, H = s.hasSpend;
-  const kpis = [[t('محادثات جديدة'), T.convs], [t('بعتوا أرقامهم'), T.phones], [t('مؤهلين'), T.qualified + T.converted], [t(SD_TRANSFER_LABEL), T.transferred], [t('اشتروا'), T.buyers], [t('المبيعات (ج.م)'), Math.round(T.value)],
+  const kpis = [[t('محادثات جديدة'), T.convs], [t('أرسلوا أرقامهم'), T.phones], [t('مؤهلين'), T.qualified + T.converted], [t(SD_TRANSFER_LABEL), T.transferred], [t('اشتروا'), T.buyers], [t('المبيعات (ج.م)'), Math.round(T.value)],
     ...(H ? [[t('صرف الإعلانات (ج.م)'), Math.round(T.spend)], [t('تكلفة المحادثة'), T.cpConv == null ? '—' : Math.round(T.cpConv)], [t('تكلفة المؤهل'), T.cpQual == null ? '—' : Math.round(T.cpQual)], [t('تكلفة العميل الجاد'), T.cpTrans == null ? '—' : Math.round(T.cpTrans)], [t('تكلفة العميل المشتري'), T.cpBuy == null ? '—' : Math.round(T.cpBuy)], [t('العائد على الصرف'), T.roas == null ? '—' : `${T.roas.toFixed(2)}x`]] : []),
     [t('متوسط أول رد'), fmtWait(s.median)]];
-  const funnel = [[t('المرحلة'), t('العدد'), t('من اللي قبلها')], ...[[t('محادثات'), T.convs], [t('بعتوا أرقامهم'), T.phones], [t('مسجل'), T.lead + T.qualified + T.converted], [t('مؤهل'), T.qualified + T.converted], [t(SD_TRANSFER_LABEL), T.transferred], [t('اشتروا'), T.buyers]].map((r, i, a) => [r[0], r[1], i ? (a[i - 1][1] ? r[1] / a[i - 1][1] : 0) : 1])];
+  const funnel = [[t('المرحلة'), t('العدد'), t('عن الفترة السابقة')], ...[[t('محادثات'), T.convs], [t('أرسلوا أرقامهم'), T.phones], [t('مسجل'), T.lead + T.qualified + T.converted], [t('مؤهل'), T.qualified + T.converted], [t(SD_TRANSFER_LABEL), T.transferred], [t('اشتروا'), T.buyers]].map((r, i, a) => [r[0], r[1], i ? (a[i - 1][1] ? r[1] / a[i - 1][1] : 0) : 1])];
   const adHead = [t('الإعلان'), t('الحملة'), t('المجموعة'), t('الحالة'), ...(H ? [t('الصرف (ج.م)'), t('مرات الظهور'), t('الوصول'), t('التكرار'), t('الضغطات'), t('نسبة الضغط %'), t('محادثات ميتا')] : []), t('محادثات'), t('أرقام'), t('متابعة'), t('مسجل'), t('مؤهل'), t('غير مؤهل'), t('تم التحويل'), t('مفقود'), t('سبام'), t(SD_TRANSFER_LABEL), t('اشتروا'), t('المبيعات (ج.م)'), ...(H ? [t('تكلفة المحادثة'), t('تكلفة المؤهل'), t('تكلفة العميل الجاد'), t('تكلفة المشتري'), t('العائد')] : []), t('رجال البيع'), t('الدول')];
   const r2 = v => v == null ? '' : Math.round(v);
   const adRows = s.ads.map(a => [a.title, a.campaign, a.adset, a.status, ...(H ? [Math.round(a.spend), a.impressions, a.reach, +a.frequency.toFixed(2), a.clicks, +a.ctr.toFixed(2), a.metaMsgs] : []), a.convs, a.phones, a.stages.followup || 0, a.stages.lead || 0, a.stages.qualified || 0, a.stages.unqualified || 0, a.stages.converted || 0, a.stages.lost || 0, a.stages.spam || 0, a.transferred, a.buyers, Math.round(a.value), ...(H ? [r2(a.cpConv), r2(a.cpQual), r2(a.cpTrans), r2(a.cpBuy), a.roas == null ? '' : +a.roas.toFixed(2)] : []), Object.entries(a.reps).map(([id, n]) => `${userName(id)} (${n})`).join('، '), countryTop(a.countries, 20)]);
@@ -9865,7 +9939,7 @@ function exportSocialDash(s, period) {
   const insights = [[t('النوع'), t('التحليل والتوصية')], ...socialDashInsights(s).map(([k, x]) => [{ good: t('فرصة'), bad: t('مشكلة'), warn: t('تنبيه'), info: t('معلومة') }[k], x])];
   const title = `${t('تقرير أداء الإعلانات والسوشيال')} · ${period.label}`;
   downloadBlob(buildXlsx([
-    { name: t('لوحة الملخص'), dash: { title, subtitle: `${t('من')} ${fmtDT(new Date(socialDashPeriod().from).toISOString()).slice(0, 10)} ${t('إلى')} ${fmtDate(localDay(new Date(socialDashPeriod().to - 1).toISOString()))} · ${t('اتعمل')} ${fmtDT(new Date().toISOString())}`, kpis, tables: [
+    { name: t('لوحة الملخص'), dash: { title, subtitle: `${t('من')} ${fmtDT(new Date(socialDashPeriod().from).toISOString()).slice(0, 10)} ${t('إلى')} ${fmtDate(localDay(new Date(socialDashPeriod().to - 1).toISOString()))} · ${t('أُنشئ')} ${fmtDT(new Date().toISOString())}`, kpis, tables: [
       { title: t('مسار العملاء (القمع)'), rows: funnel, pct: [2], bars: [1] },
       { title: t('أفضل 10 إعلانات'), rows: [[t('الإعلان'), ...(H ? [t('الصرف (ج.م)')] : []), t('محادثات'), t('مؤهل'), t(SD_TRANSFER_LABEL), t('اشتروا'), t('المبيعات (ج.م)')], ...s.ads.slice().sort((a, b) => b.buyers - a.buyers || b.transferred - a.transferred || b.qual - a.qual || b.convs - a.convs).slice(0, 10).map(a => [a.title, ...(H ? [Math.round(a.spend)] : []), a.convs, a.qual, a.transferred, a.buyers, Math.round(a.value)])], bars: H ? [1, 2] : [1] },
       { title: t('تحليل وتوصيات'), rows: insights },
@@ -9889,19 +9963,19 @@ async function socialDashDocx(s, period) {
     title: t('تقرير أداء الإعلانات والسوشيال'), subtitle: `${t('ماسنجر وإنستجرام وواتساب')} · ${period.label}`,
     sections: [
       { heading: t('الملخص التنفيذي'), kpis: [[t('محادثات'), T.convs], [t('مؤهلين'), T.qualified + T.converted], [t(SD_TRANSFER_LABEL), T.transferred], [t('اشتروا'), T.buyers], ...(H ? [[t('الصرف (ج.م)'), money(T.spend)], [t('العائد'), T.roas != null ? `${T.roas.toFixed(1)}x` : '—']] : [])],
-        text: [t('وصلت {a} محادثة جديدة، بعت {b} منهم أرقامهم ({p})، واتأهل {q}، واتحوّل {c} عميل جاد لرجال البيع، واشترى {d} بقيمة {v} ج.م. متوسط أول رد من الفريق: {w}.', { a: T.convs, b: T.phones, p: pct(T.phones, T.convs), q: T.qualified + T.converted, c: T.transferred, d: T.buyers, v: money(T.value), w: fmtWait(s.median) }),
+        text: [t('وصلت {a} محادثة جديدة، أرسل {b} منهم أرقامهم ({p})، وتأهّل {q}، وحُوِّل {c} عميل جاد إلى رجال البيع، واشترى {d} بقيمة {v} ج.م. متوسط أول رد من الفريق: {w}.', { a: T.convs, b: T.phones, p: pct(T.phones, T.convs), q: T.qualified + T.converted, c: T.transferred, d: T.buyers, v: money(T.value), w: fmtWait(s.median) }),
           H ? t('الصرف {s} ج.م: تكلفة المحادثة {c1}، تكلفة العميل المؤهل {c2}، تكلفة العميل الجاد {c3}، تكلفة العميل المشتري {c4} ج.م.', { s: money(T.spend), c1: sdMoney(T.cpConv), c2: sdMoney(T.cpQual), c3: sdMoney(T.cpTrans), c4: sdMoney(T.cpBuy) }) : '',
-          top ? t('أفضل إعلان: "{n}" ({c} محادثة، {q} مؤهل، {tr} اتحولوا لرجال البيع، {b} اشتروا).', { n: top.title, c: top.convs, q: top.qual, tr: top.transferred, b: top.buyers }) : ''].filter(Boolean) },
+          top ? t('أفضل إعلان: "{n}" ({c} محادثة، {q} مؤهل، {tr} حُوِّلوا إلى رجال البيع، {b} اشتروا).', { n: top.title, c: top.convs, q: top.qual, tr: top.transferred, b: top.buyers }) : ''].filter(Boolean) },
       { heading: t('تحليل وتوصيات للميديا باير'), text: ins.map(([k, x]) => `${{ good: '✓', bad: '✗', warn: '!', info: '•' }[k]} ${x}`) },
-      { heading: t('مسار العملاء (القمع)'), chart: { horizontal: true, rows: [[t('محادثات'), T.convs], [t('بعتوا أرقامهم'), T.phones], [t('مسجل'), T.lead + T.qualified + T.converted], [t('مؤهل'), T.qualified + T.converted], [t('عملاء جادين'), T.transferred], [t('اشتروا'), T.buyers]] } },
+      { heading: t('مسار العملاء (القمع)'), chart: { horizontal: true, rows: [[t('محادثات'), T.convs], [t('أرسلوا أرقامهم'), T.phones], [t('مسجل'), T.lead + T.qualified + T.converted], [t('مؤهل'), T.qualified + T.converted], [t('عملاء جادّون'), T.transferred], [t('اشتروا'), T.buyers]] } },
       { heading: t('المحادثات يومًا بيوم'), chart: { rows: Object.entries(s.days).map(([k, v]) => [`${k.slice(8)}/${k.slice(5, 7)}`, v.convs]) } },
       ...(H ? [{ heading: t('الصرف يومًا بيوم (ج.م)'), chart: { rows: Object.entries(s.days).map(([k, v]) => [`${k.slice(8)}/${k.slice(5, 7)}`, Math.round(v.spend)]) } }] : []),
       { heading: t('أداء الإعلانات'), chart: { horizontal: true, rows: s.ads.slice().sort((a, b) => b.convs - a.convs).slice(0, 10).map(a => [a.title, a.convs]), caption: t('عدد المحادثات لكل إعلان') },
-        table: { head: [t('الإعلان'), ...(H ? [t('الصرف')] : []), t('محادثات'), t('أرقام'), t('مسجل'), t('مؤهل'), t('عملاء جادين'), t('اشتروا'), t('المبيعات'), ...(H ? [t('تكلفة المؤهل'), t('العائد')] : [])], rows: s.ads.map(a => [a.title, ...(H ? [money(a.spend)] : []), a.convs, a.phones, a.stages.lead || 0, a.qual, a.transferred, a.buyers, money(a.value), ...(H ? [sdMoney(a.cpQual), a.roas != null ? `${a.roas.toFixed(1)}x` : '—'] : [])]) } },
-      { heading: t('الحملات'), table: { head: [t('الحملة'), ...(H ? [t('الصرف')] : []), t('محادثات'), t('مؤهل'), t('عملاء جادين'), t('اشتروا'), t('المبيعات')], rows: s.camps.map(c => [c.name, ...(H ? [money(c.spend)] : []), c.convs, c.qual, c.transferred, c.buyers, money(c.value)]) } },
-      { heading: t('رجال البيع'), table: { head: [t('رجل البيع'), t('عملاء جادين'), t('اشتروا'), t('نسبة الإغلاق'), t('المبيعات')], rows: s.reps.map(r => [userName(r.id), r.transferred, r.buyers, pct(r.buyers, r.transferred), money(r.value)]) } },
+        table: { head: [t('الإعلان'), ...(H ? [t('الصرف')] : []), t('محادثات'), t('أرقام'), t('مسجل'), t('مؤهل'), t('عملاء جادّون'), t('اشتروا'), t('المبيعات'), ...(H ? [t('تكلفة المؤهل'), t('العائد')] : [])], rows: s.ads.map(a => [a.title, ...(H ? [money(a.spend)] : []), a.convs, a.phones, a.stages.lead || 0, a.qual, a.transferred, a.buyers, money(a.value), ...(H ? [sdMoney(a.cpQual), a.roas != null ? `${a.roas.toFixed(1)}x` : '—'] : [])]) } },
+      { heading: t('الحملات'), table: { head: [t('الحملة'), ...(H ? [t('الصرف')] : []), t('محادثات'), t('مؤهل'), t('عملاء جادّون'), t('اشتروا'), t('المبيعات')], rows: s.camps.map(c => [c.name, ...(H ? [money(c.spend)] : []), c.convs, c.qual, c.transferred, c.buyers, money(c.value)]) } },
+      { heading: t('رجال البيع'), table: { head: [t('رجل البيع'), t('عملاء جادّون'), t('اشتروا'), t('نسبة الإغلاق'), t('المبيعات')], rows: s.reps.map(r => [userName(r.id), r.transferred, r.buyers, pct(r.buyers, r.transferred), money(r.value)]) } },
       { heading: t('مراحل العملاء'), kpis: Object.entries(SOCIAL_STAGES).filter(([k]) => s.stages[k]).map(([k, l]) => [t(l), s.stages[k]]) },
-      { heading: t('العملاء الجادين اللي اتحولوا لرجال البيع'), table: { head: [t('العميل'), t('الإعلان'), t('القناة'), t('رجل البيع'), t('اشترى')], rows: s.journey.filter(r => r.cust).slice(0, 200).map(r => [r.name, r.adTitle, r.channel ? t(SOCIAL_CHANNELS[r.channel] || '') : '', userName(r.rep), r.bought ? money(r.value) : '—']) } },
+      { heading: t('العملاء الجادّون المحوَّلون إلى رجال البيع'), table: { head: [t('العميل'), t('الإعلان'), t('القناة'), t('رجل البيع'), t('اشترى')], rows: s.journey.filter(r => r.cust).slice(0, 200).map(r => [r.name, r.adTitle, r.channel ? t(SOCIAL_CHANNELS[r.channel] || '') : '', userName(r.rep), r.bought ? money(r.value) : '—']) } },
       { heading: t('العملاء حسب الدولة'), chart: { horizontal: true, rows: Object.entries(s.countries).sort((a, b) => b[1] - a[1]).slice(0, 12).map(([k, n]) => [k ? countryLabel(k) : t('دولة غير محددة'), n]) } },
     ],
   });
@@ -9910,15 +9984,20 @@ async function socialDashDocx(s, period) {
 }
 
 Object.assign(EN, {
-  'لوحة أداء الإعلانات والسوشيال': 'Ads & social performance', 'من الإعلان للمحادثة للعميل الجاد لرجل البيع للبيع. كل رقم بيفتح أسماء العملاء، وكل اسم بيفتح الشات.': 'From ad to conversation to serious lead to sales rep to sale. Every number opens the customer names, and every name opens the chat.',
-  'تحديث من ميتا': 'Refresh from Meta', 'الرسائل': 'Messages', 'أمس': 'Yesterday', 'الشهر اللي فات': 'Last month', 'كل الحملات': 'All campaigns', 'الحملة': 'Campaign', 'القناة': 'Channel',
-  'عملاء جادين تم تحويلهم لرجال البيع': 'Serious leads transferred to sales reps', 'مؤهلين': 'Qualified', 'بعتوا أرقامهم': 'Sent their number', 'صرف الإعلانات': 'Ad spend', 'تكلفة المحادثة': 'Cost per conversation', 'تكلفة المؤهل': 'Cost per qualified',
-  'تكلفة العميل الجاد': 'Cost per serious lead', 'تكلفة العميل المشتري': 'Cost per buyer', 'تكلفة المشتري': 'Cost per buyer', 'العائد على الصرف': 'Return on ad spend', 'العائد': 'ROAS', 'متوسط أول رد': 'Median first reply', 'مش متوصل': 'Not connected',
+  'غير مقروءة': 'Unread', 'مقروءة': 'Read', 'صندوق الوارد': 'Inbox', 'غير المقروءة': 'Unread', 'متجاهَلة': 'Ignored', 'تحوّلت إلى عميل': 'Became a customer',
+  'استيراد المحادثات القديمة': 'Import past conversations', 'بدء الاستيراد': 'Start import', 'إيقاف': 'Stop', 'اكتمل الاستيراد': 'Import complete', 'توقف الاستيراد': 'Import stopped',
+  'يجلب من ميتا سجل محادثات ماسنجر وإنستجرام السابقة كاملًا مع الصور، وتُضاف كمحادثات مقروءة دون تكرار ما هو موجود. أما واتساب فلا تتيح ميتا استرجاع الرسائل السابقة لتاريخ الربط.': 'Pulls the full history of past Messenger and Instagram conversations from Meta, including photos, as read conversations without duplicating existing messages. Meta does not provide WhatsApp messages from before the connection date.',
+  'جارٍ استيراد {ch}: {n} محادثة، {m} رسالة جديدة...': 'Importing {ch}: {n} conversations, {m} new messages...', '{n} محادثة، منها {c} جديدة، و{m} رسالة أُضيفت': '{n} conversations ({c} new), {m} messages added', 'يلزم تحديث خادم Cloudflare أولًا': 'The Cloudflare server needs updating first',
+  'يُعرض تحصيل {u} ومديونيته فقط': 'Showing collections and debt for {u} only',
+  'لوحة أداء الإعلانات والسوشيال': 'Ads & social performance', 'من الإعلان إلى المحادثة إلى العميل الجاد إلى رجل البيع إلى البيع. كل رقم يعرض أسماء العملاء، وكل اسم يفتح المحادثة.': 'From ad to conversation to serious lead to sales rep to sale. Every number opens the customer names, and every name opens the chat.',
+  'تحديث من ميتا': 'Refresh from Meta', 'الرسائل': 'Messages', 'أمس': 'Yesterday', 'الشهر الماضي': 'Last month', 'كل الحملات': 'All campaigns', 'الحملة': 'Campaign', 'القناة': 'Channel',
+  'عملاء جادّون تم تحويلهم إلى رجال البيع': 'Serious leads transferred to sales reps', 'مؤهلين': 'Qualified', 'أرسلوا أرقامهم': 'Sent their number', 'صرف الإعلانات': 'Ad spend', 'تكلفة المحادثة': 'Cost per conversation', 'تكلفة المؤهل': 'Cost per qualified',
+  'تكلفة العميل الجاد': 'Cost per serious lead', 'تكلفة العميل المشتري': 'Cost per buyer', 'تكلفة المشتري': 'Cost per buyer', 'العائد على الصرف': 'Return on ad spend', 'العائد': 'ROAS', 'متوسط أول رد': 'Median first reply', 'غير مربوط': 'Not connected',
   'مسار العملاء (القمع)': 'Customer funnel', 'تحليل وتوصيات للميديا باير': 'Analysis & recommendations', 'أداء كل إعلان': 'Performance per ad', 'رجال البيع': 'Sales reps', 'رجل البيع': 'Sales rep', 'الحملات': 'Campaigns', 'الصرف': 'Spend', 'مرات الظهور': 'Impressions', 'نسبة الضغط': 'CTR',
-  'اتحولوا لرجال البيع': 'Sent to sales', 'تتبّع مسار العملاء': 'Customer journey', 'دوس على الاسم يفتح الشات': 'Click a name to open the chat', 'بحث بالاسم أو رقم التليفون': 'Search by name or phone', 'كل الإعلانات': 'All ads', 'كل رجال البيع': 'All sales reps', 'إكسيل بالأسماء': 'Excel with names',
-  'مفيش عملاء هنا': 'No customers here', 'اشترى': 'Bought', 'الرقم': 'Phone', 'المرحلة': 'Stage', 'العميل': 'Customer', 'الإعلان': 'Ad', 'أول رسالة': 'First message', 'تقرير أداء الإعلانات والسوشيال': 'Ads & social performance report', 'لوحة الملخص': 'Dashboard', 'مسار العملاء بالأسماء': 'Customer journey',
-  'شغال': 'Active', 'متوقف': 'Paused', 'الحملة متوقفة': 'Campaign paused', 'المجموعة متوقفة': 'Ad set paused', 'تحت المراجعة': 'In review', 'مرفوض': 'Rejected', 'فيه مشكلة': 'Has issues', 'مؤرشف': 'Archived', 'محذوف': 'Deleted', 'اتعمل': 'Created',
-  'الصرف يومًا بيوم (ج.م)': 'Spend per day (EGP)', 'من غير مرحلة': 'No stage', 'عملاء جادين': 'Serious leads', 'نسبة الإغلاق': 'Close rate', 'أكتر إعلانات': 'Top ads', 'اتحوّلوله': 'Transferred', 'بدون حملة': 'No campaign', 'مسجل يدويًا': 'Added manually',
+  'حُوِّلوا إلى رجال البيع': 'Sent to sales', 'تتبّع مسار العملاء': 'Customer journey', 'اضغط على الاسم لفتح المحادثة': 'Click a name to open the chat', 'بحث بالاسم أو رقم التليفون': 'Search by name or phone', 'كل الإعلانات': 'All ads', 'كل رجال البيع': 'All sales reps', 'إكسيل بالأسماء': 'Excel with names',
+  'لا يوجد عملاء هنا': 'No customers here', 'اشترى': 'Bought', 'الرقم': 'Phone', 'المرحلة': 'Stage', 'العميل': 'Customer', 'الإعلان': 'Ad', 'أول رسالة': 'First message', 'تقرير أداء الإعلانات والسوشيال': 'Ads & social performance report', 'لوحة الملخص': 'Dashboard', 'مسار العملاء بالأسماء': 'Customer journey',
+  'نشط': 'Active', 'متوقف': 'Paused', 'الحملة متوقفة': 'Campaign paused', 'المجموعة متوقفة': 'Ad set paused', 'تحت المراجعة': 'In review', 'مرفوض': 'Rejected', 'توجد مشكلة': 'Has issues', 'مؤرشف': 'Archived', 'محذوف': 'Deleted', 'أُنشئ': 'Created',
+  'الصرف يومًا بيوم (ج.م)': 'Spend per day (EGP)', 'دون مرحلة': 'No stage', 'عملاء جادّون': 'Serious leads', 'نسبة الإغلاق': 'Close rate', 'أكثر الإعلانات': 'Top ads', 'حُوِّلوا إليه': 'Transferred', 'بدون حملة': 'No campaign', 'مسجل يدويًا': 'Added manually',
 });
 
 </script>
@@ -10208,7 +10287,7 @@ const SKILLS = {
     quick: [
       ['📞 جهزني لمكالمة عميل', '@pick'],
       ['🛡 رد على "الجهاز غالي"', 'عميل مزارع قال: "الجهاز غالي". اكتب 3 ردود مختلفة بالعامية المصرية، كل رد يتبع خطوات التعامل مع الاعتراض وينتهي بخطوة تالية.'],
-      ['🤔 "مش مقتنع إنه بيشتغل"', 'عميل قال: "مش مقتنع إن الجهاز المغناطيسي بيشتغل". اكتب طريقة الرد خطوة بخطوة مع أسئلة لفهم سبب شكه، وأدلة يمكن تقديمها، وخطوة تالية.'],
+      ['🤔 "لست مقتنعًا بأن الجهاز يعمل"', 'عميل قال: "لست مقتنعًا بأن الجهاز المغناطيسي يعمل". اكتب طريقة الرد خطوة بخطوة مع أسئلة لفهم سبب شكه، وأدلة يمكن تقديمها، وخطوة تالية.'],
       ['🎯 أسئلة تأهيل عميل جديد', 'اكتب أهم 10 أسئلة تأهيل لعميل جديد في أول مكالمة، مرتبة من الأسهل للأعمق، مع سبب كل سؤال وما الذي يكشفه.'],
       ['🔁 خطة متابعة 30 يومًا', 'اكتب خطة متابعة لعميل مهتم لم يشترِ بعد على 30 يومًا: اليوم، القناة (مكالمة أو واتساب)، والرسالة أو نقاط المكالمة لكل خطوة.'],
       ['📣 اكتب رسالة متابعة لحملة', '@template'],
@@ -10218,7 +10297,7 @@ const SKILLS = {
     icon: '📱', name: 'خبير السوشيال ميديا', data: 'social',
     prompt: [
       'مهارتك الآن: خبير تسويق سوشيال ميديا للشركات الزراعية (فيسبوك، إنستجرام، تيك توك، واتساب، يوتيوب شورتس). الجمهور: مزارعون ومهندسون زراعيون وموزعون، باللهجة المصرية أو لهجة البلد المستهدف.',
-      '- البوست: أول سطر خطاف يوقف التمرير (سؤال عن مشكلة حقيقية، أو مشهد من الغيط) ← المشكلة ← الحل والفائدة ← دليل (تجربة عميل أو تحليل) ← دعوة واضحة "ابعت رسالة" أو "اطلب تحليل مياهك".',
+      '- البوست: أول سطر خطاف يوقف التمرير (سؤال عن مشكلة حقيقية، أو مشهد من الحقل) ← المشكلة ← الحل والفائدة ← دليل (تجربة عميل أو تحليل) ← دعوة واضحة "أرسل رسالة" أو "اطلب تحليل مياهك".',
       '- الريلز: خطاف في أول 3 ثوانٍ، ثم المشكلة، ثم الجهاز وفكرته ببساطة، ثم الدليل، ثم الدعوة؛ 20-40 ثانية، مع وصف اللقطات والنص على الشاشة لكل لقطة.',
       '- إعلانات الرسائل (Click to Message): 3 نسخ بزوايا مختلفة (المشكلة، النتيجة، الدليل)، لكل نسخة نص أساسي وعنوان قصير ورسالة ترحيب مقترحة.',
       '- الكابشن: قصير وواضح، مع 5-8 هاشتاجات مرتبطة بالعربي والإنجليزي.',
@@ -10239,7 +10318,7 @@ const SKILLS = {
     icon: '📈', name: 'مستشار الإدارة', data: 'sales',
     prompt: 'مهارتك الآن: مستشار للإدارة ومدير المبيعات. قدّم الصورة الكبيرة: مؤشرات الأداء الرئيسية واتجاهها، وتوقعًا مبسطًا للشهر القادم مبنيًا على متوسط آخر 3-6 أشهر مع ذكر الافتراضات بوضوح، والمخاطر (التحصيل، المتابعات المتأخرة، الإلغاءات)، وتوزيع الفريق والمناطق، وقرارات مقترحة مرتبة بالأولوية. اكتب كتقرير تنفيذي موجز.',
     quick: [
-      ['📈 توقع الشهر الجاي', 'بناءً على المبيعات الشهرية المرفقة، ما توقعك للشهر القادم (نطاق منخفض ومتوقع ومرتفع)؟ وضّح الافتراضات وما الذي يرفع النتيجة.'],
+      ['📈 توقع الشهر القادم', 'بناءً على المبيعات الشهرية المرفقة، ما توقعك للشهر القادم (نطاق منخفض ومتوقع ومرتفع)؟ وضّح الافتراضات وما الذي يرفع النتيجة.'],
       ['🧾 التحصيل والمخاطر', 'حلّل التحصيل والمتبقي والإلغاءات والمتابعات المتأخرة، ورتّب المخاطر حسب الأولوية مع إجراء لكل خطر.'],
       ['👥 قرارات الفريق', 'من أرقام الفريق والمناطق: كيف نعيد توزيع الجهد والعملاء لنرفع المبيعات الشهر القادم؟ قرارات محددة ومرتبة.'],
       ['📄 تقرير وورد بقراءة Dropy', '@report'],
@@ -10482,7 +10561,7 @@ function drawAssistant() {
     <nav class="drop-skills" aria-label="${t('مهارات Dropy')}">${Object.entries(SKILLS).map(([k, s]) => `<button class="${aiState.skill === k && !history ? 'on' : ''}" data-skill="${k}" ${aiState.busy ? 'disabled' : ''}>${s.icon} ${esc(t(s.name))}</button>`).join('')}</nav>
     ${history ? `<div class="drop-body"><b>${t('محادثاتك المحفوظة')}</b>${aiState.history.length ? `<div class="drop-hist">${aiState.history.map(h => `<div class="drop-hrow"><button class="drop-hopen" data-open="${esc(h.id)}"><span>${SKILLS[h.skill]?.icon || '💧'}</span><span class="t">${esc(h.title || t('محادثة'))}</span><span class="muted">${fmtDT(new Date(h.updated_at).toISOString())}</span></button><button class="drop-hdel" data-del="${esc(h.id)}" aria-label="${t('حذف')}">🗑</button></div>`).join('')}</div>` : `<p class="muted">${t('لا توجد محادثات محفوظة بعد. كل محادثة مع Dropy تُحفظ تلقائيًا هنا.')}</p>`}</div>`
     : `<div class="drop-body" id="dpBody">${aiState.msgs.length ? aiState.msgs.map(m => `<div class="drop-msg ${m.role}">${m.role === 'assistant' ? `<span class="drop-av">${dropSvg()}</span>` : ''}<div class="bubble">${m.role === 'assistant' ? mdLite(m.content) : esc(m.content)}${msgActions(m)}</div></div>`).join('')
-      : `<div class="drop-welcome"><span class="drop-big">${dropSvg()}</span><b>${t('أهلًا {n}، أنا Dropy 💧', { n: firstName(ME.name) })}</b><p class="muted">${t('اختار مهارة من فوق، وبعدين اضغط زرار جاهز أو اكتب سؤالك. كل محادثة بتتحفظ وتقدر ترجعلها من 🕘.')}</p><div class="drop-skillcard">${sk.icon} <b>${esc(t(sk.name))}</b></div></div>`}
+      : `<div class="drop-welcome"><span class="drop-big">${dropSvg()}</span><b>${t('أهلًا {n}، أنا Dropy 💧', { n: firstName(ME.name) })}</b><p class="muted">${t('اختر مهارة من الأعلى، ثم اضغط زرًا جاهزًا أو اكتب سؤالك. تُحفظ كل محادثة ويمكنك الرجوع إليها من 🕘.')}</p><div class="drop-skillcard">${sk.icon} <b>${esc(t(sk.name))}</b></div></div>`}
       ${aiState.pick ? customerPickerHtml() : ''}
       ${aiState.busy ? `<div class="drop-msg assistant"><span class="drop-av">${dropSvg('thinking')}</span><div class="bubble typing"><i></i><i></i><i></i></div></div>` : ''}</div>
     <div class="drop-quick">${sk.quick.map(([l], i) => `<button class="chip" data-q="${i}" ${aiState.busy ? 'disabled' : ''}>${esc(t(l))}</button>`).join('')}</div>
@@ -10508,7 +10587,7 @@ function drawAssistant() {
     if (!aiState.busy && !aiState.pick) ta.focus();
   }
 }
-const customerPickerHtml = () => `<div class="drop-msg assistant"><span class="drop-av">${dropSvg()}</span><div class="bubble"><b>${t('اختار العميل')}</b><div class="mt"><select class="inp" id="dpPick" data-combo><option value="">${t('اكتب اسم العميل أو كوده')}</option>${visibleCustomers().filter(c => !c.archived).slice(0, 3000).map(c => `<option value="${c.id}" data-s="${esc(c.code)}">${esc(c.name)} · ${esc(c.code)}</option>`).join('')}</select></div></div></div>`;
+const customerPickerHtml = () => `<div class="drop-msg assistant"><span class="drop-av">${dropSvg()}</span><div class="bubble"><b>${t('اختر العميل')}</b><div class="mt"><select class="inp" id="dpPick" data-combo><option value="">${t('اكتب اسم العميل أو كوده')}</option>${visibleCustomers().filter(c => !c.archived).slice(0, 3000).map(c => `<option value="${c.id}" data-s="${esc(c.code)}">${esc(c.name)} · ${esc(c.code)}</option>`).join('')}</select></div></div></div>`;
 function setDropMood(mood) {
   document.querySelectorAll('.drop-mini, .drop-fab').forEach(el => { el.classList.remove('thinking', 'happy', 'sad'); if (mood) el.classList.add(mood); });
   if (mood === 'happy' || mood === 'sad') setTimeout(() => setDropMood(''), 1600);
@@ -10547,7 +10626,7 @@ function quickAction(i) {
   if (p === '@report') return aiReport();
   if (p === '@pick') { aiState.view = 'chat'; aiState.pick = true; drawAssistant(); setTimeout(() => $('#drop-panel .combo-inp')?.focus(), 50); return; }
   if (p === '@template') {
-    aiState.msgs.push({ role: 'assistant', content: t('اكتب لي في سطر هدف الرسالة ومن هم العملاء، مثل: "متابعة مزارعي المانجو اللي ما اشتروش من شهرين وتذكيرهم بتحليل المياه". وسأكتبها بمتغيرات {الاسم} و{المحصول} لتستخدمها في حملات المتابعة.'), at: Date.now() });
+    aiState.msgs.push({ role: 'assistant', content: t('اكتب لي في سطر هدف الرسالة ومن هم العملاء، مثل: "متابعة مزارعي المانجو الذين لم يشتروا منذ شهرين وتذكيرهم بتحليل المياه". وسأكتبها بمتغيرات {الاسم} و{المحصول} لتستخدمها في حملات المتابعة.'), at: Date.now() });
     aiState.mode = 'template'; drawAssistant(); return;
   }
   chatAsk(p, { label: t(l) });
