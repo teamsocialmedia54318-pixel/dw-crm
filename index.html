@@ -729,6 +729,70 @@ button.kpi:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; 
 .soc-av.broken img { display: none; }
 .soc-av.broken .soc-ch { position: static; transform: none; }
 
+/* ------- لوحة أداء الإعلانات (social-dash.js): عريضة، مربعات مؤشرات قابلة للضغط، قمع، توصيات، جداول مرتبة ------- */
+.sd { max-width: none; }
+.sd-head { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px; margin-bottom: 12px; }
+.sd-head h1 { font-size: 22px; }
+.sd-head .muted { font-size: 13px; margin-top: 2px; }
+.sd-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 10px; margin-bottom: 14px; box-shadow: var(--shadow); position: sticky; top: 0; z-index: 30; }
+.sd-bar .inp { width: auto; max-width: 220px; }
+.sd-note { background: var(--blue-bg); color: var(--navy); border: 1px solid #cfe6f6; border-radius: 10px; padding: 9px 14px; margin-bottom: 12px; font-size: 13px; }
+.sd-kpis { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; margin-bottom: 14px; }
+.sd-kpi { display: grid; grid-template-columns: auto 1fr; grid-template-areas: "ic l" "v v" "s s"; align-items: center; gap: 2px 8px; text-align: start; background: #fff; border: 1px solid var(--border); border-inline-start: 4px solid var(--teal); border-radius: 12px; padding: 12px 14px; box-shadow: var(--shadow); font: inherit; color: inherit; cursor: pointer; transition: transform .12s, box-shadow .12s; }
+.sd-kpi:disabled { cursor: default; border-inline-start-color: #c9d3e3; }
+.sd-kpi:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(13,26,77,.12); }
+.sd-kpi.k-purple { border-inline-start-color: #7b4bc4; } .sd-kpi.k-blue { border-inline-start-color: var(--blue); } .sd-kpi.k-green { border-inline-start-color: var(--green); }
+.sd-ic { grid-area: ic; font-size: 18px; }
+.sd-kl { grid-area: l; color: var(--muted); font-size: 12.5px; font-weight: 600; line-height: 1.35; }
+.sd-kv { grid-area: v; font-size: 26px; font-weight: 800; color: var(--navy); line-height: 1.2; }
+.sd-ks { grid-area: s; font-size: 12px; color: var(--muted); min-height: 16px; }
+.sd-grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 14px; }
+.sd-ttl { font-weight: 800; color: var(--navy); font-size: 15px; margin-bottom: 8px; }
+.sd-ttl .muted { font-weight: 500; font-size: 12.5px; }
+.sd-funnel { display: grid; gap: 6px; }
+.sd-fr { display: grid; grid-template-columns: minmax(120px, 34%) 1fr 54px 46px; align-items: center; gap: 8px; background: none; border: 0; padding: 4px 2px; font: inherit; color: inherit; cursor: pointer; text-align: start; border-radius: 6px; }
+.sd-fr:hover { background: var(--card-soft); }
+.sd-fl { font-size: 13px; font-weight: 600; }
+.sd-fb { height: 14px; background: var(--card-soft); border-radius: 7px; overflow: hidden; }
+.sd-fb i { display: block; height: 100%; background: linear-gradient(90deg, var(--teal), var(--cyan)); border-radius: 7px; }
+.sd-fr b { color: var(--navy); text-align: end; }
+.sd-ins { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; max-height: 330px; overflow-y: auto; }
+.sd-ins li { padding: 7px 12px; border-radius: 8px; font-size: 13px; line-height: 1.55; border-inline-start: 4px solid var(--blue); background: var(--blue-bg); }
+.sd-ins li.good { border-color: var(--green); background: var(--green-bg); }
+.sd-ins li.bad { border-color: var(--red); background: var(--red-bg); }
+.sd-ins li.warn { border-color: var(--orange); background: var(--orange-bg); }
+button.stage-box { border: 0; font: inherit; cursor: pointer; transition: transform .12s; }
+button.stage-box:hover { transform: translateY(-2px); }
+.sd-tbl { max-height: 620px; overflow: auto; }
+.sd-tbl .tbl th { z-index: 2; }
+.sd-sort { cursor: pointer; user-select: none; }
+.sd-sort.on { background: var(--navy-mid); }
+.sd-ad { display: flex; gap: 10px; align-items: flex-start; min-width: 260px; }
+.sd-ad img { width: 44px; height: 44px; border-radius: 8px; object-fit: cover; flex: none; }
+.sd-ad .muted { font-size: 12px; }
+.sd-n { background: none; border: 1px solid transparent; border-radius: 6px; padding: 1px 8px; font: inherit; color: var(--teal); cursor: pointer; text-decoration: underline dotted; }
+.sd-n.b { font-weight: 800; }
+.sd-n:hover { background: var(--blue-bg); border-color: #cfe6f6; }
+.tbl .pos { color: var(--green); } .tbl .neg { color: var(--red); }
+.sd-name { display: inline-flex; align-items: center; gap: 8px; background: none; border: 0; padding: 0; font: inherit; color: var(--navy); cursor: pointer; text-align: start; }
+.sd-name:hover b { text-decoration: underline; color: var(--teal); }
+.sd-name .soc-ch, .sd-name .soc-av { transform: scale(.85); }
+@media (max-width: 1100px) { .sd-grid2 { grid-template-columns: 1fr; } }
+@media (max-width: 700px) { .sd-kv { font-size: 22px; } .sd-fr { grid-template-columns: 110px 1fr 40px 40px; } .sd-bar { position: static; } }
+
+/* صندوق الرسايل: تابات القنوات بعددها، والإحصائيات فوق في سطر صغير */
+.soc-chtabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.soc-chtab { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--border); background: #fff; border-radius: 20px; padding: 5px 12px; font: inherit; font-size: 13px; font-weight: 600; color: var(--navy); cursor: pointer; }
+.soc-chtab.on { background: var(--navy); border-color: var(--navy); color: #fff; }
+.soc-chtab .n { background: var(--card-soft); color: var(--navy); border-radius: 10px; padding: 0 7px; font-size: 11.5px; }
+.soc-chtab.on .n { background: rgba(255,255,255,.18); color: #fff; }
+.soc-chtab .soc-ch { width: 20px; height: 20px; font-size: 10px; }
+.soc-strip { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 14px; box-shadow: var(--shadow); font-size: 13px; }
+.soc-strip b { color: var(--navy); font-size: 15px; }
+.soc-strip .sep { width: 1px; height: 18px; background: var(--border); }
+.soc-strip details { width: 100%; }
+.soc-strip summary { cursor: pointer; color: var(--teal); font-weight: 600; }.soc-chtab .cnt-dot { background: var(--red); color: #fff; border-radius: 10px; padding: 0 6px; font-size: 11px; }
+
 </style>
 </head>
 <body>
@@ -1354,7 +1418,82 @@ const EN = {
 
   const colName = i => { let s = ''; i++; while (i > 0) { const m = (i - 1) % 26; s = String.fromCharCode(65 + m) + s; i = (i - m - 1) / 26; } return s; };
 
+  // ستايلات إضافية (أرقامها في styles.xml): 6 عنوان، 7 عنوان فرعي، 8 اسم مؤشر، 9 رقم مؤشر، 10 عنوان قسم، 11/12 نسبة مئوية، 13 صف الإجمالي، 14 نص طويل ملفوف
+  const cellXml = (ref, v, s) => typeof v === 'number' ? `<c r="${ref}" s="${s}"><v>${v}</v></c>` : `<c r="${ref}" s="${s}" t="inlineStr"><is><t xml:space="preserve">${xmlEsc(v)}</t></is></c>`;
+  const barCf = (sqref, i) => `<conditionalFormatting sqref="${sqref}"><cfRule type="dataBar" priority="${i + 1}"><dataBar><cfvo type="min"/><cfvo type="max"/><color rgb="FF63A9DD"/></dataBar></cfRule></conditionalFormatting>`;
+  const view = freeze => `<sheetViews><sheetView ${LANG === 'ar' ? 'rightToLeft="1" ' : ''}showGridLines="0" workbookViewId="0">${freeze ? `<pane ySplit="${freeze}" topLeftCell="A${freeze + 1}" activePane="bottomLeft" state="frozen"/>` : ''}</sheetView></sheetViews>`;
+  // جدول بعنوان فوقه: صف العنوان، وصف التاريخ، وبعدين الجدول بأعمدة نسب وأشرطة بيانات وصف إجمالي
+  function titledSheetXml(sheet) {
+    const rows = sheet.rows, n = rows[0].length, off = 3;
+    const pctCols = new Set(sheet.pct || []);
+    const widths = rows[0].map((_, i) => Math.min(48, Math.max(11, ...rows.slice(0, 300).map(r => String(r[i] ?? '').length + 3))));
+    let x = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">${view(off)}<cols>`;
+    widths.forEach((w, i) => { x += `<col min="${i + 1}" max="${i + 1}" width="${w}" customWidth="1"/>`; });
+    x += `</cols><sheetData><row r="1" ht="30" customHeight="1">${cellXml('A1', sheet.title, 6)}${Array.from({ length: n - 1 }, (_, i) => `<c r="${colName(i + 1)}1" s="6"/>`).join('')}</row>`;
+    x += `<row r="2">${cellXml('A2', sheet.subtitle || new Date().toLocaleString(), 7)}</row>`;
+    const last = rows.length - 1;
+    rows.forEach((r, ri) => {
+      const rr = ri + off, total = sheet.total && ri === last && ri > 0;
+      x += `<row r="${rr}">`;
+      r.forEach((v, ci) => {
+        if (v === null || v === undefined || v === '') return;
+        const zebra = ri % 2 === 0, num = typeof v === 'number';
+        const s = ri === 0 ? 1 : total ? 13 : pctCols.has(ci) && num ? (zebra ? 12 : 11) : num ? (Number.isInteger(v) ? (zebra ? 5 : 4) : (zebra ? 16 : 15)) : (zebra ? 3 : 2);
+        x += cellXml(colName(ci) + rr, v, s);
+      });
+      x += '</row>';
+    });
+    const end = off + last - (sheet.total ? 1 : 0);
+    x += `</sheetData><autoFilter ref="A${off}:${colName(n - 1)}${end}"/><mergeCells count="2"><mergeCell ref="A1:${colName(Math.max(1, n - 1))}1"/><mergeCell ref="A2:${colName(Math.max(1, n - 1))}2"/></mergeCells>`;
+    x += (sheet.bars || []).filter((c, i, a) => a.indexOf(c) === i && rows.length > 2).map((c, i) => barCf(`${colName(c)}${off + 1}:${colName(c)}${end}`, i)).join('');
+    return x + '</worksheet>';
+  }
+  // لوحة ملخص: عنوان، مربعات المؤشرات (4 في الصف)، وبعدين جداول صغيرة كل واحد بعنوانه
+  function dashSheetXml(sheet) {
+    const D = sheet.dash, W = 8;
+    const rowsXml = [], merges = [], cfs = [];
+    let r = 1;
+    const put = (cells, attrs = '') => { rowsXml.push(`<row r="${r}"${attrs}>${cells}</row>`); r++; };
+    put(cellXml('A1', D.title, 6) + Array.from({ length: W - 1 }, (_, i) => `<c r="${colName(i + 1)}1" s="6"/>`).join(''), ' ht="34" customHeight="1"'); merges.push(`A1:${colName(W - 1)}1`);
+    put(cellXml(`A${r}`, D.subtitle || '', 7)); merges.push(`A2:${colName(W - 1)}2`);
+    r++;
+    for (let i = 0; i < D.kpis.length; i += 4) {
+      const chunk = D.kpis.slice(i, i + 4);
+      let lab = '', val = '';
+      chunk.forEach(([l, v], j) => {
+        const c1 = colName(j * 2), c2 = colName(j * 2 + 1);
+        lab += cellXml(`${c1}${r}`, l, 8) + `<c r="${c2}${r}" s="8"/>`;
+        val += cellXml(`${c1}${r + 1}`, v, 9) + `<c r="${c2}${r + 1}" s="9"/>`;
+        merges.push(`${c1}${r}:${c2}${r}`, `${c1}${r + 1}:${c2}${r + 1}`);
+      });
+      put(lab, ' ht="20" customHeight="1"'); put(val, ' ht="34" customHeight="1"'); r++;
+    }
+    (D.tables || []).forEach(tb => {
+      r++;
+      put(cellXml(`A${r}`, tb.title, 10) + Array.from({ length: W - 1 }, (_, i) => `<c r="${colName(i + 1)}${r}" s="10"/>`).join(''), ' ht="24" customHeight="1"'); merges.push(`A${r - 1}:${colName(W - 1)}${r - 1}`);
+      const start = r, pctCols = new Set(tb.pct || []), longText = tb.rows[0].length === 2 && tb.rows.slice(1).some(x => String(x[1]).length > 60);
+      tb.rows.forEach((row, ri) => {
+        let cells = '';
+        row.forEach((v, ci) => {
+          if (v === null || v === undefined || v === '') return;
+          const zebra = ri % 2 === 0, num = typeof v === 'number';
+          const s = ri === 0 ? 1 : longText && ci === 1 ? 14 : pctCols.has(ci) && num ? (zebra ? 12 : 11) : num ? (Number.isInteger(v) ? (zebra ? 5 : 4) : (zebra ? 16 : 15)) : (zebra ? 3 : 2);
+          cells += cellXml(`${colName(ci)}${r}`, v, s);
+        });
+        if (longText) { cells += Array.from({ length: W - 2 }, (_, i) => `<c r="${colName(i + 2)}${r}" s="${ri === 0 ? 1 : 14}"/>`).join(''); merges.push(`B${r}:${colName(W - 1)}${r}`); }
+        put(cells, longText && ri ? ` ht="${Math.min(90, 18 * Math.ceil(String(row[1]).length / 95))}" customHeight="1"` : '');
+      });
+      (tb.bars || []).forEach(c => { if (tb.rows.length > 2) cfs.push(`${colName(c)}${start + 1}:${colName(c)}${r - 1}`); });
+    });
+    let x = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">${view(0)}<cols><col min="1" max="1" width="40" customWidth="1"/><col min="2" max="${W}" width="17" customWidth="1"/></cols><sheetData>${rowsXml.join('')}</sheetData>`;
+    x += `<mergeCells count="${merges.length}">${merges.map(m => `<mergeCell ref="${m}"/>`).join('')}</mergeCells>`;
+    x += cfs.map((sq, i) => barCf(sq, i)).join('');
+    return x + '</worksheet>';
+  }
+
   function sheetXml(sheet) {
+    if (sheet.dash) return dashSheetXml(sheet);
+    if (sheet.title) return titledSheetXml(sheet);
     const rows = sheet.rows;
     const widths = rows[0].map((_, i) => Math.min(40, Math.max(10, ...rows.slice(0, 200).map(r => String(r[i] ?? '').length + 3))));
     let x = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView ${LANG === 'ar' ? 'rightToLeft="1" ' : ''}workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols>`;
@@ -1383,7 +1522,7 @@ const EN = {
       { name: '_rels/.rels', text: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>` },
       { name: 'xl/workbook.xml', text: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>${names.map((n, i) => `<sheet name="${n}" sheetId="${i + 1}" r:id="rId${i + 1}"/>`).join('')}</sheets></workbook>` },
       { name: 'xl/_rels/workbook.xml.rels', text: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${sheets.map((_, i) => `<Relationship Id="rId${i + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i + 1}.xml"/>`).join('')}<Relationship Id="rId${sheets.length + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>` },
-      { name: 'xl/styles.xml', text: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Arial"/></font><font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Arial"/></font></fonts><fills count="4"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF0D1A4D"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFEEF8FD"/></patternFill></fill></fills><borders count="2"><border/><border><left style="thin"><color rgb="FFE2E8F2"/></left><right style="thin"><color rgb="FFE2E8F2"/></right><top style="thin"><color rgb="FFE2E8F2"/></top><bottom style="thin"><color rgb="FFE2E8F2"/></bottom></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="6"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1"/><xf numFmtId="0" fontId="0" fillId="3" borderId="1" xfId="0" applyFill="1" applyBorder="1"/><xf numFmtId="3" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/><xf numFmtId="3" fontId="0" fillId="3" borderId="1" xfId="0" applyNumberFormat="1" applyFill="1" applyBorder="1"/></cellXfs></styleSheet>` },
+      { name: 'xl/styles.xml', text: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><numFmts count="1"><numFmt numFmtId="164" formatCode="#,##0.00"/></numFmts><fonts count="8"><font><sz val="11"/><name val="Arial"/></font><font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Arial"/></font><font><b/><sz val="16"/><color rgb="FFFFFFFF"/><name val="Arial"/></font><font><i/><sz val="10"/><color rgb="FF61698B"/><name val="Arial"/></font><font><sz val="10"/><color rgb="FF61698B"/><name val="Arial"/></font><font><b/><sz val="18"/><color rgb="FF0D1A4D"/><name val="Arial"/></font><font><b/><sz val="13"/><color rgb="FF0D1A4D"/><name val="Arial"/></font><font><b/><sz val="11"/><color rgb="FF0D1A4D"/><name val="Arial"/></font></fonts><fills count="6"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF0D1A4D"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFEEF8FD"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFF1F5FB"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFE3ECF7"/></patternFill></fill></fills><borders count="3"><border/><border><left style="thin"><color rgb="FFE2E8F2"/></left><right style="thin"><color rgb="FFE2E8F2"/></right><top style="thin"><color rgb="FFE2E8F2"/></top><bottom style="thin"><color rgb="FFE2E8F2"/></bottom></border><border><bottom style="medium"><color rgb="FF0D1A4D"/></bottom></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="17"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1"/><xf numFmtId="0" fontId="0" fillId="3" borderId="1" xfId="0" applyFill="1" applyBorder="1"/><xf numFmtId="3" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/><xf numFmtId="3" fontId="0" fillId="3" borderId="1" xfId="0" applyNumberFormat="1" applyFill="1" applyBorder="1"/><xf numFmtId="0" fontId="2" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1" applyAlignment="1"><alignment vertical="center" indent="1"/></xf><xf numFmtId="0" fontId="3" fillId="0" borderId="0" xfId="0" applyFont="1"/><xf numFmtId="0" fontId="4" fillId="4" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf><xf numFmtId="3" fontId="5" fillId="4" borderId="1" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf><xf numFmtId="0" fontId="6" fillId="0" borderId="2" xfId="0" applyFont="1" applyBorder="1" applyAlignment="1"><alignment vertical="center"/></xf><xf numFmtId="9" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/><xf numFmtId="9" fontId="0" fillId="3" borderId="1" xfId="0" applyNumberFormat="1" applyFill="1" applyBorder="1"/><xf numFmtId="3" fontId="7" fillId="5" borderId="1" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyBorder="1"/><xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf><xf numFmtId="164" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/><xf numFmtId="164" fontId="0" fillId="3" borderId="1" xfId="0" applyNumberFormat="1" applyFill="1" applyBorder="1"/></cellXfs></styleSheet>` },
       ...sheets.map((s, i) => ({ name: `xl/worksheets/sheet${i + 1}.xml`, text: sheetXml(s) })),
     ];
     return zipStore(files);
@@ -3331,7 +3470,16 @@ function migrateDB(db) {
   const v10 = migrateV10(db);
   const v11 = migrateV11(db);
   const v12 = migrateV12(db);
-  return v2 || v3 || v4 || v5 || v6 || v7 || v8 || v9 || v10 || v11 || v12;
+  const v13 = migrateV13(db);
+  return v2 || v3 || v4 || v5 || v6 || v7 || v8 || v9 || v10 || v11 || v12 || v13;
+}
+// الإصدار 13: "ماسنجر" مصدر معرفة لوحده (جنب فيسبوك وإنستجرام وواتساب) علشان رجل البيع يحدد القناة والإعلان
+function migrateV13(db) {
+  if ((db.version || 1) >= 13) return false;
+  db.version = 13;
+  db.lists.source = db.lists.source || [];
+  if (!db.lists.source.includes('ماسنجر')) db.lists.source.splice(Math.max(0, db.lists.source.indexOf('فيسبوك') + 1), 0, 'ماسنجر');
+  return true;
 }
 // الإصدار 12: صلاحيات مدير الحسابات بالظبط (من غير عملاء ولا متابعات بيع)، ومستخدمين الدور ده ما يتسندلهمش عملاء
 function migrateV12(db) {
@@ -4644,7 +4792,7 @@ function openWizard(market = 'egypt', preset = {}, opts = {}) {
         ${farmStateField(d, 'w')}
         <div class="field"><label>${t('تحليل المياه أو التربة (اختياري)')}</label><div class="grid2">${fileKindSelect('wkind')}<input class="inp" type="file" id="wfile" accept="${FILE_ACCEPT}" multiple></div><div class="chips mt" id="wfiles"></div><small class="muted">${t('صورة أو ملف PDF، ويمكن إضافته لاحقًا من ملف العميل')}</small></div>
         <div class="grid2">${customFieldInputs('land', d)}</div>`,
-      () => `${deviceFields(d)}<div class="grid2"><div class="field"><label>${t('مصدر المعرفة')}</label><select class="inp" data-f="source">${optsT(DB.lists.source, d.source, t('اختر'))}</select></div>${viaField(d)}</div>
+      () => `${deviceFields(d)}<div class="grid2"><div class="field"><label>${t('مصدر المعرفة')}</label><select class="inp" data-f="source">${optsT(DB.lists.source, d.source, t('اختر'))}</select></div>${viaField(d)}${adPickField(d)}</div>
         <div class="field"><label>${t('تقييم العميل')} <span class="req">*</span></label><div class="chips" id="rate">${RATINGS.map(r => `<button type="button" class="chip ${d.rating === r ? 'on' : ''}" data-r="${r}">${tv(r)}</button>`).join('')}</div></div>
         <div class="grid2">${customFieldInputs('request', d)}</div>`,
       () => `<div class="grid2"><div class="field"><label>${t('تاريخ الاتصال')}</label><input class="inp" type="date" data-f="contactDate" value="${d.contactDate}"></div><div class="field"><label>${t('تاريخ المتابعة التالية')} <span class="req">*</span></label><input class="inp" type="date" data-f="followupDate" min="${today()}" value="${d.followupDate}"></div></div>
@@ -4691,6 +4839,7 @@ function openWizard(market = 'egypt', preset = {}, opts = {}) {
     if (step === 3) {
       bindDevice(box, d);
       bindVia(box);
+      bindAdPick(box);
       $$('#rate .chip', box).forEach(b => b.onclick = () => { d.rating = b.dataset.r; $$('#rate .chip', box).forEach(x => x.classList.toggle('on', x === b)); });
     }
   };
@@ -4703,6 +4852,8 @@ function openWizard(market = 'egypt', preset = {}, opts = {}) {
     if (data.market === 'intl') { data.govCode = ''; data.subCode = ''; } else data.country = '';
     Object.assign(data, watersFields(data.waters), devicesFields(data.devices));
     data.viaDistributorId = viaId(via, data.source);
+    const social = applyAdPick(data, d.social);
+    if (social) data.social = social; else delete data.social;
     const c = createCustomer(data);
     if (firstNote) {
       DB.followups.unshift({ id: uid(), customerId: c.id, userId: ME.id, at: nowStamp(), text: firstNote, outcome: 'تم الرد', nextDate: c.followupDate, viaVoice: false, stageId: c.stageId });
@@ -4949,6 +5100,7 @@ function openEditCustomer(id, onDone) {
       ${deviceFields(c)}
       <div class="grid3"><div class="field"><label>${t('مصدر المعرفة')}</label><select class="inp" data-f="source">${optsT(DB.lists.source, c.source, t('اختر'))}</select></div><div class="field"><label>${t('التقييم')}</label><select class="inp" data-f="rating">${optsT(RATINGS, c.rating)}</select></div><div class="field"><label>${t('تاريخ المتابعة')}</label><input class="inp" type="date" data-f="followupDate" value="${c.followupDate}"></div></div>
       ${viaField(d)}
+      ${adPickField(c)}
       <div class="grid3"><div class="field"><label>${t('حالة الشراء')}</label><select class="inp" data-f="payType">${optsT(Object.entries(PAY_TYPES).filter(([k]) => c.market !== 'intl' || k === 'cash' || k === c.payType), c.payType, t('لم يشترِ'))}</select></div>${c.market === 'intl' ? '<div></div>' : `<div class="field"><label>${t('قيمة المقدم')}</label><input class="inp" type="number" data-f="deposit" value="${esc(c.deposit)}"></div>`}<div class="field"><label>${t('تاريخ السداد')}</label><input class="inp" type="date" data-f="payDate" value="${c.payDate}"></div></div>
       ${can('customers.assign') || (can('customers.share') && c.ownerId === ME.id) ? `<div class="field"><label>${t('يتابعه أيضًا (متابعة مشتركة)')}</label><div class="chips" id="asst">${others.map(u => `<button type="button" class="chip ${(c.assistantIds || []).includes(u.id) ? 'on' : ''}" data-u="${u.id}">${esc(u.name)}</button>`).join('')}</div></div>` : ''}
       <div class="grid2">${customFieldInputs('', d)}</div>`,
@@ -4961,6 +5113,7 @@ function openEditCustomer(id, onDone) {
   bindWaters(m.el);
   bindCategory(m.el, d);
   bindVia(m.el);
+  bindAdPick(m.el);
   const stopFarmMic = bindMic(m.el, { mic: '#efarmMic', status: '#efarmSt', input: '#efarmTxt' });
   $$('#asst .chip', m.el).forEach(b => b.onclick = () => b.classList.toggle('on'));
   $('#sv', m.el).onclick = () => {
@@ -4980,7 +5133,15 @@ function openEditCustomer(id, onDone) {
     const dup = findDuplicate([patch.phone1, patch.phone2, patch.phone3, patch.phone4], c.id);
     if (dup) { toast(t('هذا الرقم مسجل باسم "{name}" لدى {owner}', { name: dup.name, owner: userName(dup.ownerId) }), 'err'); return; }
     patch.viaDistributorId = viaId(via, patch.source);
+    // الإعلان اللي جه منه العميل بيتحفظ لوحده (مش حقل عادي في سجل التعديلات)
+    const social = applyAdPick(patch, c.social);
+    const adChanged = JSON.stringify(social || null) !== JSON.stringify(c.social || null);
     let changed = updateCustomer(c.id, patch);
+    if (adChanged) {
+      if (social) c.social = social; else delete c.social;
+      audit('edit', 'customer', c.id, 'تحديد الإعلان اللي جه منه العميل {name}: {ad}', { name: c.name, ad: social?.adTitle || social?.adId || t('رسالة مباشرة') });
+      changed = true;
+    }
     const partner = syncPartner(c);
     if (partner?.fresh) toast(t('أُضيف {name} إلى قائمة الموزعين بتصنيف {type}', { name: c.name, type: tv(c.category) }), 'ok');
     if (shareTo) {
@@ -8513,7 +8674,7 @@ function openLeaderPick(tm, userId, onDone) {
 
 const SOCIAL_CHANNELS = { fb: 'ماسنجر', ig: 'إنستجرام', wa: 'واتساب' };
 const SOCIAL_STATUS = { new: 'جديدة', open: 'مفتوحة', converted: 'تحوّلت لعميل', ignored: 'متجاهلة' };
-const SOCIAL_SOURCE = { fb: 'فيسبوك', ig: 'إنستجرام', wa: 'واتساب' };
+const SOCIAL_SOURCE = { fb: 'ماسنجر', ig: 'إنستجرام', wa: 'واتساب' };
 // مرحلة العميل زي ميتا. مسجل ومؤهل وتم التحويل بيتبعتوا لميتا (LeadSubmitted / QualifiedLead / Purchase) علشان الإعلان يجيب ناس شبههم
 const SOCIAL_STAGES = { followup: 'متابعة', lead: 'مسجل', qualified: 'مؤهل', unqualified: 'غير مؤهل', converted: 'تم التحويل', lost: 'مفقود', spam: 'سبام' };
 const STAGE_PILL = { followup: 'p-blue', lead: 'p-orange', qualified: 'p-purple', unqualified: 'p-gray', converted: 'p-green', lost: 'p-red', spam: 'p-red' };
@@ -8683,16 +8844,16 @@ function drawSocialStats() {
   const rows = Object.entries(byCountry).sort((a, b) => b[1] - a[1]);
   const custToday = socialCustomersToday();
   const fromAds = custToday.filter(c => c.social.adTitle || c.social.adId).length;
-  box.innerHTML = `<div class="kpis">
-      <div class="kpi"><div class="l">${t('محادثات جديدة لم تُفتح')}</div><div class="v">${socialNewCount()}</div></div>
-      <div class="kpi"><div class="l">${t('محادثات بدأت اليوم')}</div><div class="v">${st ? st.newConvs : '—'}</div></div>
-      <div class="kpi"><div class="l">${t('أرقام وصلت اليوم')}</div><div class="v">${st ? st.phones.length : '—'}</div></div>
-      <div class="kpi"><div class="l">${t('عملاء سُجلوا اليوم من السوشيال')}</div><div class="v">${custToday.length}</div><div class="muted" style="font-size:12px">${t('منهم {n} من إعلانات', { n: fromAds })}</div></div>
-    </div>
-    <div class="grid2 mt">
-      <div class="card"><b>${t('أرقام اليوم حسب الدولة')}</b><div class="chips mt">${rows.length ? rows.map(([k, n]) => `<span class="pill ${k ? 'p-blue' : 'p-gray'}">${esc(k ? countryLabel(k) : t('دولة غير محددة'))}: <b>${n}</b></span>`).join('') : `<span class="muted">${t('لا توجد أرقام اليوم حتى الآن')}</span>`}</div></div>
-      <div class="card"><b>${t('محادثات اليوم حسب الإعلان')}</b><div class="chips mt">${st?.ads?.length ? st.ads.map(a => `<span class="pill p-harvest">${esc(a.ad_title || `${t('إعلان')} ${a.ad_id}`)}: <b>${a.n}</b></span>`).join('') : `<span class="muted">${t('لا توجد محادثات من إعلانات اليوم')}</span>`}</div></div>
-    </div>`;
+  // سطر واحد صغير بدل المربعات الكبيرة، والتفاصيل (الدول والإعلانات) بتتفتح لما تحتاجها
+  box.innerHTML = `<div class="soc-strip"><span>${t('جديدة لم تُفتح')}: <b>${socialNewCount()}</b></span><span class="sep"></span>
+      <span>${t('بدأت اليوم')}: <b>${st ? st.newConvs : '—'}</b></span><span class="sep"></span>
+      <span>${t('أرقام اليوم')}: <b>${st ? st.phones.length : '—'}</b></span><span class="sep"></span>
+      <span>${t('سُجلوا عملاء اليوم')}: <b>${custToday.length}</b> <span class="muted">(${t('منهم {n} من إعلانات', { n: fromAds })})</span></span>
+      <details id="socStatsMore" ${socialState.statsOpen ? 'open' : ''}><summary>${t('تفاصيل اليوم: الدول والإعلانات')}</summary>
+        <div class="mt"><b>${t('أرقام اليوم حسب الدولة')}:</b> <span class="chips">${rows.length ? rows.map(([k, n]) => `<span class="pill ${k ? 'p-blue' : 'p-gray'}">${esc(k ? countryLabel(k) : t('دولة غير محددة'))}: <b>${n}</b></span>`).join('') : `<span class="muted">${t('لا توجد أرقام اليوم حتى الآن')}</span>`}</span></div>
+        <div class="mt"><b>${t('محادثات اليوم حسب الإعلان')}:</b> <span class="chips">${st?.ads?.length ? st.ads.map(a => `<span class="pill p-harvest">${esc(a.ad_title || `${t('إعلان')} ${a.ad_id}`)}: <b>${a.n}</b></span>`).join('') : `<span class="muted">${t('لا توجد محادثات من إعلانات اليوم')}</span>`}</span></div>
+      </details></div>`;
+  const det = $('#socStatsMore', box); if (det) det.ontoggle = () => { socialState.statsOpen = det.open; };
 }
 
 // ------- الصفحة -------
@@ -8709,9 +8870,9 @@ function viewSocial(root, sub) {
     : !cloudMode ? `<div class="card empty">${t('رسائل السوشيال تعمل من الرابط المنشور للنظام فقط.')}</div>`
     : `<div id="socialStats"></div>
     <div class="filters mt"><div class="tabs" id="socTabs">${[['active', 'الجديدة والمفتوحة'], ['new', 'الجديدة'], ['mine', 'المحوّلة إليّ'], ['converted', 'تحوّلت لعملاء'], ['ignored', 'المتجاهلة'], ['all', 'الكل']].map(([k, l]) => `<button class="tab ${socialState.tab === k ? 'on' : ''}" data-st="${k}">${t(l)}</button>`).join('')}</div>
-      <select class="inp" id="socCh" aria-label="${t('القناة')}">${opts([['', t('كل القنوات')], ['fb', t('ماسنجر')], ['ig', t('إنستجرام')], ['wa', t('واتساب')]], socialState.channel)}</select>
       <select class="inp" id="socStage" aria-label="${t('مرحلة العميل')}">${opts([['', t('كل المراحل')], ['none', t('من غير مرحلة')], ...Object.entries(SOCIAL_STAGES).map(([k, v]) => [k, t(v)])], socialState.stage)}</select>
-      <input class="inp" id="socQ" type="search" placeholder="${t('بحث بالاسم أو الرقم أو الإعلان')}" value="${esc(socialState.q)}"></div>
+      <input class="inp search" id="socQ" type="search" placeholder="${t('بحث بالاسم أو رقم التليفون أو الإعلان')}" value="${esc(socialState.q)}"></div>
+    <div class="soc-chtabs" id="socChTabs"></div>
     <div class="social-wrap mt"><div class="social-list card" id="socialList"><div class="muted" style="padding:12px">${t('جارٍ تحميل المحادثات...')}</div></div><div class="social-thread card" id="socialThread"></div></div>`}`;
   const set = $('#socSet', root);
   if (set) set.onclick = openSocialSettings;
@@ -8719,7 +8880,6 @@ function viewSocial(root, sub) {
   $('#socDash', root).onclick = () => { socialState.view = 'dash'; history.replaceState(null, '', '#/social'); viewSocial(root); };
   $('#socRe', root).onclick = async () => { socialState.at = 0; socialState.convs.clear(); await refreshSocial(true); };
   $$('#socTabs .tab', root).forEach(b => b.onclick = () => { socialState.tab = b.dataset.st; $$('#socTabs .tab', root).forEach(x => x.classList.toggle('on', x === b)); drawSocialList(); });
-  $('#socCh', root).onchange = e => { socialState.channel = e.target.value; drawSocialList(); };
   $('#socStage', root).onchange = e => { socialState.stage = e.target.value; drawSocialList(); };
   $('#socQ', root).oninput = e => { socialState.q = e.target.value; drawSocialList(); };
   refreshSocial(!socialState.loaded);
@@ -8741,18 +8901,30 @@ async function refreshSocial(full) {
     if (box) box.innerHTML = `<div class="err-msg" style="margin:12px">${esc(t('تعذر الوصول إلى رسائل السوشيال: {e}', { e: err.message }))}</div>`;
   }
 }
-const socialMatches = c => {
+// البحث بالرقم بأي صيغة: 010… أو +2010… أو من غير الصفر (بنقارن آخر 9 أرقام)
+const socialPhoneHit = (c, q) => { const dq = toLatinDigits(q).replace(/\D/g, ''); return dq.length >= 5 && (c.phones || []).map(p => String(p.p).replace(/\D/g, '')).concat(c.channel === 'wa' ? [String(c.user_id || '')] : []).some(d => d.includes(dq) || (dq.length >= 9 && d.slice(-9) === dq.slice(-9)) || (dq.startsWith('0') && d.endsWith(dq.slice(1)))); };
+const socialMatches = (c, ignoreChannel) => {
   const st = socialState, q = normHeader(toLatinDigits(st.q)).trim();
-  if (st.channel && c.channel !== st.channel) return false;
+  if (st.channel && !ignoreChannel && c.channel !== st.channel) return false;
   if (st.stage && (st.stage === 'none' ? !!c.stage : c.stage !== st.stage)) return false;
   if (st.tab === 'active' && !['new', 'open'].includes(c.status)) return false;
   if (st.tab === 'mine' && c.assignee !== ME.id) return false;
   if (!['active', 'mine', 'all'].includes(st.tab) && c.status !== st.tab) return false;
   // كل عضو يرى المحادثات غير المسندة والمسندة إليه، والإدارة ترى الكل
   if (!canManageSocial() && c.assignee && c.assignee !== ME.id) return false;
-  if (q && ![c.name, c.username, c.ad_title, c.last_text, ...(c.phones || []).map(p => p.p), ...(c.emails || [])].some(v => normHeader(v || '').includes(q))) return false;
+  if (q && !socialPhoneHit(c, st.q) && ![c.name, c.username, c.ad_title, c.last_text, ...(c.phones || []).map(p => p.p), ...(c.emails || [])].some(v => normHeader(v || '').includes(q))) return false;
   return true;
 };
+// تابات القنوات زي ميتا: الكل / واتساب / ماسنجر / إنستجرام، وجنب كل واحدة عدد المحادثات حسب الفلاتر التانية
+function drawSocialChTabs() {
+  const box = $('#socChTabs');
+  if (!box) return;
+  const all = [...socialState.convs.values()].filter(c => socialMatches(c, true));
+  const n = ch => all.filter(c => !ch || c.channel === ch).length;
+  const unread = ch => all.filter(c => (!ch || c.channel === ch) && c.status === 'new').length;
+  box.innerHTML = [['', t('كل الرسائل')], ['wa', t('واتساب')], ['fb', t('ماسنجر')], ['ig', t('إنستجرام')]].map(([k, l]) => `<button class="soc-chtab ${socialState.channel === k ? 'on' : ''}" data-ch="${k}">${k ? channelBadge(k) : '💬'} ${l} <span class="n">${n(k)}</span>${unread(k) ? `<span class="cnt-dot" title="${esc(t('جديدة'))}">${unread(k)}</span>` : ''}</button>`).join('');
+  $$('[data-ch]', box).forEach(b => b.onclick = () => { socialState.channel = b.dataset.ch; drawSocialList(); });
+}
 const channelBadge = ch => `<span class="soc-ch soc-${ch}" title="${esc(t(SOCIAL_CHANNELS[ch]))}">${ch === 'ig' ? 'IG' : ch === 'wa' ? '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="#fff" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3a.5.5 0 0 0 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5 5 0 0 0 1.1 2.7 11.5 11.5 0 0 0 4.4 3.9c1.6.7 2.3.8 3.1.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg>' : 'f'}</span>`;
 // صورة العميل من ميتا (بعد موافقة صلاحية الملف الشخصي)، ولو مش موجودة أو الرابط انتهى تظهر علامة القناة
 const socialAvatar = c => c.pic ? `<span class="soc-av"><img src="${esc(c.pic)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.classList.add('broken')">${channelBadge(c.channel)}</span>` : channelBadge(c.channel);
@@ -8763,7 +8935,8 @@ const socialTime = ms => { if (!ms) return ''; const d = new Date(ms); return lo
 function drawSocialList() {
   const box = $('#socialList');
   if (!box) return;
-  const list = [...socialState.convs.values()].filter(socialMatches).sort((a, b) => b.last_at - a.last_at);
+  drawSocialChTabs();
+  const list = [...socialState.convs.values()].filter(c => socialMatches(c)).sort((a, b) => b.last_at - a.last_at);
   box.innerHTML = list.length ? list.slice(0, 300).map(c => `<button class="soc-item ${c.id === socialState.sel ? 'on' : ''} ${c.status === 'new' ? 'unread' : ''}" data-cv="${esc(c.id)}">
       ${socialAvatar(c)}<div class="soc-main"><div class="soc-top"><b>${esc(c.name || t('عميل بدون اسم'))}</b><span class="muted">${socialTime(c.last_at)}</span></div>
       <div class="soc-last">${c.last_dir === 'out' ? `<span class="muted">${t('أنت')}: </span>` : ''}${esc(c.last_text || '')}</div>
@@ -9069,133 +9242,7 @@ function convertConv(c, msgs, ins) {
   } });
 }
 
-// ------- لوحة أداء السوشيال: من أي إعلان تأتي المحادثات، ومن أيها يأتي من يشتري فعلًا -------
-const socialDash = { range: '7', from: '', to: '', data: null, key: '' };
-const SOCIAL_RANGES = [['1', 'اليوم'], ['7', 'آخر 7 أيام'], ['30', 'آخر 30 يومًا'], ['month', 'هذا الشهر'], ['custom', 'فترة محددة']];
-function socialDashPeriod() {
-  const d = socialDash, end = new Date(); end.setHours(24, 0, 0, 0);
-  if (d.range === 'custom' && d.from) {
-    const f = new Date(`${d.from}T00:00:00`), tt = d.to ? new Date(`${d.to}T00:00:00`) : new Date(end); if (d.to) tt.setDate(tt.getDate() + 1);
-    return { from: f.getTime(), to: tt.getTime(), label: `${fmtDate(d.from)} - ${fmtDate(d.to || today())}` };
-  }
-  const start = new Date(end);
-  if (d.range === 'month') start.setDate(1), start.setHours(0, 0, 0, 0), start.setMonth(new Date().getMonth());
-  else start.setDate(start.getDate() - (+d.range || 7));
-  return { from: start.getTime(), to: end.getTime(), label: t(SOCIAL_RANGES.find(r => r[0] === d.range)?.[1] || '') };
-}
-// دولة المحادثة: اللي اتحددت في الشات، أو دولة رقم العميل (المؤكدة أولًا)
-const convCountry = cv => cv.country || (cv.phones || []).find(p => p.country && !p.guessed)?.country || (cv.phones || []).find(p => p.country)?.country || '';
-const countryTop = (obj, n = 4) => Object.entries(obj).sort((a, b) => b[1] - a[1]).slice(0, n).map(([k, v]) => `${k ? countryLabel(k) : t('غير محددة')} ${v}`).join(' · ');
-// تجميع المحادثات مع بيانات الـ CRM: من تحوّل لعميل، ومن اشترى، وقيمة مبيعاته
-function socialDashCompute(data, period) {
-  const convs = data.convs || [];
-  const byConv = new Map(DB.customers.filter(c => c.social?.convId).map(c => [c.social.convId, c]));
-  const custOf = cv => byConv.get(cv.id) || (cv.customer_id && custById(cv.customer_id)) || null;
-  const sales = c => DB.orders.filter(o => o.customerId === c.id && countsAsSale(o));
-  const bought = c => !!c && (c.purchased || sales(c).length > 0);
-  const revenue = c => c ? sales(c).reduce((s, o) => s + orderValue(o), 0) : 0;
-  const days = {};
-  for (let ms = period.from; ms < period.to; ms += 86400000) days[localDay(new Date(ms).toISOString())] = { convs: 0, phones: 0 };
-  const countries = {}, ads = {}, channels = { fb: 0, ig: 0, wa: 0 }, stages = {};
-  let withPhone = 0, customers = 0, buyers = 0, value = 0;
-  convs.forEach(cv => {
-    const day = localDay(new Date(cv.first_at).toISOString());
-    if (days[day]) { days[day].convs++; if ((cv.phones || []).length) days[day].phones++; }
-    channels[cv.channel] = (channels[cv.channel] || 0) + 1;
-    if ((cv.phones || []).length) withPhone++;
-    // دولة العميل: المختارة في المحادثة، أو من رقمه (كل عميل يتحسب مرة واحدة)
-    const ctry = convCountry(cv);
-    countries[ctry] = (countries[ctry] || 0) + 1;
-    if (cv.stage) stages[cv.stage] = (stages[cv.stage] || 0) + 1;
-    const cu = custOf(cv), b = bought(cu), v = revenue(cu);
-    if (cu) customers++;
-    if (b) { buyers++; value += v; }
-    const ak = cv.ad_id || cv.ad_title ? `${cv.ad_id}|${cv.ad_title}` : 'direct';
-    const a = ads[ak] = ads[ak] || { title: cv.ad_title || (cv.ad_id ? `${t('إعلان')} ${cv.ad_id}` : t('رسائل مباشرة (بدون إعلان)')), convs: 0, phones: 0, customers: 0, buyers: 0, value: 0, stages: {}, countries: {} };
-    a.convs++; if ((cv.phones || []).length) a.phones++; if (cu) a.customers++; if (b) { a.buyers++; a.value += v; }
-    if (cv.stage) a.stages[cv.stage] = (a.stages[cv.stage] || 0) + 1;
-    a.countries[ctry] = (a.countries[ctry] || 0) + 1;
-  });
-  const waits = (data.resp || []).filter(r => r.fi && r.fo).map(r => (r.fo - r.fi) / 60000).sort((a, b) => a - b);
-  const median = waits.length ? waits[Math.floor(waits.length / 2)] : null;
-  return { total: convs.length, withPhone, customers, buyers, value, days, countries, stages, ads: Object.values(ads).sort((a, b) => b.buyers - a.buyers || b.customers - a.customers || b.convs - a.convs), channels, median, replied: waits.length, fastShare: waits.length ? waits.filter(w => w <= 60).length / waits.length : null };
-}
-const pct = (a, b) => b ? `${Math.round(a / b * 100)}%` : '—';
-const fmtWait = m => m == null ? '—' : m < 60 ? t('{n} دقيقة', { n: Math.round(m) }) : m < 1440 ? t('{n} ساعة', { n: (m / 60).toFixed(1) }) : t('{n} يوم', { n: (m / 1440).toFixed(1) });
-function viewSocialDash(root) {
-  const d = socialDash, period = socialDashPeriod();
-  root.innerHTML = `<div class="page-head"><h1>${t('لوحة أداء السوشيال')}</h1><span class="spacer"></span><button class="btn" id="sdBack">💬 ${t('الرسائل')}</button><button class="btn" id="sdXls">⬇ ${t('إكسيل')}</button><button class="btn primary" id="sdDoc">📄 ${t('تقرير وورد')}</button>
-      <div class="hint">${t('المحادثات والأرقام من ماسنجر وإنستجرام، ومن تحوّل منهم لعميل ومن اشترى، حسب كل إعلان. المبيعات بالجنيه، وطلبات الدولار بسعر {r} ج.م', { r: DB.settings.usdRate })}</div></div>
-    <div class="filters"><div class="tabs" id="sdRange">${SOCIAL_RANGES.map(([k, l]) => `<button class="tab ${d.range === k ? 'on' : ''}" data-r="${k}">${t(l)}</button>`).join('')}</div>
-      <span id="sdCustom" ${d.range === 'custom' ? '' : 'hidden'}><input class="inp" type="date" id="sdFrom" value="${d.from}" aria-label="${t('من')}"> <input class="inp" type="date" id="sdTo" value="${d.to}" aria-label="${t('إلى')}"></span></div>
-    <div id="sdBody" class="mt"><div class="card muted">${t('جارٍ تحميل البيانات...')}</div></div>`;
-  $('#sdBack', root).onclick = () => { socialState.view = 'inbox'; viewSocial(root); };
-  $$('#sdRange .tab', root).forEach(b => b.onclick = () => { d.range = b.dataset.r; d.data = null; viewSocialDash(root); });
-  ['sdFrom', 'sdTo'].forEach(id => { const el = $(`#${id}`, root); el.onchange = () => { d[id === 'sdFrom' ? 'from' : 'to'] = el.value; d.data = null; viewSocialDash(root); }; });
-  $('#sdXls', root).onclick = () => d.data && exportSocialDash(socialDashCompute(d.data, period), period);
-  $('#sdDoc', root).onclick = async () => {
-    if (!d.data) return;
-    const btn = $('#sdDoc', root); btn.disabled = true;
-    try { await socialDashDocx(socialDashCompute(d.data, period), period); } catch (err) { toast(err.message, 'err'); }
-    btn.disabled = false;
-  };
-  const key = `${period.from}-${period.to}`;
-  const draw = () => drawSocialDash($('#sdBody', root), socialDashCompute(d.data, period), period);
-  if (d.data && d.key === key) { draw(); return; }
-  socialApi(`report?from=${period.from}&to=${period.to}`).then(out => { d.data = out; d.key = key; if ($('#sdBody', root)) draw(); })
-    .catch(err => { const b = $('#sdBody', root); if (b) b.innerHTML = `<div class="err-msg">${esc(t('تعذر تحميل البيانات: {e}', { e: err.message }))}</div>`; });
-}
-function drawSocialDash(box, s, period) {
-  const dayRows = Object.entries(s.days).map(([k, v]) => ({ label: k.slice(8) + '/' + k.slice(5, 7), value: v.convs, tip: `${fmtDate(k)}: ${t('{a} محادثة، {b} أرسلوا أرقامهم', { a: v.convs, b: v.phones })}` }));
-  box.innerHTML = `<div class="kpis">
-      <div class="kpi"><div class="l">${t('محادثات جديدة')}</div><div class="v">${s.total}</div><div class="muted" style="font-size:12px">${esc(period.label)}</div></div>
-      <div class="kpi"><div class="l">${t('أرسلوا أرقامهم')}</div><div class="v">${s.withPhone}</div><div class="muted" style="font-size:12px">${pct(s.withPhone, s.total)} ${t('من المحادثات')}</div></div>
-      <div class="kpi"><div class="l">${t('تحوّلوا لعملاء')}</div><div class="v">${s.customers}</div><div class="muted" style="font-size:12px">${pct(s.customers, s.total)}</div></div>
-      <div class="kpi"><div class="l">${t('اشتروا')}</div><div class="v">${s.buyers}</div><div class="muted" style="font-size:12px">${money(s.value)} ${t('ج.م')}</div></div>
-      <div class="kpi"><div class="l">${t('متوسط أول رد من الفريق')}</div><div class="v" style="font-size:20px">${fmtWait(s.median)}</div><div class="muted" style="font-size:12px">${s.fastShare == null ? '' : t('{p} خلال ساعة', { p: pct(s.fastShare * 100, 100) })}</div></div>
-    </div>
-    <div class="card mt"><b>${t('المحادثات يومًا بيوم')}</b>${dayRows.length > 1 ? barChart(dayRows, v => String(v)) : `<div class="muted mt">${t('اختر فترة أطول لعرض الرسم')}</div>`}</div>
-    <div class="card mt"><b>${t('مراحل العملاء (اللي بتتبعت للإعلانات)')}</b>
-      <div class="stage-row mt">${Object.entries(SOCIAL_STAGES).map(([k, l]) => `<div class="stage-box ${STAGE_PILL[k]}"><div class="v">${s.stages[k] || 0}</div><div class="l">${t(l)}${STAGE_META[k] ? ' ⓜ' : ''}</div></div>`).join('')}<div class="stage-box p-gray"><div class="v">${s.total - Object.values(s.stages).reduce((x, y) => x + y, 0)}</div><div class="l">${t('من غير مرحلة')}</div></div></div></div>
-    <div class="card mt"><b>${t('أداء كل إعلان: المحادثات والمراحل والدول')}</b>
-      <div class="tbl-wrap mt"><table class="tbl"><thead><tr><th>${t('الإعلان')}</th><th>${t('محادثات')}</th><th>${t('أرقام')}</th><th>${t('اتحولوا للسيلز')}</th><th>${t('متابعة')}</th><th>${t('مسجل')}</th><th>${t('مؤهل')}</th><th>${t('تم التحويل')}</th><th>${t('مفقود / سبام')}</th><th>${t('اشتروا')}</th><th>${t('المبيعات (ج.م)')}</th></tr></thead>
-      <tbody>${s.ads.length ? s.ads.map(a => `<tr><td class="wrap">${esc(a.title)}<div class="muted" style="font-size:12px">🌍 ${esc(countryTop(a.countries))}</div></td><td>${a.convs}</td><td>${a.phones}</td><td>${a.customers}</td><td>${a.stages.followup || 0}</td><td>${a.stages.lead || 0}</td><td>${a.stages.qualified || 0}</td><td><b>${a.stages.converted || 0}</b></td><td>${(a.stages.lost || 0) + (a.stages.spam || 0)}</td><td><b>${a.buyers}</b> <span class="muted">${pct(a.buyers, a.convs)}</span></td><td>${money(a.value)}</td></tr>`).join('') : `<tr><td colspan="11" class="muted">${t('لا توجد محادثات في هذه الفترة')}</td></tr>`}</tbody></table></div></div>
-    <div class="grid2 mt">
-      <div class="card"><b>${t('العملاء حسب الدولة')}</b>${hbars(Object.entries(s.countries).sort((a, b) => b[1] - a[1]).map(([k, n]) => [k ? countryLabel(k) : t('دولة غير محددة'), n, String(n)]), { fmt: String, h1: t('الدولة'), h2: t('العملاء') })}</div>
-      <div class="card"><b>${t('القنوات')}</b>${s.total ? stackBar([[t('ماسنجر'), s.channels.fb || 0], [t('إنستجرام'), s.channels.ig || 0], [t('واتساب'), s.channels.wa || 0]], String) : `<div class="empty">${t('لا توجد بيانات في هذه الفترة')}</div>`}</div>
-    </div>`;
-}
-function exportSocialDash(s, period) {
-  const title = t('أداء السوشيال');
-  const summary = [[t('البند'), t('القيمة')], [t('الفترة'), period.label], [t('محادثات جديدة'), s.total], [t('أرسلوا أرقامهم'), s.withPhone], [t('تحوّلوا لعملاء'), s.customers], [t('اشتروا'), s.buyers], [t('المبيعات (ج.م)'), Math.round(s.value)], [t('متوسط أول رد من الفريق'), fmtWait(s.median)]];
-  const ads = [[t('الإعلان'), t('محادثات'), t('أرقام'), t('اتحولوا للسيلز'), t('متابعة'), t('مسجل'), t('مؤهل'), t('تم التحويل'), t('مفقود'), t('سبام'), t('اشتروا'), t('نسبة الشراء'), t('المبيعات (ج.م)'), t('الدول')], ...s.ads.map(a => [a.title, a.convs, a.phones, a.customers, a.stages.followup || 0, a.stages.lead || 0, a.stages.qualified || 0, a.stages.converted || 0, a.stages.lost || 0, a.stages.spam || 0, a.buyers, pct(a.buyers, a.convs), Math.round(a.value), countryTop(a.countries, 20)])];
-  const allC = [...new Set(s.ads.flatMap(a => Object.keys(a.countries)))].sort((x, y) => (s.countries[y] || 0) - (s.countries[x] || 0));
-  const adCountry = [[t('الإعلان'), ...allC.map(k => k ? countryLabel(k) : t('غير محددة'))], ...s.ads.map(a => [a.title, ...allC.map(k => a.countries[k] || 0)])];
-  const days = [[t('اليوم'), t('محادثات'), t('أرسلوا أرقامهم')], ...Object.entries(s.days).map(([k, v]) => [fmtDate(k), v.convs, v.phones])];
-  const countries = [[t('الدولة'), t('العملاء')], ...Object.entries(s.countries).sort((a, b) => b[1] - a[1]).map(([k, n]) => [k ? countryLabel(k) : t('دولة غير محددة'), n])];
-  downloadBlob(buildXlsx([{ name: t('الملخص'), rows: summary }, { name: t('الإعلانات'), rows: ads }, { name: t('الإعلانات والدول'), rows: adCountry }, { name: t('الأيام'), rows: days }, { name: t('الدول'), rows: countries }]), `${title} ${today()}.xlsx`);
-  audit('export', 'social', null, 'تصدير لوحة أداء السوشيال');
-}
-
-// تقرير وورد منسق بألوان دلتا ووتر: الأرقام المهمة، الرسم اليومي، أداء كل إعلان، والدول
-async function socialDashDocx(s, period) {
-  const top = s.ads.filter(a => a.buyers)[0];
-  const blob = await buildReportDocx({
-    title: t('تقرير أداء السوشيال'), subtitle: `${t('ماسنجر وإنستجرام')} · ${period.label}`,
-    sections: [
-      { heading: t('الملخص'), kpis: [[t('محادثات جديدة'), s.total], [t('أرسلوا أرقامهم'), s.withPhone], [t('تحوّلوا لعملاء'), s.customers], [t('اشتروا'), s.buyers]],
-        text: [t('وصلت {a} محادثة جديدة، أرسل {b} منهم أرقامهم ({p})، وتحوّل {c} لعملاء، واشترى {d} بقيمة {v} ج.م. متوسط أول رد من الفريق: {w}.', { a: s.total, b: s.withPhone, p: pct(s.withPhone, s.total), c: s.customers, d: s.buyers, v: money(s.value), w: fmtWait(s.median) }),
-          top ? t('أفضل إعلان في الشراء: "{n}" ({b} مشترين من {c} محادثة).', { n: top.title, b: top.buyers, c: top.convs }) : ''].filter(Boolean) },
-      { heading: t('المحادثات يومًا بيوم'), chart: { rows: Object.entries(s.days).map(([k, v]) => [`${k.slice(8)}/${k.slice(5, 7)}`, v.convs]) } },
-      { heading: t('أداء الإعلانات'), chart: { horizontal: true, rows: s.ads.slice(0, 10).map(a => [a.title, a.convs]), caption: t('عدد المحادثات لكل إعلان') },
-        table: { head: [t('الإعلان'), t('محادثات'), t('أرقام'), t('اتحولوا للسيلز'), t('مسجل'), t('مؤهل'), t('تم التحويل'), t('اشتروا'), t('المبيعات (ج.م)'), t('الدول')], rows: s.ads.map(a => [a.title, a.convs, a.phones, a.customers, a.stages.lead || 0, a.stages.qualified || 0, a.stages.converted || 0, a.buyers, Math.round(a.value), countryTop(a.countries, 3)]) } },
-      { heading: t('مراحل العملاء'), kpis: Object.entries(SOCIAL_STAGES).filter(([k]) => s.stages[k]).map(([k, l]) => [t(l), s.stages[k]]) },
-      { heading: t('العملاء حسب الدولة'), chart: { horizontal: true, rows: Object.entries(s.countries).sort((a, b) => b[1] - a[1]).slice(0, 12).map(([k, n]) => [k ? countryLabel(k) : t('دولة غير محددة'), n]) } },
-    ],
-  });
-  downloadBlob(blob, `${t('تقرير أداء السوشيال')} ${today()}.docx`);
-  audit('export', 'social', null, 'تقرير وورد لأداء السوشيال');
-}
+// لوحة أداء الإعلانات والسوشيال في social-dash.js
 
 // ------- نتيجة فحص الربط مع ميتا: سطر لكل مفتاح، بلا أي قيمة سرية -------
 function metaCheckHtml(checks) {
@@ -9240,6 +9287,9 @@ function metaCheckHtml(checks) {
 }
 
 // ------- إعدادات الربط والفريق (للإدارة) -------
+// مستلمو تقرير الإعلانات اليومي: اللي اتحدد في الإعدادات، وإلا الإدارة (صاحب الشركة والمديرين) اللي عندهم إيميل
+const validEmail = e => /^\S+@\S+\.\S+$/.test(String(e || '')) && !/@example\.com$/i.test(String(e));
+const adsReportTo = () => Array.isArray(socialCfg().adsReportTo) ? socialCfg().adsReportTo : DB.users.filter(u => u.active !== false && ['owner', 'manager'].includes(u.role) && validEmail(u.email)).map(u => u.id);
 function openSocialSettings() {
   const cfg = socialCfg();
   const members = new Set(socialMembers());
@@ -9252,12 +9302,26 @@ function openSocialSettings() {
       <div class="field"><label>${t('مراجعو حملات المتابعة (يعتمدون الرسائل قبل إرسالها)')}</label><div class="chips" id="ssRev">${users.map(u => `<button type="button" class="chip ${campaignReviewers().includes(u.id) ? 'on' : ''}" data-u="${u.id}">${esc(u.name)}</button>`).join('')}</div></div>
       <label class="chk"><input type="checkbox" id="ssCapi" ${cfg.capi ? 'checked' : ''}> ${t('إبلاغ ميتا تلقائيًا بعملاء الرسائل: عند تسجيلهم (عميل محتمل) وعند شرائهم بقيمة الشراء، فتجلب الإعلانات عملاء يشبهونهم')}</label>
       <small class="muted">${t('يعمل بعد إضافة DATASET_ID و PAGE_ID و IG_ID في Cloudflare (ملف الإعداد). الرقم والإيميل يُرسلان مشفّرين.')}</small>
+      <div class="field mt"><label>📊 ${t('تقرير الإعلانات اليومي على الإيميل (كل يوم الساعة 10 بالليل) يوصل لـ')}</label><div class="chips" id="ssAds">${users.filter(u => validEmail(u.email)).map(u => `<button type="button" class="chip ${adsReportTo().includes(u.id) ? 'on' : ''}" data-u="${u.id}">${esc(u.name)}</button>`).join('') || `<span class="muted">${t('مفيش مستخدمين عندهم إيميل. ضيف الإيميل من إدارة المستخدمين')}</span>`}</div>
+        <small class="muted">${t('تحليل كل إعلان (الصرف، المحادثات، المؤهلين، اللي اتحولوا لرجال البيع، المشتريين، التكلفة والعائد) ونصايح للإعلانات، ومعاه ملف إكسيل بالتفاصيل وأسماء العملاء. اللي يظهر هنا بس اللي عندهم إيميل.')}</small>
+        <div class="mt"><button class="btn sm" id="ssAdsNow" type="button">✉ ${t('ابعت تقرير النهارده دلوقتي')}</button> <span id="ssAdsMsg" class="muted"></span></div></div>
       <div class="field mt"><label>${t('الردود الجاهزة')}</label><textarea class="inp" id="ssTpl" rows="6" placeholder="${t('سطر لكل رد: اسم الرد | نص الرد. يمكن استخدام {الاسم} لاسم العميل و{اسمي} لاسمك')}">${esc(tpls)}</textarea></div>
       <div class="mt"><button class="btn" id="ssTest">${t('اختبار الاتصال')}</button> <button class="btn" id="ssMeta">🔍 ${t('فحص الربط مع ميتا')}</button> <span id="ssMsg" class="muted"></span></div>
       <div id="ssMetaOut"></div>`,
     footer: `<button class="btn primary" id="ssSave">${t('حفظ')}</button>`,
   });
-  $$('#ssMem .chip, #ssRev .chip', m.el).forEach(b => b.onclick = () => b.classList.toggle('on'));
+  $$('#ssMem .chip, #ssRev .chip, #ssAds .chip', m.el).forEach(b => b.onclick = () => b.classList.toggle('on'));
+  $('#ssAdsNow', m.el).onclick = async () => {
+    const msg = $('#ssAdsMsg', m.el), btn = $('#ssAdsNow', m.el);
+    const to = $$('#ssAds .chip.on', m.el).map(b => b.dataset.u);
+    if (!to.length) { msg.textContent = t('اختار مين يستلم الأول'); return; }
+    // الإعدادات بتتحفظ الأول علشان خدمة جوجل تقرأ المستلمين الجداد
+    DB.settings.social = { ...socialCfg(), adsReportTo: to }; saveDB();
+    btn.disabled = true; msg.textContent = t('جارٍ تجهيز التقرير وإرساله...');
+    try { await cloudSync(true).catch(() => {}); const out = await cloudPost('adsreport'); msg.textContent = `✓ ${t('اتبعت لـ {n}', { n: out.sent || to.length })}`; }
+    catch (err) { msg.textContent = `✗ ${err.message === 'unknown action' ? t('خدمة جوجل محتاجة تحديث (Code.gs) الأول') : err.message}`; }
+    btn.disabled = false;
+  };
   $('#ssTest', m.el).onclick = async () => {
     const msg = $('#ssMsg', m.el);
     const url = $('#ssUrl', m.el).value.trim().replace(/\/+$/, '');
@@ -9285,7 +9349,7 @@ function openSocialSettings() {
     if (url && !/^https:\/\/[\w.-]+(\/[\w./-]*)?$/.test(url)) { toast(t('الرابط يجب أن يبدأ بـ https://'), 'err'); return; }
     const templates = $('#ssTpl', m.el).value.split('\n').map(l => l.trim()).filter(Boolean).map(l => { const i = l.indexOf('|'); return i > 0 ? { name: l.slice(0, i).trim().slice(0, 60), text: l.slice(i + 1).trim().slice(0, 1000) } : { name: l.slice(0, 30), text: l.slice(0, 1000) }; });
     const before = JSON.stringify(socialCfg());
-    DB.settings.social = { url, members: $$('#ssMem .chip.on', m.el).map(b => b.dataset.u), templates, capi: $('#ssCapi', m.el).checked, reviewers: $$('#ssRev .chip.on', m.el).map(b => b.dataset.u) };
+    DB.settings.social = { url, members: $$('#ssMem .chip.on', m.el).map(b => b.dataset.u), templates, capi: $('#ssCapi', m.el).checked, reviewers: $$('#ssRev .chip.on', m.el).map(b => b.dataset.u), adsReportTo: $$('#ssAds .chip.on', m.el).map(b => b.dataset.u) };
     socialState.capiOff = false;
     if (JSON.stringify(DB.settings.social) !== before) audit('settings', 'settings', null, 'تعديل إعدادات رسائل السوشيال', null, [{ field: 'فريق السوشيال', from: '', to: DB.settings.social.members.map(userName).join('، ') }]);
     else saveDB();
@@ -9295,6 +9359,436 @@ function openSocialSettings() {
     route();
   };
 }
+
+// ------- اختيار الإعلان في ملف العميل: رجل البيع لما يختار إن العميل جاي من فيسبوك/ماسنجر/إنستجرام/واتساب يحدد أنهي إعلان،
+// علشان لوحة الإعلانات تحسب العميل على إعلانه حتى لو ما جاش من محادثة في السيستم -------
+const SOCIAL_SRC_CH = { 'فيسبوك': 'fb', 'ماسنجر': 'fb', 'إنستجرام': 'ig', 'واتساب': 'wa' };
+let socialAdCache = null;
+async function loadSocialAds() {
+  if (socialAdCache) return socialAdCache;
+  if (!socialReady() || !cloudMode) return [];
+  try { socialAdCache = (await socialApi('adlist')).ads || []; setTimeout(() => { socialAdCache = null; }, 10 * 60 * 1000); } catch { return []; }
+  return socialAdCache;
+}
+const adKeyOf = a => `${a.id || ''}|${a.title || a.name || ''}`;
+const adLabel = a => `${a.name || a.title || `${t('إعلان')} ${a.id}`}${a.campaign ? ` · ${a.campaign}` : ''}${a.status === 'ACTIVE' ? ` · ${t('شغال')}` : ''}${a.n ? ` (${t('{n} محادثة', { n: a.n })})` : ''}`;
+function adPickField(d) {
+  if (d.social?.convId) return `<div class="field"><label>${t('جه من أنهي إعلان؟')}</label><div class="muted">${esc(d.social.adTitle || d.social.adId || t('رسالة مباشرة (ليست من إعلان)'))} · ${t('مربوط بمحادثته')}</div></div>`;
+  const cur = d.social && (d.social.adId || d.social.adTitle) ? `${d.social.adId || ''}|${d.social.adTitle || ''}` : '';
+  return `<div class="field" id="adWrap" ${SOCIAL_SRC_CH[d.source] ? '' : 'hidden'}><label>${t('جه من أنهي إعلان؟')}</label><select class="inp" data-f="socialAdKey" id="adPick"><option value="">${t('رسالة مباشرة / مش عارف')}</option>${cur ? `<option value="${esc(cur)}" selected>${esc(d.social.adTitle || d.social.adId)}</option>` : ''}</select><small class="muted">${t('علشان لوحة الإعلانات تحسب العميل ده على إعلانه')}</small></div>`;
+}
+function bindAdPick(root) {
+  const src = $('[data-f="source"]', root), wrap = $('#adWrap', root), sel = $('#adPick', root);
+  if (!src || !wrap || !sel) return;
+  const toggle = () => { wrap.hidden = !SOCIAL_SRC_CH[src.value]; };
+  src.addEventListener('change', toggle); toggle();
+  loadSocialAds().then(list => {
+    if (!list.length || !document.body.contains(sel)) return;
+    const cur = sel.value;
+    const seen = new Set();
+    const items = list.filter(a => { const k = adKeyOf(a); if (seen.has(k)) return false; seen.add(k); return true; });
+    sel.innerHTML = `<option value="">${t('رسالة مباشرة / مش عارف')}</option>${cur && !items.some(a => adKeyOf(a) === cur) ? `<option value="${esc(cur)}" selected>${esc(cur.split('|').slice(1).join('|') || cur.split('|')[0])}</option>` : ''}${items.map(a => `<option value="${esc(adKeyOf(a))}" ${adKeyOf(a) === cur ? 'selected' : ''}>${esc(adLabel(a))}</option>`).join('')}`;
+  });
+}
+// بيرجّع بيانات social الجديدة (أو اللي قبلها لو مفيش تغيير)، ويشيل socialAdKey من البيانات
+function applyAdPick(data, prev) {
+  const key = data.socialAdKey;
+  delete data.socialAdKey;
+  if (prev?.convId || key === undefined) return prev;
+  const ch = SOCIAL_SRC_CH[data.source];
+  if (!ch || !key) return prev && !prev.convId ? null : prev;
+  const [adId, ...rest] = key.split('|');
+  return { ...(prev || {}), channel: ch, adId: adId || '', adTitle: rest.join('|'), at: prev?.at || nowStamp(), manual: true };
+}
+</script>
+<script>
+// ------- لوحة أداء الإعلانات والسوشيال: كل إعلان جاب كام محادثة ورقم ومسجل ومؤهل، واتحوّل كام لرجال البيع ومين اشترى وبكام،
+// والصرف من حساب الإعلانات (لو متوصل) علشان تكلفة كل عميل والعائد. كل رقم بيفتح أسماء العملاء، وكل اسم بيفتح الشات بتاعه -------
+const socialDash = { range: '7', from: '', to: '', data: null, ads: null, adsErr: '', key: '', channel: '', campaign: '', sort: 'spend', dir: -1, jq: '', jStage: '', jAd: '', jRep: '', jShown: 50 };
+const SOCIAL_RANGES = [['1', 'اليوم'], ['y', 'أمس'], ['7', 'آخر 7 أيام'], ['30', 'آخر 30 يومًا'], ['month', 'هذا الشهر'], ['lmonth', 'الشهر اللي فات'], ['custom', 'فترة محددة']];
+function socialDashPeriod() {
+  const d = socialDash, end = new Date(); end.setHours(24, 0, 0, 0);
+  if (d.range === 'custom' && d.from) {
+    const f = new Date(`${d.from}T00:00:00`), tt = d.to ? new Date(`${d.to}T00:00:00`) : new Date(end); if (d.to) tt.setDate(tt.getDate() + 1);
+    return { from: f.getTime(), to: tt.getTime(), label: `${fmtDate(d.from)} - ${fmtDate(d.to || today())}` };
+  }
+  const start = new Date(end);
+  let stop = end;
+  if (d.range === 'month') { start.setDate(1); start.setHours(0, 0, 0, 0); start.setMonth(new Date().getMonth()); }
+  else if (d.range === 'lmonth') { start.setHours(0, 0, 0, 0); start.setDate(1); start.setMonth(new Date().getMonth() - 1); stop = new Date(start); stop.setMonth(stop.getMonth() + 1); }
+  else if (d.range === 'y') { start.setDate(start.getDate() - 2); stop = new Date(end); stop.setDate(stop.getDate() - 1); }
+  else start.setDate(start.getDate() - (+d.range || 7));
+  return { from: start.getTime(), to: stop.getTime(), label: t(SOCIAL_RANGES.find(r => r[0] === d.range)?.[1] || '') };
+}
+// دولة المحادثة: اللي اتحددت في الشات، أو دولة رقم العميل (المؤكدة أولًا)
+const convCountry = cv => cv.country || (cv.phones || []).find(p => p.country && !p.guessed)?.country || (cv.phones || []).find(p => p.country)?.country || '';
+const countryTop = (obj, n = 4) => Object.entries(obj).sort((a, b) => b[1] - a[1]).slice(0, n).map(([k, v]) => `${k ? countryLabel(k) : t('غير محددة')} ${v}`).join(' · ');
+const pct = (a, b) => b ? `${Math.round(a / b * 100)}%` : '—';
+const fmtWait = m => m == null ? '—' : m < 60 ? t('{n} دقيقة', { n: Math.round(m) }) : m < 1440 ? t('{n} ساعة', { n: (m / 60).toFixed(1) }) : t('{n} يوم', { n: (m / 1440).toFixed(1) });
+const SD_POSITIVE = ['lead', 'qualified', 'converted'];
+
+// صرف الإعلان بالجنيه: الحساب الإعلاني ممكن يكون بالدولار، فبيتحوّل بسعر الدولار في الإعدادات
+const sdRate = cur => cur === 'USD' ? (DB.settings.usdRate || 1) : 1;
+const sdCost = (spend, n) => n ? spend / n : null;
+const sdMoney = v => v == null ? '—' : money(v);
+
+// تجميع كل حاجة: المحادثات + عملاء الـ CRM + المبيعات + صرف ميتا
+function socialDashCompute(data, period, adsData) {
+  const d = socialDash;
+  const allConvs = data.convs || [];
+  const convs = allConvs.filter(cv => (!d.channel || cv.channel === d.channel));
+  const byConv = new Map(DB.customers.filter(c => c.social?.convId).map(c => [c.social.convId, c]));
+  const custOf = cv => byConv.get(cv.id) || (cv.customer_id && custById(cv.customer_id)) || null;
+  const salesOf = c => DB.orders.filter(o => o.customerId === c.id && countsAsSale(o));
+  const revenue = c => c ? salesOf(c).reduce((s, o) => s + orderValue(o), 0) : 0;
+  const bought = c => !!c && (c.purchased || salesOf(c).length > 0);
+  const cur = adsData?.account?.currency || 'EGP', rate = sdRate(cur);
+  const metaAds = new Map((adsData?.ads || []).map(a => [String(a.ad_id), a]));
+  const adKey = (id, title) => id ? `id:${id}` : title ? `t:${title}` : 'direct';
+  const ads = {};
+  const adOf = (key, id, title) => {
+    if (ads[key]) return ads[key];
+    const m = id ? metaAds.get(String(id)) : null;
+    return ads[key] = { key, id: id || '', title: m?.ad_name || title || (id ? `${t('إعلان')} ${id}` : t('رسائل مباشرة (بدون إعلان)')), postTitle: title || '', campaign: m?.campaign || '', adset: m?.adset || '', status: m?.status || '', created: m?.created || '', thumb: m?.thumb || '',
+      spend: (m?.spend || 0) * rate, impressions: m?.impressions || 0, reach: m?.reach || 0, frequency: m?.frequency || 0, clicks: m?.clicks || 0, ctr: m?.ctr || 0, cpm: (m?.cpm || 0) * rate, metaMsgs: m?.msgs || 0,
+      convs: 0, phones: 0, stages: {}, transferred: 0, buyers: 0, value: 0, countries: {}, reps: {}, channels: {}, rows: [] };
+  };
+  // صف لكل عميل في مسار العملاء: من المحادثة لحد البيع
+  const journey = [];
+  const days = {};
+  for (let ms = period.from; ms < period.to; ms += 86400000) days[localDay(new Date(ms).toISOString())] = { convs: 0, phones: 0, qualified: 0, transferred: 0, spend: 0 };
+  convs.forEach(cv => {
+    const cu = custOf(cv), b = bought(cu), v = b ? revenue(cu) : 0;
+    const a = adOf(adKey(cv.ad_id, cv.ad_title), cv.ad_id, cv.ad_title);
+    const row = { kind: 'conv', id: cv.id, cv, name: cv.name || cu?.name || t('عميل بدون اسم'), channel: cv.channel, at: cv.first_at, ad: a.key, adTitle: a.title, phone: (cv.phones || [])[0]?.p || cu?.phone1 || '', country: convCountry(cv), stage: cv.stage || '', cust: cu, rep: cu?.ownerId || '', bought: b, value: v };
+    journey.push(row); a.rows.push(row);
+    a.convs++; if ((cv.phones || []).length) a.phones++;
+    if (cv.stage) a.stages[cv.stage] = (a.stages[cv.stage] || 0) + 1;
+    if (cu) { a.transferred++; a.reps[cu.ownerId] = (a.reps[cu.ownerId] || 0) + 1; }
+    if (b) { a.buyers++; a.value += v; }
+    a.countries[row.country] = (a.countries[row.country] || 0) + 1;
+    a.channels[cv.channel] = (a.channels[cv.channel] || 0) + 1;
+    const day = days[localDay(new Date(cv.first_at).toISOString())];
+    if (day) { day.convs++; if ((cv.phones || []).length) day.phones++; if (cv.stage === 'qualified' || cv.stage === 'converted') day.qualified++; if (cu) day.transferred++; }
+  });
+  // عملاء سجّلهم رجل البيع واختار إنهم جايين من إعلان (من غير محادثة في السيستم)
+  const seen = new Set(journey.map(r => r.cust?.id).filter(Boolean));
+  DB.customers.filter(c => !c.archived && c.social && !c.social.convId && (c.social.adId || c.social.adTitle) && !seen.has(c.id)).forEach(c => {
+    const at = new Date(c.createdAt).getTime();
+    if (!(at >= period.from && at < period.to) || (d.channel && c.social.channel !== d.channel)) return;
+    const a = adOf(adKey(c.social.adId, c.social.adTitle), c.social.adId, c.social.adTitle);
+    const b = bought(c), v = b ? revenue(c) : 0;
+    const row = { kind: 'manual', id: '', name: c.name, channel: c.social.channel || '', at, ad: a.key, adTitle: a.title, phone: c.phone1 || '', country: c.country || 'مصر', stage: '', cust: c, rep: c.ownerId, bought: b, value: v };
+    journey.push(row); a.rows.push(row);
+    a.transferred++; a.reps[c.ownerId] = (a.reps[c.ownerId] || 0) + 1;
+    if (b) { a.buyers++; a.value += v; }
+    a.countries[row.country] = (a.countries[row.country] || 0) + 1;
+  });
+  // إعلانات عليها صرف أو شغالة ومفيش منها محادثات لسه: بتظهر برضه (علشان الصرف اللي مجابش حد يبان)
+  (adsData?.ads || []).forEach(m => { const k = adKey(m.ad_id, ''); if (!ads[k] && !Object.values(ads).some(a => a.id === String(m.ad_id))) adOf(k, m.ad_id, ''); });
+  (adsData?.days || []).forEach(x => { if (days[x.day]) days[x.day].spend += (x.spend || 0) * rate; });
+  let list = Object.values(ads);
+  if (d.campaign) list = list.filter(a => a.campaign === d.campaign);
+  const campaigns = [...new Set(Object.values(ads).map(a => a.campaign).filter(Boolean))].sort();
+  const inCamp = r => !d.campaign || ads[r.ad]?.campaign === d.campaign;
+  const rows = journey.filter(inCamp);
+  const sum = (arr, f) => arr.reduce((s, x) => s + (f(x) || 0), 0);
+  const stages = {};
+  rows.forEach(r => { if (r.stage) stages[r.stage] = (stages[r.stage] || 0) + 1; });
+  const tot = {
+    convs: rows.filter(r => r.kind === 'conv').length, phones: rows.filter(r => r.kind === 'conv' && (r.cv.phones || []).length).length,
+    lead: stages.lead || 0, qualified: (stages.qualified || 0), converted: stages.converted || 0,
+    transferred: rows.filter(r => r.cust).length, buyers: rows.filter(r => r.bought).length, value: sum(rows, r => r.value),
+    spend: sum(list, a => a.spend), impressions: sum(list, a => a.impressions), clicks: sum(list, a => a.clicks), metaMsgs: sum(list, a => a.metaMsgs),
+  };
+  tot.cpConv = sdCost(tot.spend, tot.convs); tot.cpQual = sdCost(tot.spend, tot.qualified + tot.converted); tot.cpTrans = sdCost(tot.spend, tot.transferred); tot.cpBuy = sdCost(tot.spend, tot.buyers);
+  tot.roas = tot.spend ? tot.value / tot.spend : null;
+  list.forEach(a => { a.lead = a.stages.lead || 0; a.cpConv = sdCost(a.spend, a.convs); a.cpQual = sdCost(a.spend, (a.stages.qualified || 0) + (a.stages.converted || 0)); a.cpTrans = sdCost(a.spend, a.transferred); a.cpBuy = sdCost(a.spend, a.buyers); a.roas = a.spend ? a.value / a.spend : null; a.qual = (a.stages.qualified || 0) + (a.stages.converted || 0); });
+  // رجال البيع: اتحوّل لكل واحد كام، واشترى منهم كام وبكام، ومن أنهي إعلانات
+  const reps = {};
+  rows.filter(r => r.cust).forEach(r => { const x = reps[r.rep] = reps[r.rep] || { id: r.rep, transferred: 0, buyers: 0, value: 0, ads: {}, rows: [] }; x.transferred++; x.rows.push(r); if (r.bought) { x.buyers++; x.value += r.value; } x.ads[r.adTitle] = (x.ads[r.adTitle] || 0) + 1; });
+  // الحملات: تجميع الإعلانات
+  const camps = {};
+  Object.values(ads).forEach(a => { const k = a.campaign || t('بدون حملة'); const c = camps[k] = camps[k] || { name: k, spend: 0, convs: 0, qual: 0, transferred: 0, buyers: 0, value: 0, ads: 0 }; c.spend += a.spend; c.convs += a.convs; c.qual += (a.stages.qualified || 0) + (a.stages.converted || 0); c.transferred += a.transferred; c.buyers += a.buyers; c.value += a.value; c.ads++; });
+  const countries = {}, channels = { fb: 0, ig: 0, wa: 0 };
+  rows.forEach(r => { countries[r.country] = (countries[r.country] || 0) + 1; if (r.kind === 'conv') channels[r.channel] = (channels[r.channel] || 0) + 1; });
+  const waits = (data.resp || []).filter(r => r.fi && r.fo && (!d.channel || allConvs.find(c => c.id === r.conv_id)?.channel === d.channel)).map(r => (r.fo - r.fi) / 60000).sort((a, b) => a - b);
+  return { tot, stages, ads: list, campaigns, camps: Object.values(camps).sort((a, b) => b.spend - a.spend || b.convs - a.convs), reps: Object.values(reps).sort((a, b) => b.transferred - a.transferred),
+    journey: rows.sort((a, b) => b.at - a.at), days, countries, channels, currency: cur, hasSpend: !!adsData?.ok, account: adsData?.account || null,
+    median: waits.length ? waits[Math.floor(waits.length / 2)] : null, fastShare: waits.length ? waits.filter(w => w <= 60).length / waits.length : null, replied: waits.length };
+}
+
+// قراءة تلقائية للأرقام: نصايح للميديا باير بناءً على الصرف والمراحل والبيع
+function socialDashInsights(s) {
+  const out = [];
+  const withSpend = s.ads.filter(a => a.spend > 0);
+  const spendAll = s.tot.spend;
+  const best = withSpend.filter(a => a.qual > 0).sort((a, b) => a.cpQual - b.cpQual)[0];
+  if (best) out.push(['good', t('أرخص عميل مؤهل جه من "{a}": {c} ج.م للعميل المؤهل ({n} مؤهلين). زوّد ميزانيته تدريجيًا (20% كل يومين) طول ما التكلفة ثابتة.', { a: best.title, c: money(best.cpQual), n: best.qual })]);
+  const buyer = s.ads.filter(a => a.buyers > 0).sort((a, b) => (b.roas ?? 0) - (a.roas ?? 0) || b.value - a.value)[0];
+  if (buyer) out.push(['good', t('أعلى عائد: "{a}" — {b} عميل اشترى بـ {v} ج.م{r}.', { a: buyer.title, b: buyer.buyers, v: money(buyer.value), r: buyer.roas != null ? ` (${t('العائد {x} ضعف الصرف', { x: buyer.roas.toFixed(1) })})` : '' })]);
+  withSpend.filter(a => a.spend >= Math.max(spendAll * 0.15, 1) && !a.qual && !a.transferred).forEach(a => out.push(['bad', t('"{a}" صرف {s} ج.م ({p} من الصرف) ومجابش ولا عميل مؤهل ولا اتحوّل لرجال البيع. راجع الجمهور والرسالة أو وقفه.', { a: a.title, s: money(a.spend), p: pct(a.spend, spendAll) })]));
+  s.ads.filter(a => a.convs >= 10 && a.phones / a.convs < 0.2).forEach(a => out.push(['warn', t('"{a}": {n} محادثة بس {p} بس بعتوا أرقامهم. الإعلان بيجيب فضول أكتر من نية شراء: وضّح في الإعلان إنه للمزارع والمساحات، واطلب الرقم في أول رد.', { a: a.title, n: a.convs, p: pct(a.phones, a.convs) })]));
+  s.ads.filter(a => a.transferred >= 5 && !a.buyers).forEach(a => out.push(['warn', t('"{a}": اتحوّل منه {n} عميل لرجال البيع ومحدش اشترى لسه. تابع مع رجال البيع جودة العملاء دول قبل ما تزوّد الصرف.', { a: a.title, n: a.transferred })]));
+  withSpend.filter(a => a.frequency >= 3.5).forEach(a => out.push(['warn', t('"{a}": التكرار {f} (نفس الشخص شاف الإعلان {f} مرات). الجمهور تعب: جدّد التصميم أو وسّع الجمهور.', { a: a.title, f: a.frequency.toFixed(1) })]));
+  withSpend.filter(a => a.impressions >= 3000 && a.ctr > 0 && a.ctr < 0.8).forEach(a => out.push(['warn', t('"{a}": نسبة الضغط {c}% ضعيفة. جرّب صورة/فيديو أقوى وأول سطر فيه المشكلة (ملوحة المياه) والنتيجة.', { a: a.title, c: a.ctr.toFixed(2) })]));
+  s.ads.filter(a => a.created && Date.now() - new Date(a.created).getTime() < 3 * 86400000).forEach(a => out.push(['info', t('"{a}" جديد (أقل من 3 أيام): سيبه يخلص مرحلة التعلّم قبل ما تحكم عليه أو تغيّره.', { a: a.title })]));
+  const noStage = s.tot.convs - Object.values(s.stages).reduce((x, y) => x + y, 0);
+  if (s.tot.convs >= 10 && noStage / s.tot.convs > 0.5) out.push(['warn', t('{p} من المحادثات من غير مرحلة. لما الفريق يحدد مسجل/مؤهل، ميتا بتتعلّم وتجيب عملاء أحسن بنفس الصرف.', { p: pct(noStage, s.tot.convs) })]);
+  if (s.median != null && s.median > 60) out.push(['warn', t('متوسط أول رد {w}. الرد خلال أول ساعة بيرفع نسبة اللي بيبعتوا أرقامهم بشكل واضح.', { w: fmtWait(s.median) })]);
+  const cs = Object.entries(s.countries).filter(([k]) => k).sort((a, b) => b[1] - a[1]);
+  if (cs.length > 1 && s.tot.convs >= 10) out.push(['info', t('أكتر الدول: {c}. لو فيه دول مش مستهدفة بتاخد نسبة كبيرة، استبعدها من الاستهداف.', { c: cs.slice(0, 4).map(([k, n]) => `${countryLabel(k)} ${pct(n, s.tot.convs)}`).join('، ') })]);
+  if (!s.hasSpend) out.push(['info', t('حساب الإعلانات مش متوصل، فالتكلفة والعائد مش ظاهرين. ضيف AD_ACCOUNT_ID في Cloudflare (وتوكن فيه ads_read).')]);
+  return out;
+}
+
+function viewSocialDash(root) {
+  const d = socialDash, period = socialDashPeriod();
+  root.innerHTML = `<div class="sd">
+    <div class="sd-head"><div><h1>${t('لوحة أداء الإعلانات والسوشيال')}</h1><div class="muted">${t('من الإعلان للمحادثة للعميل الجاد لرجل البيع للبيع. كل رقم بيفتح أسماء العملاء، وكل اسم بيفتح الشات.')}</div></div><span class="spacer"></span>
+      <button class="btn" id="sdBack">💬 ${t('الرسائل')}</button><button class="btn" id="sdRe" title="${t('تحديث من ميتا')}">⟳</button><button class="btn" id="sdXls">⬇ ${t('إكسيل')}</button><button class="btn primary" id="sdDoc">📄 ${t('تقرير وورد')}</button></div>
+    <div class="sd-bar"><div class="tabs" id="sdRange">${SOCIAL_RANGES.map(([k, l]) => `<button class="tab ${d.range === k ? 'on' : ''}" data-r="${k}">${t(l)}</button>`).join('')}</div>
+      <span id="sdCustom" ${d.range === 'custom' ? '' : 'hidden'}><input class="inp" type="date" id="sdFrom" value="${d.from}" aria-label="${t('من')}"> <input class="inp" type="date" id="sdTo" value="${d.to}" aria-label="${t('إلى')}"></span>
+      <select class="inp" id="sdCh" aria-label="${t('القناة')}">${opts([['', t('كل القنوات')], ['fb', t('ماسنجر')], ['ig', t('إنستجرام')], ['wa', t('واتساب')]], d.channel)}</select>
+      <select class="inp" id="sdCamp" aria-label="${t('الحملة')}"><option value="">${t('كل الحملات')}</option></select></div>
+    <div id="sdBody"><div class="card muted">${t('جارٍ تحميل البيانات...')}</div></div></div>`;
+  $('#sdBack', root).onclick = () => { socialState.view = 'inbox'; viewSocial(root); };
+  $$('#sdRange .tab', root).forEach(b => b.onclick = () => { d.range = b.dataset.r; d.data = null; viewSocialDash(root); });
+  ['sdFrom', 'sdTo'].forEach(id => { const el = $(`#${id}`, root); el.onchange = () => { d[id === 'sdFrom' ? 'from' : 'to'] = el.value; d.data = null; viewSocialDash(root); }; });
+  $('#sdCh', root).onchange = e => { d.channel = e.target.value; draw(); };
+  $('#sdCamp', root).onchange = e => { d.campaign = e.target.value; draw(); };
+  $('#sdRe', root).onclick = () => { d.data = null; d.ads = null; viewSocialDash(root); };
+  const compute = () => socialDashCompute(d.data, period, d.ads);
+  $('#sdXls', root).onclick = () => d.data && exportSocialDash(compute(), period);
+  $('#sdDoc', root).onclick = async () => {
+    if (!d.data) return;
+    const btn = $('#sdDoc', root); btn.disabled = true;
+    try { await socialDashDocx(compute(), period); } catch (err) { toast(err.message, 'err'); }
+    btn.disabled = false;
+  };
+  const key = `${period.from}-${period.to}`;
+  function draw() {
+    const box = $('#sdBody', root);
+    if (!box || !d.data) return;
+    const s = compute();
+    const sel = $('#sdCamp', root);
+    sel.innerHTML = `<option value="">${t('كل الحملات')}</option>${s.campaigns.map(c => `<option ${c === d.campaign ? 'selected' : ''}>${esc(c)}</option>`).join('')}`;
+    drawSocialDash(box, s, period, draw);
+  }
+  if (d.data && d.key === key) { draw(); return; }
+  const since = localDay(new Date(period.from).toISOString()), until = localDay(new Date(period.to - 1).toISOString());
+  Promise.all([
+    socialApi(`report?from=${period.from}&to=${period.to}`),
+    socialApi(`ads?since=${since}&until=${until}`).catch(err => ({ ok: false, error: err.message })),
+  ]).then(([rep, ads]) => { d.data = rep; d.ads = ads?.ok ? ads : null; d.adsErr = ads?.ok ? '' : ads?.error || ''; d.key = key; d.jShown = 50; draw(); })
+    .catch(err => { const b = $('#sdBody', root); if (b) b.innerHTML = `<div class="err-msg">${esc(t('تعذر تحميل البيانات: {e}', { e: err.message }))}</div>`; });
+}
+
+const SD_TRANSFER_LABEL = 'عملاء جادين تم تحويلهم لرجال البيع';
+function drawSocialDash(box, s, period, redraw) {
+  const d = socialDash, T = s.tot;
+  const kpi = (icon, label, value, sub, list, cls = '') => `<button class="sd-kpi ${cls}" ${list ? `data-list="${list}"` : 'disabled'}><span class="sd-ic">${icon}</span><span class="sd-kl">${label}</span><span class="sd-kv">${value}</span><span class="sd-ks">${sub || ''}</span></button>`;
+  const costSub = (v, l) => s.hasSpend ? `${l}: ${sdMoney(v)} ${t('ج.م')}` : '';
+  const funnel = [[t('محادثات'), T.convs, 'all'], [t('بعتوا أرقامهم'), T.phones, 'phones'], [t('مسجل'), T.lead + T.qualified + T.converted, 'lead+'], [t('مؤهل'), T.qualified + T.converted, 'qualified+'], [t(SD_TRANSFER_LABEL), T.transferred, 'transferred'], [t('اشتروا'), T.buyers, 'buyers']];
+  const maxF = Math.max(1, funnel[0][1]);
+  const insights = socialDashInsights(s);
+  const dayRows = Object.entries(s.days).map(([k, v]) => ({ label: k.slice(8) + '/' + k.slice(5, 7), value: v.convs, tip: `${fmtDate(k)}: ${t('{a} محادثة، {b} أرقام، {q} مؤهل، {tr} اتحولوا لرجال البيع', { a: v.convs, b: v.phones, q: v.qualified, tr: v.transferred })}${s.hasSpend ? ` · ${t('صرف')} ${money(v.spend)}` : ''}` }));
+  const spendRows = Object.entries(s.days).map(([k, v]) => ({ label: k.slice(8) + '/' + k.slice(5, 7), value: Math.round(v.spend), tip: `${fmtDate(k)}: ${money(v.spend)} ${t('ج.م')}` }));
+  const sv = x => x[d.sort] == null ? -1e15 : x[d.sort];
+  const sorted = s.ads.slice().sort((a, b) => (sv(b) - sv(a)) * (d.dir < 0 ? 1 : -1) || b.convs - a.convs);
+  const th = (k, l) => `<th class="sd-sort ${d.sort === k ? 'on' : ''}" data-sort="${k}">${l}${d.sort === k ? (d.dir < 0 ? ' ▼' : ' ▲') : ''}</th>`;
+  const cell = (a, n, metric, strong) => n ? `<td><button class="sd-n ${strong ? 'b' : ''}" data-list="ad|${esc(a.key)}|${metric}">${n}</button></td>` : '<td class="muted">0</td>';
+  const statusPill = st => st ? `<span class="pill ${st === 'ACTIVE' ? 'p-green' : /PAUSED|ARCHIVED|DELETED/.test(st) ? 'p-gray' : 'p-orange'}">${esc({ ACTIVE: t('شغال'), PAUSED: t('متوقف'), CAMPAIGN_PAUSED: t('الحملة متوقفة'), ADSET_PAUSED: t('المجموعة متوقفة'), PENDING_REVIEW: t('تحت المراجعة'), DISAPPROVED: t('مرفوض'), WITH_ISSUES: t('فيه مشكلة'), ARCHIVED: t('مؤرشف'), DELETED: t('محذوف') }[st] || st)}</span>` : '';
+  const journey = s.journey.filter(r => (!d.jStage || (d.jStage === 'none' ? !r.stage : d.jStage === 'transferred' ? !!r.cust : d.jStage === 'buyers' ? r.bought : r.stage === d.jStage)) && (!d.jAd || r.ad === d.jAd) && (!d.jRep || r.rep === d.jRep) && sdMatch(r, d.jq));
+  box.innerHTML = `
+    ${s.hasSpend ? '' : `<div class="sd-note">ⓘ ${esc(socialDash.adsErr && !['not configured', 'unknown'].includes(socialDash.adsErr) ? t('حساب الإعلانات رد بخطأ: {e}', { e: socialDash.adsErr }) : t('الصرف والتكلفة لكل عميل محتاجين ربط حساب الإعلانات (AD_ACCOUNT_ID في Cloudflare). باقي الأرقام شغالة.'))}</div>`}
+    <div class="sd-kpis">
+      ${kpi('💬', t('محادثات جديدة'), T.convs, esc(period.label), 'all')}
+      ${kpi('📞', t('بعتوا أرقامهم'), T.phones, `${pct(T.phones, T.convs)} ${t('من المحادثات')}`, 'phones')}
+      ${kpi('⭐', t('مؤهلين'), T.qualified + T.converted, costSub(T.cpQual, t('تكلفة المؤهل')), 'qualified+', 'k-purple')}
+      ${kpi('🤝', t(SD_TRANSFER_LABEL), T.transferred, `${pct(T.transferred, T.convs)}${s.hasSpend ? ` · ${costSub(T.cpTrans, t('التكلفة'))}` : ''}`, 'transferred', 'k-blue')}
+      ${kpi('🛒', t('اشتروا'), T.buyers, `${money(T.value)} ${t('ج.م')}`, 'buyers', 'k-green')}
+      ${kpi('💰', t('صرف الإعلانات'), s.hasSpend ? `${money(T.spend)}` : '—', s.hasSpend ? `${t('ج.م')}${s.currency !== 'EGP' ? ` · ${t('الحساب بالـ {c}', { c: s.currency })}` : ''}` : t('مش متوصل'), '')}
+      ${kpi('🎯', t('تكلفة المحادثة'), s.hasSpend ? sdMoney(T.cpConv) : '—', s.hasSpend ? `${t('تكلفة العميل المشتري')}: ${sdMoney(T.cpBuy)}` : '', '')}
+      ${kpi('📈', t('العائد على الصرف'), T.roas != null ? `${T.roas.toFixed(1)}x` : '—', s.hasSpend ? t('كل جنيه صرف رجّع {x} جنيه مبيعات', { x: T.roas != null ? T.roas.toFixed(1) : '0' }) : '', '')}
+      ${kpi('⏱', t('متوسط أول رد'), fmtWait(s.median), s.fastShare == null ? '' : t('{p} خلال ساعة', { p: pct(s.fastShare * 100, 100) }), '')}
+    </div>
+    <div class="sd-grid2">
+      <div class="card"><div class="sd-ttl">${t('مسار العملاء (القمع)')}</div>
+        <div class="sd-funnel">${funnel.map(([l, n, list], i) => `<button class="sd-fr" data-list="${list}"><span class="sd-fl">${l}</span><span class="sd-fb"><i style="width:${Math.max(2, n / maxF * 100)}%"></i></span><b>${n}</b><span class="muted">${i ? pct(n, funnel[i - 1][1]) : ''}</span></button>`).join('')}</div></div>
+      <div class="card"><div class="sd-ttl">💡 ${t('تحليل وتوصيات للميديا باير')}</div>
+        <ul class="sd-ins">${insights.length ? insights.map(([k, x]) => `<li class="${k}">${esc(x)}</li>`).join('') : `<li class="info">${t('مفيش بيانات كفاية في الفترة دي للتحليل')}</li>`}</ul></div>
+    </div>
+    <div class="card"><div class="sd-ttl">${t('مراحل العملاء (اللي بتتبعت للإعلانات)')} <span class="muted">· ${t('دوس على أي مرحلة تشوف العملاء بأساميهم')}</span></div>
+      <div class="stage-row mt">${Object.entries(SOCIAL_STAGES).map(([k, l]) => `<button class="stage-box ${STAGE_PILL[k]}" data-list="stage|${k}"><div class="v">${s.stages[k] || 0}</div><div class="l">${t(l)}${STAGE_META[k] ? ' ⓜ' : ''}</div></button>`).join('')}<button class="stage-box p-gray" data-list="stage|none"><div class="v">${T.convs - Object.values(s.stages).reduce((x, y) => x + y, 0)}</div><div class="l">${t('من غير مرحلة')}</div></button></div></div>
+    <div class="card"><div class="sd-ttl">${t('أداء كل إعلان')} <span class="muted">· ${t('{n} إعلان', { n: s.ads.length })} · ${t('دوس على العنوان للترتيب، وعلى أي رقم تشوف العملاء')}</span></div>
+      <div class="tbl-wrap sd-tbl"><table class="tbl"><thead><tr><th>${t('الإعلان')}</th>${s.hasSpend ? `${th('spend', t('الصرف'))}${th('impressions', t('مرات الظهور'))}${th('ctr', t('نسبة الضغط'))}` : ''}${th('convs', t('محادثات'))}${th('phones', t('أرقام'))}${th('lead', t('مسجل'))}${th('qual', t('مؤهل'))}${th('transferred', t('اتحولوا لرجال البيع'))}${th('buyers', t('اشتروا'))}${th('value', t('المبيعات'))}${s.hasSpend ? `${th('cpConv', t('تكلفة المحادثة'))}${th('cpQual', t('تكلفة المؤهل'))}${th('cpTrans', t('تكلفة العميل الجاد'))}${th('roas', t('العائد'))}` : ''}<th>${t('رجال البيع')}</th></tr></thead>
+      <tbody>${sorted.length ? sorted.map(a => { return `<tr><td class="wrap sd-ad">${a.thumb ? `<img src="${esc(a.thumb)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : ''}<div><b>${esc(a.title)}</b> ${statusPill(a.status)}<div class="muted">${esc([a.campaign, a.adset].filter(Boolean).join(' › '))}${a.created ? ` · ${t('اتعمل')} ${fmtDate(a.created.slice(0, 10))}` : ''}</div><div class="muted">🌍 ${esc(countryTop(a.countries))}</div></div></td>
+        ${s.hasSpend ? `<td><b>${money(a.spend)}</b></td><td>${money(a.impressions)}</td><td>${a.ctr ? `${a.ctr.toFixed(2)}%` : '—'}</td>` : ''}
+        ${cell(a, a.convs, 'all')}${cell(a, a.phones, 'phones')}${cell(a, a.stages.lead || 0, 'stage-lead')}${cell(a, a.qual, 'qualified+', true)}${cell(a, a.transferred, 'transferred', true)}${cell(a, a.buyers, 'buyers', true)}<td>${money(a.value)}</td>
+        ${s.hasSpend ? `<td>${sdMoney(a.cpConv)}</td><td>${sdMoney(a.cpQual)}</td><td>${sdMoney(a.cpTrans)}</td><td>${a.roas != null ? `<b class="${a.roas >= 1 ? 'pos' : 'neg'}">${a.roas.toFixed(1)}x</b>` : '—'}</td>` : ''}
+        <td class="wrap">${Object.entries(a.reps).map(([id, n]) => `<span class="pill p-blue">${esc(userName(id))} ${n}</span>`).join(' ') || '<span class="muted">—</span>'}</td></tr>`; }).join('')
+        : `<tr><td colspan="16" class="muted">${t('لا توجد محادثات في هذه الفترة')}</td></tr>`}</tbody></table></div></div>
+    <div class="sd-grid2">
+      <div class="card"><div class="sd-ttl">${t('رجال البيع: العملاء الجادين اللي اتحولولهم')}</div>
+        <div class="tbl-wrap"><table class="tbl"><thead><tr><th>${t('رجل البيع')}</th><th>${t('اتحوّلوله')}</th><th>${t('اشتروا')}</th><th>${t('نسبة الإغلاق')}</th><th>${t('المبيعات')}</th><th>${t('أكتر إعلانات')}</th></tr></thead>
+        <tbody>${s.reps.length ? s.reps.map(r => `<tr><td><b>${esc(userName(r.id))}</b></td><td><button class="sd-n b" data-list="rep|${esc(r.id)}">${r.transferred}</button></td><td>${r.buyers}</td><td>${pct(r.buyers, r.transferred)}</td><td>${money(r.value)}</td><td class="wrap muted">${esc(Object.entries(r.ads).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([k, n]) => `${k} (${n})`).join('، '))}</td></tr>`).join('') : `<tr><td colspan="6" class="muted">${t('محدش اتحوّل لرجال البيع في الفترة دي')}</td></tr>`}</tbody></table></div></div>
+      <div class="card"><div class="sd-ttl">${t('الحملات')}</div>
+        <div class="tbl-wrap"><table class="tbl"><thead><tr><th>${t('الحملة')}</th>${s.hasSpend ? `<th>${t('الصرف')}</th>` : ''}<th>${t('محادثات')}</th><th>${t('مؤهل')}</th><th>${t('اتحولوا لرجال البيع')}</th><th>${t('اشتروا')}</th><th>${t('المبيعات')}</th>${s.hasSpend ? `<th>${t('تكلفة المؤهل')}</th>` : ''}</tr></thead>
+        <tbody>${s.camps.map(c => `<tr><td class="wrap"><b>${esc(c.name)}</b> <span class="muted">(${c.ads})</span></td>${s.hasSpend ? `<td>${money(c.spend)}</td>` : ''}<td>${c.convs}</td><td>${c.qual}</td><td>${c.transferred}</td><td>${c.buyers}</td><td>${money(c.value)}</td>${s.hasSpend ? `<td>${sdMoney(sdCost(c.spend, c.qual))}</td>` : ''}</tr>`).join('')}</tbody></table></div></div>
+    </div>
+    <div class="sd-grid2">
+      <div class="card"><div class="sd-ttl">${t('المحادثات يومًا بيوم')}</div>${dayRows.length > 1 ? barChart(dayRows, v => String(v)) : `<div class="muted mt">${t('اختر فترة أطول لعرض الرسم')}</div>`}</div>
+      <div class="card"><div class="sd-ttl">${s.hasSpend ? t('الصرف يومًا بيوم (ج.م)') : t('القنوات')}</div>${s.hasSpend ? (spendRows.length > 1 ? barChart(spendRows) : `<div class="muted mt">${t('اختر فترة أطول لعرض الرسم')}</div>`) : (T.convs ? stackBar([[t('ماسنجر'), s.channels.fb || 0], [t('إنستجرام'), s.channels.ig || 0], [t('واتساب'), s.channels.wa || 0]], String) : `<div class="empty">${t('لا توجد بيانات في هذه الفترة')}</div>`)}</div>
+    </div>
+    <div class="sd-grid2">
+      <div class="card"><div class="sd-ttl">${t('العملاء حسب الدولة')}</div>${hbars(Object.entries(s.countries).sort((a, b) => b[1] - a[1]).slice(0, 15).map(([k, n]) => [k ? countryLabel(k) : t('دولة غير محددة'), n, String(n)]), { fmt: String, h1: t('الدولة'), h2: t('العملاء') })}</div>
+      <div class="card"><div class="sd-ttl">${t('القنوات')}</div>${T.convs ? stackBar([[t('ماسنجر'), s.channels.fb || 0], [t('إنستجرام'), s.channels.ig || 0], [t('واتساب'), s.channels.wa || 0]], String) : `<div class="empty">${t('لا توجد بيانات في هذه الفترة')}</div>`}</div>
+    </div>
+    <div class="card" id="sdJourney"><div class="sd-ttl">${t('تتبّع مسار العملاء')} <span class="muted">· ${t('{n} عميل', { n: journey.length })} · ${t('دوس على الاسم يفتح الشات')}</span></div>
+      <div class="filters mt"><input class="inp" type="search" id="jq" placeholder="${t('بحث بالاسم أو رقم التليفون')}" value="${esc(d.jq)}">
+        <select class="inp" id="jStage">${opts([['', t('كل المراحل')], ['none', t('من غير مرحلة')], ...Object.entries(SOCIAL_STAGES).map(([k, v]) => [k, t(v)]), ['transferred', t(SD_TRANSFER_LABEL)], ['buyers', t('اشتروا')]], d.jStage)}</select>
+        <select class="inp" id="jAd"><option value="">${t('كل الإعلانات')}</option>${s.ads.filter(a => a.rows.length).map(a => `<option value="${esc(a.key)}" ${a.key === d.jAd ? 'selected' : ''}>${esc(a.title.slice(0, 60))}</option>`).join('')}</select>
+        <select class="inp" id="jRep"><option value="">${t('كل رجال البيع')}</option>${s.reps.map(r => `<option value="${esc(r.id)}" ${r.id === d.jRep ? 'selected' : ''}>${esc(userName(r.id))}</option>`).join('')}</select>
+        <button class="btn" id="jXls">⬇ ${t('إكسيل بالأسماء')}</button></div>
+      ${sdTable(journey.slice(0, d.jShown))}
+      ${journey.length > d.jShown ? `<button class="btn mt" id="jMore">${t('عرض المزيد ({n} باقيين)', { n: journey.length - d.jShown })}</button>` : ''}</div>`;
+  // كل رقم أو مرحلة بتفتح أسماء العملاء
+  $$('[data-list]', box).forEach(b => b.onclick = () => openSdList(s, b.dataset.list));
+  $$('.sd-sort', box).forEach(h => h.onclick = () => { if (d.sort === h.dataset.sort) d.dir *= -1; else { d.sort = h.dataset.sort; d.dir = -1; } redraw(); });
+  bindSdTable(box);
+  const jr = () => { d.jShown = 50; redraw(); setTimeout(() => $('#sdJourney')?.scrollIntoView({ block: 'start' }), 0); };
+  $('#jq', box).onchange = e => { d.jq = e.target.value; jr(); };
+  $('#jStage', box).onchange = e => { d.jStage = e.target.value; jr(); };
+  $('#jAd', box).onchange = e => { d.jAd = e.target.value; jr(); };
+  $('#jRep', box).onchange = e => { d.jRep = e.target.value; jr(); };
+  const more = $('#jMore', box); if (more) more.onclick = () => { d.jShown += 100; redraw(); setTimeout(() => $('#jMore')?.scrollIntoView({ block: 'center' }), 0); };
+  $('#jXls', box).onclick = () => exportSdList(journey, t('مسار العملاء'));
+}
+// البحث بالاسم أو الرقم (الرقم بأي صيغة: 010… أو +2010… أو من غير صفر)
+const sdDigits = s => toLatinDigits(s).replace(/\D/g, '');
+function sdMatch(r, q) {
+  q = String(q || '').trim(); if (!q) return true;
+  const dq = sdDigits(q);
+  if (dq.length >= 5) return [r.phone, r.cust?.phone1, r.cust?.phone2, ...((r.cv?.phones) || []).map(p => p.p)].some(p => { const dp = sdDigits(p); return dp && (dp.includes(dq) || dp.slice(-9) === dq.slice(-9)); });
+  return normHeader(`${r.name} ${r.adTitle} ${r.cust?.name || ''}`).includes(normHeader(q));
+}
+function sdTable(rows) {
+  if (!rows.length) return `<div class="empty">${t('مفيش عملاء هنا')}</div>`;
+  return `<div class="tbl-wrap"><table class="tbl sd-j"><thead><tr><th>${t('العميل')}</th><th>${t('القناة')}</th><th>${t('الإعلان')}</th><th>${t('أول رسالة')}</th><th>${t('الرقم')}</th><th>${t('الدولة')}</th><th>${t('المرحلة')}</th><th>${t('رجل البيع')}</th><th>${t('اشترى')}</th></tr></thead>
+    <tbody>${rows.map(r => `<tr><td><button class="sd-name" ${r.id ? `data-chat="${esc(r.id)}"` : `data-cust="${esc(r.cust?.id || '')}"`}>${r.cv ? socialAvatar(r.cv) : ''}<b>${esc(r.name)}</b></button>${r.cust ? `<div class="muted" style="font-size:12px">${t('عميل')} ${esc(r.cust.code || '')}${r.kind === 'manual' ? ` · ${t('مسجل يدويًا')}` : ''}</div>` : ''}</td>
+      <td>${r.channel ? t(SOCIAL_CHANNELS[r.channel] || r.channel) : '—'}</td><td class="wrap" style="max-width:240px">${esc(r.adTitle)}</td><td>${r.at ? fmtDT(new Date(r.at).toISOString()) : ''}</td><td dir="ltr" class="num">${esc(r.phone || '')}</td><td>${esc(r.country ? countryLabel(r.country) : '')}</td>
+      <td>${r.stage ? stagePillHtml({ stage: r.stage }) : '<span class="muted">—</span>'}</td><td>${r.cust ? `<span class="pill p-blue">${esc(userName(r.rep))}</span>` : '<span class="muted">—</span>'}</td><td>${r.bought ? `<span class="pill p-green">✓ ${money(r.value)}</span>` : '<span class="muted">—</span>'}</td></tr>`).join('')}</tbody></table></div>`;
+}
+function bindSdTable(root, close) {
+  $$('[data-chat]', root).forEach(b => b.onclick = () => { close && close(); socialState.view = 'inbox'; location.hash = `#/social/${encodeURIComponent(b.dataset.chat)}`; });
+  $$('[data-cust]', root).forEach(b => b.onclick = () => { if (!b.dataset.cust) return; close && close(); openCustomer(b.dataset.cust); });
+}
+// قايمة العملاء ورا أي رقم في اللوحة
+function sdRowsFor(s, spec) {
+  const [kind, a, b] = spec.split('|');
+  const filt = { all: r => r.kind === 'conv', phones: r => r.kind === 'conv' && (r.cv.phones || []).length, 'lead+': r => SD_POSITIVE.includes(r.stage), 'qualified+': r => r.stage === 'qualified' || r.stage === 'converted', transferred: r => !!r.cust, buyers: r => r.bought };
+  if (kind === 'stage') return { rows: s.journey.filter(r => a === 'none' ? r.kind === 'conv' && !r.stage : r.stage === a), title: a === 'none' ? t('من غير مرحلة') : t(SOCIAL_STAGES[a]) };
+  if (kind === 'rep') return { rows: s.journey.filter(r => r.cust && r.rep === a), title: `${t(SD_TRANSFER_LABEL)}: ${userName(a)}` };
+  if (kind === 'ad') {
+    const ad = s.ads.find(x => x.key === a); if (!ad) return { rows: [], title: '' };
+    const st = b.startsWith('stage-') ? b.slice(6) : '';
+    const f = st ? (r => r.stage === st) : filt[b] || filt.all;
+    return { rows: ad.rows.filter(f), title: `${ad.title} · ${{ all: t('محادثات'), phones: t('أرقام'), 'qualified+': t('مؤهل'), transferred: t(SD_TRANSFER_LABEL), buyers: t('اشتروا') }[b] || t(SOCIAL_STAGES[st] || '')}` };
+  }
+  return { rows: s.journey.filter(filt[kind] || filt.all), title: { all: t('محادثات جديدة'), phones: t('بعتوا أرقامهم'), 'lead+': t('مسجل'), 'qualified+': t('مؤهلين'), transferred: t(SD_TRANSFER_LABEL), buyers: t('اشتروا') }[kind] || '' };
+}
+function openSdList(s, spec) {
+  const { rows, title } = sdRowsFor(s, spec);
+  let q = '';
+  const md = openModal({ title: `${esc(title)} (${rows.length})`, wide: true, body: `<div class="filters"><input class="inp" type="search" id="sdlq" placeholder="${t('بحث بالاسم أو رقم التليفون')}"><button class="btn" id="sdlx">⬇ ${t('إكسيل')}</button></div><div id="sdlb" class="mt"></div>` });
+  const draw = () => { const list = rows.filter(r => sdMatch(r, q)); $('#sdlb', md.el).innerHTML = sdTable(list.slice(0, 500)); bindSdTable(md.el, md.close); };
+  $('#sdlq', md.el).oninput = e => { q = e.target.value; draw(); };
+  $('#sdlx', md.el).onclick = () => exportSdList(rows.filter(r => sdMatch(r, q)), title);
+  draw();
+}
+const sdListRows = rows => [[t('العميل'), t('كود العميل'), t('القناة'), t('الإعلان'), t('أول رسالة'), t('الرقم'), t('الدولة'), t('المرحلة'), t('رجل البيع'), t('اشترى'), t('قيمة الشراء (ج.م)')],
+  ...rows.map(r => [r.name, r.cust?.code || '', r.channel ? t(SOCIAL_CHANNELS[r.channel] || r.channel) : '', r.adTitle, r.at ? fmtDT(new Date(r.at).toISOString()) : '', r.phone || '', r.country ? countryLabel(r.country) : '', r.stage ? t(SOCIAL_STAGES[r.stage]) : '', r.cust ? userName(r.rep) : '', r.bought ? t('نعم') : '', r.bought ? Math.round(r.value) : ''])];
+function exportSdList(rows, title) {
+  downloadBlob(buildXlsx([{ name: title.slice(0, 30), title, rows: sdListRows(rows) }]), `${safeFileName(title)} ${today()}.xlsx`);
+  audit('export', 'social', null, 'تصدير قائمة عملاء من لوحة الإعلانات: {t}', { t: title });
+}
+
+// ------- إكسيل منسق: لوحة ملخص + الإعلانات + الحملات + رجال البيع + مسار العملاء بالأسماء + الأيام + الدول -------
+function exportSocialDash(s, period) {
+  const T = s.tot, H = s.hasSpend;
+  const kpis = [[t('محادثات جديدة'), T.convs], [t('بعتوا أرقامهم'), T.phones], [t('مؤهلين'), T.qualified + T.converted], [t(SD_TRANSFER_LABEL), T.transferred], [t('اشتروا'), T.buyers], [t('المبيعات (ج.م)'), Math.round(T.value)],
+    ...(H ? [[t('صرف الإعلانات (ج.م)'), Math.round(T.spend)], [t('تكلفة المحادثة'), T.cpConv == null ? '—' : Math.round(T.cpConv)], [t('تكلفة المؤهل'), T.cpQual == null ? '—' : Math.round(T.cpQual)], [t('تكلفة العميل الجاد'), T.cpTrans == null ? '—' : Math.round(T.cpTrans)], [t('تكلفة العميل المشتري'), T.cpBuy == null ? '—' : Math.round(T.cpBuy)], [t('العائد على الصرف'), T.roas == null ? '—' : `${T.roas.toFixed(2)}x`]] : []),
+    [t('متوسط أول رد'), fmtWait(s.median)]];
+  const funnel = [[t('المرحلة'), t('العدد'), t('من اللي قبلها')], ...[[t('محادثات'), T.convs], [t('بعتوا أرقامهم'), T.phones], [t('مسجل'), T.lead + T.qualified + T.converted], [t('مؤهل'), T.qualified + T.converted], [t(SD_TRANSFER_LABEL), T.transferred], [t('اشتروا'), T.buyers]].map((r, i, a) => [r[0], r[1], i ? (a[i - 1][1] ? r[1] / a[i - 1][1] : 0) : 1])];
+  const adHead = [t('الإعلان'), t('الحملة'), t('المجموعة'), t('الحالة'), ...(H ? [t('الصرف (ج.م)'), t('مرات الظهور'), t('الوصول'), t('التكرار'), t('الضغطات'), t('نسبة الضغط %'), t('محادثات ميتا')] : []), t('محادثات'), t('أرقام'), t('متابعة'), t('مسجل'), t('مؤهل'), t('غير مؤهل'), t('تم التحويل'), t('مفقود'), t('سبام'), t(SD_TRANSFER_LABEL), t('اشتروا'), t('المبيعات (ج.م)'), ...(H ? [t('تكلفة المحادثة'), t('تكلفة المؤهل'), t('تكلفة العميل الجاد'), t('تكلفة المشتري'), t('العائد')] : []), t('رجال البيع'), t('الدول')];
+  const r2 = v => v == null ? '' : Math.round(v);
+  const adRows = s.ads.map(a => [a.title, a.campaign, a.adset, a.status, ...(H ? [Math.round(a.spend), a.impressions, a.reach, +a.frequency.toFixed(2), a.clicks, +a.ctr.toFixed(2), a.metaMsgs] : []), a.convs, a.phones, a.stages.followup || 0, a.stages.lead || 0, a.stages.qualified || 0, a.stages.unqualified || 0, a.stages.converted || 0, a.stages.lost || 0, a.stages.spam || 0, a.transferred, a.buyers, Math.round(a.value), ...(H ? [r2(a.cpConv), r2(a.cpQual), r2(a.cpTrans), r2(a.cpBuy), a.roas == null ? '' : +a.roas.toFixed(2)] : []), Object.entries(a.reps).map(([id, n]) => `${userName(id)} (${n})`).join('، '), countryTop(a.countries, 20)]);
+  const sumCol = i => adRows.reduce((x, r) => x + (typeof r[i] === 'number' ? r[i] : 0), 0);
+  const totalRow = adHead.map((h, i) => i === 0 ? t('الإجمالي') : i < 4 ? '' : ([t('التكرار'), t('نسبة الضغط %'), t('العائد'), t('رجال البيع'), t('الدول')].includes(h) || /تكلفة/.test(h)) ? '' : sumCol(i));
+  const bars = (head, names) => names.map(n => head.indexOf(n)).filter(i => i >= 0);
+  const camp = [[t('الحملة'), t('عدد الإعلانات'), ...(H ? [t('الصرف (ج.م)')] : []), t('محادثات'), t('مؤهل'), t(SD_TRANSFER_LABEL), t('اشتروا'), t('المبيعات (ج.م)'), ...(H ? [t('تكلفة المؤهل'), t('العائد')] : [])], ...s.camps.map(c => [c.name, c.ads, ...(H ? [Math.round(c.spend)] : []), c.convs, c.qual, c.transferred, c.buyers, Math.round(c.value), ...(H ? [r2(sdCost(c.spend, c.qual)), c.spend ? +(c.value / c.spend).toFixed(2) : ''] : [])])];
+  const reps = [[t('رجل البيع'), t(SD_TRANSFER_LABEL), t('اشتروا'), t('نسبة الإغلاق'), t('المبيعات (ج.م)'), t('الإعلانات')], ...s.reps.map(r => [userName(r.id), r.transferred, r.buyers, r.transferred ? r.buyers / r.transferred : 0, Math.round(r.value), Object.entries(r.ads).sort((a, b) => b[1] - a[1]).map(([k, n]) => `${k} (${n})`).join('، ')])];
+  const days = [[t('اليوم'), t('محادثات'), t('أرقام'), t('مؤهل'), t(SD_TRANSFER_LABEL), ...(H ? [t('الصرف (ج.م)')] : [])], ...Object.entries(s.days).map(([k, v]) => [fmtDate(k), v.convs, v.phones, v.qualified, v.transferred, ...(H ? [Math.round(v.spend)] : [])])];
+  const countries = [[t('الدولة'), t('العملاء'), t('النسبة')], ...Object.entries(s.countries).sort((a, b) => b[1] - a[1]).map(([k, n]) => [k ? countryLabel(k) : t('دولة غير محددة'), n, T.convs ? n / Math.max(1, s.journey.length) : 0])];
+  const insights = [[t('النوع'), t('التحليل والتوصية')], ...socialDashInsights(s).map(([k, x]) => [{ good: t('فرصة'), bad: t('مشكلة'), warn: t('تنبيه'), info: t('معلومة') }[k], x])];
+  const title = `${t('تقرير أداء الإعلانات والسوشيال')} · ${period.label}`;
+  downloadBlob(buildXlsx([
+    { name: t('لوحة الملخص'), dash: { title, subtitle: `${t('من')} ${fmtDT(new Date(socialDashPeriod().from).toISOString()).slice(0, 10)} ${t('إلى')} ${fmtDate(localDay(new Date(socialDashPeriod().to - 1).toISOString()))} · ${t('اتعمل')} ${fmtDT(new Date().toISOString())}`, kpis, tables: [
+      { title: t('مسار العملاء (القمع)'), rows: funnel, pct: [2], bars: [1] },
+      { title: t('أفضل 10 إعلانات'), rows: [[t('الإعلان'), ...(H ? [t('الصرف (ج.م)')] : []), t('محادثات'), t('مؤهل'), t(SD_TRANSFER_LABEL), t('اشتروا'), t('المبيعات (ج.م)')], ...s.ads.slice().sort((a, b) => b.buyers - a.buyers || b.transferred - a.transferred || b.qual - a.qual || b.convs - a.convs).slice(0, 10).map(a => [a.title, ...(H ? [Math.round(a.spend)] : []), a.convs, a.qual, a.transferred, a.buyers, Math.round(a.value)])], bars: H ? [1, 2] : [1] },
+      { title: t('تحليل وتوصيات'), rows: insights },
+    ] } },
+    { name: t('الإعلانات'), title, rows: [adHead, ...adRows, totalRow], bars: bars(adHead, [t('الصرف (ج.م)'), t('محادثات'), t('مؤهل'), t(SD_TRANSFER_LABEL), t('اشتروا'), t('المبيعات (ج.م)')]), total: true },
+    { name: t('الحملات'), title, rows: camp, bars: [2, 3] },
+    { name: t('رجال البيع'), title, rows: reps, pct: [3], bars: [1, 4] },
+    { name: t('مسار العملاء بالأسماء'), title, rows: sdListRows(s.journey) },
+    { name: t('الأيام'), title, rows: days, bars: [1, H ? 5 : 1] },
+    { name: t('الدول'), title, rows: countries, pct: [2], bars: [1] },
+  ]), `${safeFileName(t('تقرير الإعلانات'))} ${socialDash.range === 'custom' ? `${socialDash.from}_${socialDash.to || today()}` : today()}.xlsx`);
+  audit('export', 'social', null, 'تصدير لوحة أداء الإعلانات');
+}
+
+// ------- تقرير وورد مفصّل -------
+async function socialDashDocx(s, period) {
+  const T = s.tot, H = s.hasSpend;
+  const ins = socialDashInsights(s);
+  const top = s.ads.slice().sort((a, b) => b.buyers - a.buyers || b.transferred - a.transferred || b.qual - a.qual)[0];
+  const blob = await buildReportDocx({
+    title: t('تقرير أداء الإعلانات والسوشيال'), subtitle: `${t('ماسنجر وإنستجرام وواتساب')} · ${period.label}`,
+    sections: [
+      { heading: t('الملخص التنفيذي'), kpis: [[t('محادثات'), T.convs], [t('مؤهلين'), T.qualified + T.converted], [t(SD_TRANSFER_LABEL), T.transferred], [t('اشتروا'), T.buyers], ...(H ? [[t('الصرف (ج.م)'), money(T.spend)], [t('العائد'), T.roas != null ? `${T.roas.toFixed(1)}x` : '—']] : [])],
+        text: [t('وصلت {a} محادثة جديدة، بعت {b} منهم أرقامهم ({p})، واتأهل {q}، واتحوّل {c} عميل جاد لرجال البيع، واشترى {d} بقيمة {v} ج.م. متوسط أول رد من الفريق: {w}.', { a: T.convs, b: T.phones, p: pct(T.phones, T.convs), q: T.qualified + T.converted, c: T.transferred, d: T.buyers, v: money(T.value), w: fmtWait(s.median) }),
+          H ? t('الصرف {s} ج.م: تكلفة المحادثة {c1}، تكلفة العميل المؤهل {c2}، تكلفة العميل الجاد {c3}، تكلفة العميل المشتري {c4} ج.م.', { s: money(T.spend), c1: sdMoney(T.cpConv), c2: sdMoney(T.cpQual), c3: sdMoney(T.cpTrans), c4: sdMoney(T.cpBuy) }) : '',
+          top ? t('أفضل إعلان: "{n}" ({c} محادثة، {q} مؤهل، {tr} اتحولوا لرجال البيع، {b} اشتروا).', { n: top.title, c: top.convs, q: top.qual, tr: top.transferred, b: top.buyers }) : ''].filter(Boolean) },
+      { heading: t('تحليل وتوصيات للميديا باير'), text: ins.map(([k, x]) => `${{ good: '✓', bad: '✗', warn: '!', info: '•' }[k]} ${x}`) },
+      { heading: t('مسار العملاء (القمع)'), chart: { horizontal: true, rows: [[t('محادثات'), T.convs], [t('بعتوا أرقامهم'), T.phones], [t('مسجل'), T.lead + T.qualified + T.converted], [t('مؤهل'), T.qualified + T.converted], [t('عملاء جادين'), T.transferred], [t('اشتروا'), T.buyers]] } },
+      { heading: t('المحادثات يومًا بيوم'), chart: { rows: Object.entries(s.days).map(([k, v]) => [`${k.slice(8)}/${k.slice(5, 7)}`, v.convs]) } },
+      ...(H ? [{ heading: t('الصرف يومًا بيوم (ج.م)'), chart: { rows: Object.entries(s.days).map(([k, v]) => [`${k.slice(8)}/${k.slice(5, 7)}`, Math.round(v.spend)]) } }] : []),
+      { heading: t('أداء الإعلانات'), chart: { horizontal: true, rows: s.ads.slice().sort((a, b) => b.convs - a.convs).slice(0, 10).map(a => [a.title, a.convs]), caption: t('عدد المحادثات لكل إعلان') },
+        table: { head: [t('الإعلان'), ...(H ? [t('الصرف')] : []), t('محادثات'), t('أرقام'), t('مسجل'), t('مؤهل'), t('عملاء جادين'), t('اشتروا'), t('المبيعات'), ...(H ? [t('تكلفة المؤهل'), t('العائد')] : [])], rows: s.ads.map(a => [a.title, ...(H ? [money(a.spend)] : []), a.convs, a.phones, a.stages.lead || 0, a.qual, a.transferred, a.buyers, money(a.value), ...(H ? [sdMoney(a.cpQual), a.roas != null ? `${a.roas.toFixed(1)}x` : '—'] : [])]) } },
+      { heading: t('الحملات'), table: { head: [t('الحملة'), ...(H ? [t('الصرف')] : []), t('محادثات'), t('مؤهل'), t('عملاء جادين'), t('اشتروا'), t('المبيعات')], rows: s.camps.map(c => [c.name, ...(H ? [money(c.spend)] : []), c.convs, c.qual, c.transferred, c.buyers, money(c.value)]) } },
+      { heading: t('رجال البيع'), table: { head: [t('رجل البيع'), t('عملاء جادين'), t('اشتروا'), t('نسبة الإغلاق'), t('المبيعات')], rows: s.reps.map(r => [userName(r.id), r.transferred, r.buyers, pct(r.buyers, r.transferred), money(r.value)]) } },
+      { heading: t('مراحل العملاء'), kpis: Object.entries(SOCIAL_STAGES).filter(([k]) => s.stages[k]).map(([k, l]) => [t(l), s.stages[k]]) },
+      { heading: t('العملاء الجادين اللي اتحولوا لرجال البيع'), table: { head: [t('العميل'), t('الإعلان'), t('القناة'), t('رجل البيع'), t('اشترى')], rows: s.journey.filter(r => r.cust).slice(0, 200).map(r => [r.name, r.adTitle, r.channel ? t(SOCIAL_CHANNELS[r.channel] || '') : '', userName(r.rep), r.bought ? money(r.value) : '—']) } },
+      { heading: t('العملاء حسب الدولة'), chart: { horizontal: true, rows: Object.entries(s.countries).sort((a, b) => b[1] - a[1]).slice(0, 12).map(([k, n]) => [k ? countryLabel(k) : t('دولة غير محددة'), n]) } },
+    ],
+  });
+  downloadBlob(blob, `${safeFileName(t('تقرير أداء الإعلانات'))} ${today()}.docx`);
+  audit('export', 'social', null, 'تقرير وورد لأداء الإعلانات');
+}
+
+Object.assign(EN, {
+  'لوحة أداء الإعلانات والسوشيال': 'Ads & social performance', 'من الإعلان للمحادثة للعميل الجاد لرجل البيع للبيع. كل رقم بيفتح أسماء العملاء، وكل اسم بيفتح الشات.': 'From ad to conversation to serious lead to sales rep to sale. Every number opens the customer names, and every name opens the chat.',
+  'تحديث من ميتا': 'Refresh from Meta', 'الرسائل': 'Messages', 'أمس': 'Yesterday', 'الشهر اللي فات': 'Last month', 'كل الحملات': 'All campaigns', 'الحملة': 'Campaign', 'القناة': 'Channel',
+  'عملاء جادين تم تحويلهم لرجال البيع': 'Serious leads transferred to sales reps', 'مؤهلين': 'Qualified', 'بعتوا أرقامهم': 'Sent their number', 'صرف الإعلانات': 'Ad spend', 'تكلفة المحادثة': 'Cost per conversation', 'تكلفة المؤهل': 'Cost per qualified',
+  'تكلفة العميل الجاد': 'Cost per serious lead', 'تكلفة العميل المشتري': 'Cost per buyer', 'تكلفة المشتري': 'Cost per buyer', 'العائد على الصرف': 'Return on ad spend', 'العائد': 'ROAS', 'متوسط أول رد': 'Median first reply', 'مش متوصل': 'Not connected',
+  'مسار العملاء (القمع)': 'Customer funnel', 'تحليل وتوصيات للميديا باير': 'Analysis & recommendations', 'أداء كل إعلان': 'Performance per ad', 'رجال البيع': 'Sales reps', 'رجل البيع': 'Sales rep', 'الحملات': 'Campaigns', 'الصرف': 'Spend', 'مرات الظهور': 'Impressions', 'نسبة الضغط': 'CTR',
+  'اتحولوا لرجال البيع': 'Sent to sales', 'تتبّع مسار العملاء': 'Customer journey', 'دوس على الاسم يفتح الشات': 'Click a name to open the chat', 'بحث بالاسم أو رقم التليفون': 'Search by name or phone', 'كل الإعلانات': 'All ads', 'كل رجال البيع': 'All sales reps', 'إكسيل بالأسماء': 'Excel with names',
+  'مفيش عملاء هنا': 'No customers here', 'اشترى': 'Bought', 'الرقم': 'Phone', 'المرحلة': 'Stage', 'العميل': 'Customer', 'الإعلان': 'Ad', 'أول رسالة': 'First message', 'تقرير أداء الإعلانات والسوشيال': 'Ads & social performance report', 'لوحة الملخص': 'Dashboard', 'مسار العملاء بالأسماء': 'Customer journey',
+  'شغال': 'Active', 'متوقف': 'Paused', 'الحملة متوقفة': 'Campaign paused', 'المجموعة متوقفة': 'Ad set paused', 'تحت المراجعة': 'In review', 'مرفوض': 'Rejected', 'فيه مشكلة': 'Has issues', 'مؤرشف': 'Archived', 'محذوف': 'Deleted', 'اتعمل': 'Created',
+  'الصرف يومًا بيوم (ج.م)': 'Spend per day (EGP)', 'من غير مرحلة': 'No stage', 'عملاء جادين': 'Serious leads', 'نسبة الإغلاق': 'Close rate', 'أكتر إعلانات': 'Top ads', 'اتحوّلوله': 'Transferred', 'بدون حملة': 'No campaign', 'مسجل يدويًا': 'Added manually',
+});
 
 </script>
 <script>
