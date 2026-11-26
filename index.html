@@ -6507,7 +6507,9 @@ function exportStatementXlsx(c) {
   const f = customerFinance(c), stamp = exportStamp();
   const ordersRows = f.orders.map(o => [o.no, fmtDate(o.date), plain(o.items.map(i => `${deviceName(i.type, i.size)} × ${i.qty}`).join(' + ')), o.total, curLabel(o), t(PAY_TYPES[o.payType]), +o.deposit || 0, orderCollected(o), t(ORDER_STATUS[o.status] || o.status), plain(o.payHistory?.length > 1 ? o.payHistory.map(p => `${t(PAY_TYPES[p.payType])} ${fmtDate(String(p.at).slice(0, 10))}${p.reason ? ` (${p.reason})` : ''}`).join(' ← ') : '')]);
   const ledger = financeLedger(f.orders).map(e => [fmtDate(e.date), e.o.no, t(LEDGER_TYPE[e.type]), e.amount, curLabel(e.o), e.kind ? t(e.kind === 'full' ? 'كلي' : 'جزئي') : '', t(TIMING[e.timing])]);
+  const L = salesLedger(c);
   downloadBlob(buildXlsx([
+    { name: t('بيان مبيعات وسداد'), title: t('بيان بمبيعات وسداد'), subtitle: `${c.code} · ${t('العملة')}: ${L.cur} · ${stamp}`, total: true, rows: [LEDGER_HEAD.map(x => t(x)), ...ledgerTableRows(L), [t('الإجمالي'), '', Math.round(L.total), Math.round(L.paid), L.balance]] },
     { name: t('البيانات'), rows: [[stamp], [], ...customerInfoRows(c, f), [], ...moneyRows(f)] },
     { name: t('الطلبات'), rows: [[stamp], ['الطلب', 'تاريخ الشراء', 'الأجهزة', 'الإجمالي', 'العملة', 'طريقة الدفع', 'المقدم', 'المحصّل', 'الحالة', 'تاريخ طريقة الدفع'].map(x => t(x)), ...ordersRows] },
     { name: t('الأقساط'), rows: [[stamp], INST_HEAD.map(x => t(x)), ...instDetailRows(f)] },
@@ -6527,11 +6529,124 @@ async function exportStatementDocx(c) {
     sections: [
       { heading: t('بيانات العميل'), kv: customerInfoRows(c, f) },
       { heading: t('الملخص المالي (ج.م)'), kv: moneyRows(f) },
+      ...(() => { const L = salesLedger(c); return L.rows.length ? [{ heading: `${t('بيان بمبيعات وسداد')} (${L.cur})`, table: { head: LEDGER_HEAD.map(x => t(x)), rows: [...L.rows.map(r => [fmtDate(r.date), plain(r.text), r.amount ? money(r.amount) : '', r.paid ? money(r.paid) : '', money(r.balance)]), [t('الإجمالي'), '', money(L.total), money(L.paid), money(L.balance)]] } }] : []; })(),
       ...(f.insts.length ? [{ heading: t('الأقساط'), table: { head: instHead.map(k => t(INST_HEAD[k])), rows: instDetailRows(f).map(r => instHead.map(k => r[k])) } }] : []),
       ...(ledger.length ? [{ heading: t('سجل التحصيل'), table: { head: ['التاريخ', 'الطلب', 'النوع', 'المبلغ', 'كلي أو جزئي', 'التوقيت'].map(x => t(x)), rows: ledger } }] : []),
     ],
   }, `${t('كشف حساب')} ${c.name} ${c.code}`);
   toast(t('تم تنزيل كشف الحساب'), 'ok');
+}
+
+// ------- بيان بمبيعات وسداد العميل: سطر لكل جهاز بسعره الأصلي وموديله، وسطر لكل سداد، والمديونية بتتحسب سطر بسطر -------
+// المبلغ = اللي اتحسب على العميل (الجهاز بالسعر الرسمي، والخصم بالسالب)، المسدد = اللي دفعه، المديونية = الرصيد بعد السطر
+function salesLedger(c) {
+  const orders = ordersOfCustomer(c.id).filter(o => o.status !== 'cancelled').sort((a, b) => String(a.date).localeCompare(String(b.date)));
+  // لو كل الطلبات بنفس العملة الكشف بيها، ولو مختلطة كله بيتحوّل جنيه بسعر الدولار في الإعدادات
+  const curs = [...new Set(orders.map(o => o.currency || 'EGP'))];
+  const mixed = curs.length > 1, rate = o => mixed ? fx(o) : 1;
+  const cur = mixed ? t('ج.م') : orders[0] ? curLabel(orders[0]) : t('ج.م');
+  const rows = [];
+  const add = (date, text, amount, paid, seq) => rows.push({ date: date || '', text, amount: amount || 0, paid: paid || 0, seq });
+  orders.forEach((o, oi) => {
+    const official = it => { const p = DB.products.find(x => x.id === it.productId); return (p ? productPrice(p, o.currency) : +it.price || 0) * (+it.qty || 0); };
+    const items = o.items || [];
+    const offTotal = items.reduce((s, it) => s + official(it), 0);
+    items.forEach(it => add(o.date, `${deviceName(it.type, it.size)}${+it.qty > 1 ? ` × ${it.qty}` : ''} (${t('طلب')} ${o.no})`, Math.round(official(it) * rate(o)), 0, oi * 10));
+    const disc = Math.round((offTotal - o.total) * rate(o));
+    if (disc > 0) add(o.date, `${t('خصم على الطلب')} ${o.no}`, -disc, 0, oi * 10 + 1);
+    else if (disc < 0) add(o.date, `${t('فرق سعر على الطلب')} ${o.no}`, -disc, 0, oi * 10 + 1);
+    // المرتجع: قيمة الأجهزة المرتجعة (بنفس نسبة سعر البيع) بتنزل من المديونية، والخصم على المرتجع بيفضل على العميل
+    (o.returns || []).forEach(r => {
+      const val = r.items.reduce((s, x) => { const it = items.find(y => y.productId === x.productId && y.type === x.type && y.size === x.size) || x; const one = official({ ...it, qty: 1 }); return s + one * x.qty; }, 0) * (offTotal ? o.total / offTotal : 1);
+      add(r.date, `${t('مرتجع')}: ${r.items.map(x => `${deviceName(x.type, x.size)}${x.qty > 1 ? ` × ${x.qty}` : ''}`).join(' + ')}${r.withDeduction ? ` (${t('بخصم')} ${money(r.deduction)})` : ''}`, -Math.round((val - (r.withDeduction ? +r.deduction || 0 : 0)) * rate(o)), 0, oi * 10 + 5);
+    });
+  });
+  financeLedger(orders).forEach(e => {
+    const k = orders.indexOf(e.o) * 10 + 3;
+    // مبلغ رجع للعميل: بيتكتب في المسدد بالسالب (بيرجّع المديونية)
+    if (e.type === 'refund') add(e.date, `${t('رد مبلغ للعميل')} (${e.o.no})`, 0, Math.round(e.amount * rate(e.o)), k);
+    else add(e.date, `${t('سداد')}${e.type === 'deposit' ? ` (${t('مقدم')})` : e.type === 'cash' ? ` (${t('نقدي')})` : e.kind === 'partial' ? ` (${t('جزء من قسط')})` : ''}`, 0, Math.round(e.amount * rate(e.o)), k);
+  });
+  rows.sort((a, b) => a.date.localeCompare(b.date) || a.seq - b.seq);
+  let bal = 0;
+  rows.forEach(r => { bal += r.amount - r.paid; r.balance = Math.round(bal); });
+  return { rows, cur, total: rows.reduce((s, r) => s + r.amount, 0), paid: rows.reduce((s, r) => s + r.paid, 0), balance: Math.round(bal) };
+}
+const LEDGER_HEAD = ['التاريخ', 'البيان', 'المبلغ', 'المسدد', 'المديونية'];
+const ledgerTableRows = L => L.rows.map(r => [fmtDate(r.date), plain(r.text), r.amount || '', r.paid || '', r.balance]);
+function exportLedgerXlsx(c) {
+  const L = salesLedger(c);
+  downloadBlob(buildXlsx([{ name: t('بيان مبيعات وسداد'), title: t('بيان بمبيعات وسداد'), subtitle: `${c.code} · ${t('العملة')}: ${L.cur} · ${exportStamp()}`, total: true,
+    rows: [LEDGER_HEAD.map(x => t(x)), ...ledgerTableRows(L), [t('الإجمالي'), '', Math.round(L.total), Math.round(L.paid), L.balance]] }]), `${safeFileName(`${t('بيان مبيعات وسداد')} ${c.name} ${c.code}`)}.xlsx`);
+  audit('export', 'customer', c.id, 'تصدير بيان مبيعات وسداد العميل {name}', { name: c.name });
+  toast(t('تم التنزيل'), 'ok');
+}
+async function exportLedgerDocx(c) {
+  const L = salesLedger(c);
+  audit('export', 'customer', c.id, 'تصدير بيان مبيعات وسداد العميل {name} وورد', { name: c.name });
+  await downloadDocx({ title: t('بيان بمبيعات وسداد'), subtitle: `${c.code} · ${t('العملة')}: ${L.cur}`,
+    sections: [{ table: { head: LEDGER_HEAD.map(x => t(x)), rows: [...L.rows.map(r => [fmtDate(r.date), plain(r.text), r.amount ? money(r.amount) : '', r.paid ? money(r.paid) : '', money(r.balance)]), [t('الإجمالي'), '', money(L.total), money(L.paid), money(L.balance)]] } }] },
+  `${t('بيان مبيعات وسداد')} ${c.name} ${c.code}`);
+  toast(t('تم التنزيل'), 'ok');
+}
+
+// ------- مديونية ومتأخرات رجال البيع: لكل رجل بيع إجمالي اللي على عملائه، واللي اتأخر عن الميعاد اللي اتفق عليه مع العميل -------
+// المتأخرات = أقساط تاريخ استحقاقها الحالي (اللي رجل البيع حدده أو اتأجل له) فات ولسه عليها فلوس
+function repDebts() {
+  const reps = {};
+  finOrders().filter(o => o.status !== 'cancelled').forEach(o => {
+    const c = custById(o.customerId); if (!c) return;
+    const id = o.repId || c.ownerId;
+    const r = reps[id] = reps[id] || { id, total: 0, collected: 0, remain: 0, late: 0, maxLate: 0, custs: {} };
+    const x = r.custs[c.id] = r.custs[c.id] || { c, total: 0, collected: 0, remain: 0, late: 0, maxLate: 0, next: '', lateInsts: 0 };
+    const total = o.total * fx(o), coll = orderCollected(o) * fx(o);
+    x.total += total; x.collected += coll; r.total += total; r.collected += coll;
+    (o.installments || []).forEach(i => {
+      const rem = instRemain(i) * fx(o); if (!(rem > 0)) return;
+      x.remain += rem; r.remain += rem;
+      if (i.due < today()) { const d = instLateDays(i).cur; x.late += rem; r.late += rem; x.lateInsts++; x.maxLate = Math.max(x.maxLate, d); r.maxLate = Math.max(r.maxLate, d); }
+      else if (!x.next || i.due < x.next) x.next = i.due;
+    });
+  });
+  return Object.values(reps).map(r => ({ ...r, custs: Object.values(r.custs).filter(x => x.remain > 0).sort((a, b) => b.late - a.late || b.remain - a.remain) })).filter(r => r.remain > 0 || r.total > 0).sort((a, b) => b.late - a.late || b.remain - a.remain);
+}
+const REP_HEAD = ['رجل البيع', 'عملاء عليهم مديونية', 'إجمالي المبيعات', 'المحصّل', 'إجمالي المديونية', 'المتأخرات', 'عملاء متأخرين', 'أقصى أيام تأخير'];
+const REP_CUST_HEAD = ['العميل', 'كود العميل', 'التليفون', 'إجمالي المشتريات', 'المسدد', 'المديونية', 'المتأخرات', 'أقساط متأخرة', 'أيام التأخير', 'أقرب استحقاق قادم', 'الحالة الائتمانية'];
+const repRow = r => [userName(r.id), r.custs.length, Math.round(r.total), Math.round(r.collected), Math.round(r.remain), Math.round(r.late), r.custs.filter(x => x.late > 0).length, r.maxLate];
+const repCustRows = r => r.custs.map(x => [x.c.name, x.c.code, plain(custPhones(x.c).join(' / ')), Math.round(x.total), Math.round(x.collected), Math.round(x.remain), Math.round(x.late), x.lateInsts, x.maxLate, fmtDate(x.next), t(CREDIT_STATUS[creditOf(x.c)])]);
+function drawFinReps(fb) {
+  const st = finState;
+  const all = repDebts();
+  const list = st.rep ? all.filter(r => r.id === st.rep) : all;
+  const sum = k => list.reduce((s, r) => s + r[k], 0);
+  fb.innerHTML = `<div class="filters">${can('orders.view_all') || canFinance() ? `<select class="inp" id="frr">${repOptions(st.rep)}</select>` : ''}<span class="spacer"></span><button class="btn sm" id="frrx">⬇ ${t('تقرير Excel')}</button><button class="btn sm" id="frrp">📄 ${t('تقرير وورد')}</button></div>
+    <div class="kpis"><div class="kpi"><div class="l">${t('إجمالي المديونية')}</div><div class="v">${money(sum('remain'))} <small>${t('ج.م')}</small></div></div>
+      <div class="kpi alert"><div class="l">${t('إجمالي المتأخرات')}</div><div class="v">${money(sum('late'))} <small>${t('ج.م')}</small></div><div class="d">${t('أقساط فات ميعادها اللي اتفق عليه مع العميل ولسه ما اتدفعتش')}</div></div>
+      <div class="kpi"><div class="l">${t('عملاء عليهم مديونية')}</div><div class="v">${list.reduce((s, r) => s + r.custs.length, 0)}</div></div>
+      <div class="kpi warn"><div class="l">${t('عملاء متأخرين')}</div><div class="v">${list.reduce((s, r) => s + r.custs.filter(x => x.late > 0).length, 0)}</div></div></div>
+    ${list.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr>${REP_HEAD.map(h => `<th>${t(h)}</th>`).join('')}</tr></thead><tbody>${list.map(r => `<tr class="click" data-rep="${r.id}"><td><b>${esc(userName(r.id))}</b></td><td>${r.custs.length}</td><td>${money(r.total)}</td><td>${money(r.collected)}</td><td><b>${money(r.remain)}</b></td><td>${r.late ? `<span class="pill p-red">${money(r.late)}</span>` : '—'}</td><td>${r.custs.filter(x => x.late > 0).length || '—'}</td><td>${r.maxLate || '—'}</td></tr>`).join('')}</tbody></table></div>
+      <p class="muted mt">${t('دوس على رجل البيع تشوف عملاءه بالتفصيل.')}</p>` : `<div class="card empty">${t('مفيش مديونيات')}</div>`}`;
+  const fr = $('#frr', fb); if (fr) fr.onchange = e => { st.rep = e.target.value; drawFinReps(fb); };
+  $$('[data-rep]', fb).forEach(tr => tr.onclick = () => openRepDebt(all.find(r => r.id === tr.dataset.rep), () => drawFinReps(fb)));
+  const title = st.rep ? `${t('مديونية ومتأخرات')} ${userName(st.rep)}` : t('مديونية ومتأخرات رجال البيع');
+  const sheets = () => [
+    { name: t('رجال البيع'), title, subtitle: exportStamp(), total: true, bars: [4, 5], rows: [REP_HEAD.map(x => t(x)), ...list.map(repRow), [t('الإجمالي'), list.reduce((s, r) => s + r.custs.length, 0), Math.round(sum('total')), Math.round(sum('collected')), Math.round(sum('remain')), Math.round(sum('late')), list.reduce((s, r) => s + r.custs.filter(x => x.late > 0).length, 0), '']] },
+    ...list.map(r => ({ name: userName(r.id).slice(0, 30), title: `${t('عملاء')} ${userName(r.id)}`, subtitle: `${t('المديونية')}: ${money(r.remain)} · ${t('المتأخرات')}: ${money(r.late)}`, bars: [5, 6], rows: [REP_CUST_HEAD.map(x => t(x)), ...repCustRows(r)] })),
+  ];
+  const x = $('#frrx', fb); if (x) x.onclick = () => { downloadBlob(buildXlsx(sheets()), `${safeFileName(title)} ${today()}.xlsx`); audit('export', 'list', null, 'تصدير {name}: {n}', { name: title, n: list.length }); };
+  const p = $('#frrp', fb); if (p) p.onclick = () => {
+    audit('export', 'list', null, 'تصدير {name}: {n}', { name: `${title} وورد`, n: list.length });
+    downloadDocx({ title, subtitle: exportStamp(), landscape: true, sections: [
+      { heading: t('الملخص'), table: { head: REP_HEAD.map(x => t(x)), rows: list.map(r => repRow(r).map((v, i) => i >= 2 && i <= 5 ? money(v) : v)) } },
+      ...list.map(r => ({ heading: `${userName(r.id)} · ${t('المديونية')} ${money(r.remain)} · ${t('المتأخرات')} ${money(r.late)}`, table: { head: REP_CUST_HEAD.map(x => t(x)), rows: repCustRows(r).map(row => row.map((v, i) => i >= 3 && i <= 6 ? money(v) : v)) }, empty: t('لا يوجد') })),
+    ] }, `${title} ${today()}`);
+  };
+}
+function openRepDebt(r, onChange) {
+  if (!r) return;
+  const m = openModal({ title: `${t('عملاء')} ${esc(userName(r.id))} · ${t('المديونية')} ${money(r.remain)} · ${t('المتأخرات')} ${money(r.late)}`, wide: true,
+    body: r.custs.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr>${REP_CUST_HEAD.filter((_, i) => i !== 1 && i !== 2).map(h => `<th>${t(h)}</th>`).join('')}</tr></thead><tbody>${r.custs.map(x => `<tr class="click" data-cust="${x.c.id}"><td>${esc(x.c.name)}<div class="muted">${esc(x.c.code)} · ${phoneLink(x.c.phone1)}</div></td><td>${money(x.total)}</td><td>${money(x.collected)}</td><td><b>${money(x.remain)}</b></td><td>${x.late ? `<span class="pill p-red">${money(x.late)}</span>` : '—'}</td><td>${x.lateInsts || '—'}</td><td>${x.maxLate || '—'}</td><td>${fmtDate(x.next) || '—'}</td><td>${creditPill(x.c)}</td></tr>`).join('')}</tbody></table></div>` : `<div class="empty">${t('مفيش عملاء عليهم مديونية')}</div>` });
+  $$('[data-cust]', m.el).forEach(tr => tr.onclick = () => { m.close(); openStatement(custById(tr.dataset.cust), onChange); });
 }
 
 // ------- ملف العميل الكامل في وورد: كل بياناته ومتابعاته وطلباته وأقساطه وسداده بالتواريخ -------
@@ -6599,11 +6714,12 @@ const ymLabel = ym => { const [y, m] = ym.split('-'); return `${monthName(+m - 1
 function viewFinance(root) {
   const st = finState, fin = canFinance();
   root.innerHTML = `<div class="page-head"><h1>${t('الحسابات')}</h1><span class="spacer"></span><span class="muted">${fin ? t('مدير الحسابات') : isOwnerUser() ? t('الإدارة') : t('عملائك فقط')}</span></div>
-    <div class="tabs">${[['dash', 'التحصيل'], ['customers', 'العملاء والحالة الائتمانية'], ['returns', 'المرتجعات']].map(([k, l]) => `<button class="tab ${st.tab === k ? 'on' : ''}" data-t="${k}">${t(l)}</button>`).join('')}</div><div id="fb"></div>`;
+    <div class="tabs">${[['dash', 'التحصيل'], ['customers', 'العملاء والحالة الائتمانية'], ['reps', 'مديونية رجال البيع'], ['returns', 'المرتجعات']].map(([k, l]) => `<button class="tab ${st.tab === k ? 'on' : ''}" data-t="${k}">${t(l)}</button>`).join('')}</div><div id="fb"></div>`;
   $$('.tab', root).forEach(b => b.onclick = () => { st.tab = b.dataset.t; viewFinance(root); });
   const fb = $('#fb', root);
   if (st.tab === 'customers') return drawFinCustomers(fb);
   if (st.tab === 'returns') return drawFinReturns(fb);
+  if (st.tab === 'reps') return drawFinReps(fb);
   drawFinDash(fb);
 }
 function drawFinDash(fb) {
@@ -6683,9 +6799,11 @@ function openStatement(c, onChange) {
       <div class="fin-sum"><div><div class="l">${t('إجمالي المشتريات')}</div><div class="v">${money(f.total)}</div></div><div><div class="l">${t('المسدد')}</div><div class="v">${money(f.collected)}</div></div><div><div class="l">${t('المتبقي')}</div><div class="v">${money(f.remain)}</div></div><div class="${f.late ? 'bad' : ''}"><div class="l">${t('المتأخرات')}</div><div class="v">${money(f.late)}</div></div><div><div class="l">${t('أيام التأخير')}</div><div class="v">${f.lateCur}${f.lateOrig > f.lateCur ? ` <small class="muted">(${t('من الأصلي')} ${f.lateOrig})</small>` : ''}</div></div></div>
       <h4 class="mt">${t('الطلبات')}</h4><div class="tbl-wrap"><table class="tbl"><thead><tr><th>${t('الطلب')}</th><th>${t('التاريخ')}</th><th>${t('الإجمالي')}</th><th>${t('الدفع')}</th><th>${t('المحصّل')}</th><th>${t('الحالة')}</th></tr></thead><tbody>${f.orders.map(o => `<tr class="click" data-o="${o.id}"><td>${o.no}</td><td>${fmtDate(o.date)}</td><td>${money(o.total)} ${curLabel(o)}</td><td>${t(PAY_TYPES[o.payType])}</td><td>${money(orderCollected(o))}</td><td>${statusPill(o.status)}</td></tr>`).join('')}</tbody></table></div>
       ${f.insts.length ? `<h4 class="mt">${t('الأقساط')}</h4><div class="tbl-wrap"><table class="tbl"><thead><tr><th>${t('الاستحقاق')}</th><th>${t('الطلب')}</th><th>${t('القسط')}</th><th>${t('المسدد')}</th><th>${t('المتبقي')}</th><th>${t('الحالة')}</th></tr></thead><tbody>${f.insts.map(({ o, i }) => `<tr class="click" data-inst="${o.id}|${i.id}"><td>${fmtDate(i.due)}${i.originalDue && i.originalDue !== i.due ? `<div class="muted">${t('الأصلي')}: ${fmtDate(i.originalDue)}</div>` : ''}</td><td>${o.no}</td><td>${money(i.amount)}</td><td>${money(instPaid(i))}</td><td><b>${money(instRemain(i))}</b></td><td>${instPill(i)}</td></tr>`).join('')}</tbody></table></div>` : ''}`,
-    footer: `${canExport() || fin || isOwnerUser() ? `<button class="btn" id="stx">⬇ ${t('كشف حساب Excel')}</button><button class="btn" id="stp">📄 ${t('كشف حساب وورد')}</button>` : ''}${fin ? `<button class="btn" id="stc">${t('تغيير الحالة الائتمانية')}</button>` : ''}<button class="btn" id="stf">👤 ${t('صفحة العميل')}</button>`,
+    footer: `${canExport() || fin || isOwnerUser() ? `<button class="btn" id="stlx">📑 ${t('بيان مبيعات وسداد Excel')}</button><button class="btn" id="stlp">📑 ${t('بيان مبيعات وسداد وورد')}</button><button class="btn" id="stx">⬇ ${t('كشف حساب Excel')}</button><button class="btn" id="stp">📄 ${t('كشف حساب وورد')}</button>` : ''}${fin ? `<button class="btn" id="stc">${t('تغيير الحالة الائتمانية')}</button>` : ''}<button class="btn" id="stf">👤 ${t('صفحة العميل')}</button>`,
   });
   const on = (s, fn) => { const el = $(s, m.el); if (el) el.onclick = fn; };
+  on('#stlx', () => exportLedgerXlsx(c));
+  on('#stlp', () => exportLedgerDocx(c));
   on('#stx', () => exportStatementXlsx(c));
   on('#stp', () => exportStatementDocx(c));
   on('#stc', () => { m.close(); openCreditForm(c, () => openStatement(c, onChange)); });
