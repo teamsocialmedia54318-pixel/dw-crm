@@ -9503,29 +9503,33 @@ function openSocialSettings() {
     catch (err) { msg.textContent = `✗ ${err.message === 'unknown action' ? t('يلزم تحديث خدمة جوجل (Code.gs) أولًا') : err.message}`; }
     btn.disabled = false;
   };
-  // الاستيراد على دفعات صغيرة (كل دفعة 5 محادثات) حتى لا يتجاوز حدود الخادم، ويمكن إيقافه واستئنافه بأمان
+  // الاستيراد على دفعات (كل دفعة حتى 10 محادثات تُجلب بالتوازي)، وماسنجر وإنستجرام يعملان في الوقت نفسه. يمكن إيقافه واستئنافه بأمان
   let histStop = false;
   $('#ssHistStop', m.el).onclick = () => { histStop = true; };
   $('#ssHist', m.el).onclick = async () => {
     const msg = $('#ssHistMsg', m.el), btn = $('#ssHist', m.el), stop = $('#ssHistStop', m.el);
     histStop = false; btn.disabled = true; stop.style.display = '';
-    let convs = 0, created = 0, added = 0, failed = '';
-    for (const [platform, label] of [['messenger', t('ماسنجر')], ['instagram', t('إنستجرام')]]) {
+    let convs = 0, created = 0, added = 0;
+    const failed = [], state = { messenger: '…', instagram: '…' };
+    const show = () => { msg.textContent = t('جارٍ الاستيراد: {n} محادثة، {m} رسالة جديدة...', { n: convs, m: added }) + ` (${t('ماسنجر')} ${state.messenger} · ${t('إنستجرام')} ${state.instagram})`; };
+    const runPlatform = async (platform, label) => {
       let after = '', errs = 0;
       for (let i = 0; i < 20000 && !histStop; i++) {
-        msg.textContent = t('جارٍ استيراد {ch}: {n} محادثة، {m} رسالة جديدة...', { ch: label, n: convs, m: added });
+        show();
         let out;
         // خطأ عابر في الشبكة أو من ميتا: يُعاد الطلب نفسه حتى 3 مرات قبل التوقف
         try { out = await socialApi('history', { method: 'POST', body: { platform, after } }); errs = 0; }
-        catch (err) { if (++errs <= 3) { await new Promise(r => setTimeout(r, 3000 * errs)); continue; } failed = `${label}: ${err.message}`; break; }
+        catch (err) { if (++errs <= 3) { await new Promise(r => setTimeout(r, 3000 * errs)); continue; } failed.push(`${label}: ${err.message}`); state[platform] = '✗'; return; }
         convs += out.convs || 0; created += out.created || 0; added += out.added || 0;
         if (out.more === undefined ? !out.next : !out.more) break;
         after = out.next || '';
       }
-      if (histStop) break;
-    }
+      state[platform] = histStop ? '⏸' : '✓';
+      show();
+    };
+    await Promise.all([runPlatform('messenger', t('ماسنجر')), runPlatform('instagram', t('إنستجرام'))]);
     btn.disabled = false; stop.style.display = 'none';
-    msg.textContent = `${histStop ? t('توقف الاستيراد') : '✓ ' + t('اكتمل الاستيراد')}: ${t('{n} محادثة، منها {c} جديدة، و{m} رسالة أُضيفت', { n: convs, c: created, m: added })}${failed ? ` · ✗ ${failed === 'unknown' || /not found/i.test(failed) ? t('يلزم تحديث خادم Cloudflare أولًا') : failed}` : ''}`;
+    msg.textContent = `${histStop ? t('توقف الاستيراد') : '✓ ' + t('اكتمل الاستيراد')}: ${t('{n} محادثة، منها {c} جديدة، و{m} رسالة أُضيفت', { n: convs, c: created, m: added })}${failed.length ? ` · ✗ ${failed.some(f => /not found|unknown/i.test(f)) ? t('يلزم تحديث خادم Cloudflare أولًا') : failed.join(' · ')}` : ''}`;
     if (added) { audit('social', 'social', null, 'استيراد المحادثات القديمة من ميتا: {n} رسالة', { n: added }); socialState.at = 0; socialState.convs.clear(); refreshSocial(true); }
   };
   $('#ssTest', m.el).onclick = async () => {
@@ -9988,7 +9992,7 @@ Object.assign(EN, {
   'غير مقروءة': 'Unread', 'مقروءة': 'Read', 'صندوق الوارد': 'Inbox', 'غير المقروءة': 'Unread', 'متجاهَلة': 'Ignored', 'تحوّلت إلى عميل': 'Became a customer',
   'استيراد المحادثات القديمة': 'Import past conversations', 'بدء الاستيراد': 'Start import', 'إيقاف': 'Stop', 'اكتمل الاستيراد': 'Import complete', 'توقف الاستيراد': 'Import stopped',
   'يجلب من ميتا سجل محادثات ماسنجر وإنستجرام السابقة كاملًا مع الصور، وتُضاف كمحادثات مقروءة دون تكرار ما هو موجود. أما واتساب فلا تتيح ميتا استرجاع الرسائل السابقة لتاريخ الربط.': 'Pulls the full history of past Messenger and Instagram conversations from Meta, including photos, as read conversations without duplicating existing messages. Meta does not provide WhatsApp messages from before the connection date.',
-  'جارٍ استيراد {ch}: {n} محادثة، {m} رسالة جديدة...': 'Importing {ch}: {n} conversations, {m} new messages...', '{n} محادثة، منها {c} جديدة، و{m} رسالة أُضيفت': '{n} conversations ({c} new), {m} messages added', 'يلزم تحديث خادم Cloudflare أولًا': 'The Cloudflare server needs updating first',
+  'جارٍ الاستيراد: {n} محادثة، {m} رسالة جديدة...': 'Importing: {n} conversations, {m} new messages...', '{n} محادثة، منها {c} جديدة، و{m} رسالة أُضيفت': '{n} conversations ({c} new), {m} messages added', 'يلزم تحديث خادم Cloudflare أولًا': 'The Cloudflare server needs updating first',
   'يُعرض تحصيل {u} ومديونيته فقط': 'Showing collections and debt for {u} only',
   'لوحة أداء الإعلانات والسوشيال': 'Ads & social performance', 'من الإعلان إلى المحادثة إلى العميل الجاد إلى رجل البيع إلى البيع. كل رقم يعرض أسماء العملاء، وكل اسم يفتح المحادثة.': 'From ad to conversation to serious lead to sales rep to sale. Every number opens the customer names, and every name opens the chat.',
   'تحديث من ميتا': 'Refresh from Meta', 'الرسائل': 'Messages', 'أمس': 'Yesterday', 'الشهر الماضي': 'Last month', 'كل الحملات': 'All campaigns', 'الحملة': 'Campaign', 'القناة': 'Channel',
