@@ -9511,15 +9511,16 @@ function openSocialSettings() {
     histStop = false; btn.disabled = true; stop.style.display = '';
     let convs = 0, created = 0, added = 0, failed = '';
     for (const [platform, label] of [['messenger', t('ماسنجر')], ['instagram', t('إنستجرام')]]) {
-      let after = '';
-      for (let i = 0; i < 400 && !histStop; i++) {
+      let after = '', errs = 0;
+      for (let i = 0; i < 20000 && !histStop; i++) {
         msg.textContent = t('جارٍ استيراد {ch}: {n} محادثة، {m} رسالة جديدة...', { ch: label, n: convs, m: added });
         let out;
-        try { out = await socialApi('history', { method: 'POST', body: { platform, after } }); }
-        catch (err) { failed = `${label}: ${err.message}`; break; }
+        // خطأ عابر في الشبكة أو من ميتا: يُعاد الطلب نفسه حتى 3 مرات قبل التوقف
+        try { out = await socialApi('history', { method: 'POST', body: { platform, after } }); errs = 0; }
+        catch (err) { if (++errs <= 3) { await new Promise(r => setTimeout(r, 3000 * errs)); continue; } failed = `${label}: ${err.message}`; break; }
         convs += out.convs || 0; created += out.created || 0; added += out.added || 0;
-        if (!out.next) break;
-        after = out.next;
+        if (out.more === undefined ? !out.next : !out.more) break;
+        after = out.next || '';
       }
       if (histStop) break;
     }
