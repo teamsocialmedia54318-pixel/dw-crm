@@ -3471,7 +3471,15 @@ function migrateDB(db) {
   const v11 = migrateV11(db);
   const v12 = migrateV12(db);
   const v13 = migrateV13(db);
-  return v2 || v3 || v4 || v5 || v6 || v7 || v8 || v9 || v10 || v11 || v12 || v13;
+  const v14 = migrateV14(db);
+  return v2 || v3 || v4 || v5 || v6 || v7 || v8 || v9 || v10 || v11 || v12 || v13 || v14;
+}
+// الإصدار 14: فريق د. محمود جمعة بقى اسمه باسم الاتنين (لو لسه بالاسم القديم)
+function migrateV14(db) {
+  if ((db.version || 1) >= 14) return false;
+  db.version = 14;
+  (db.teams || []).filter(tm => tm.name === 'فريق د. محمود جمعة').forEach(tm => { tm.name = 'فريق د. محمد حجازي & د. محمود جمعة'; });
+  return true;
 }
 // الإصدار 13: "ماسنجر" مصدر معرفة لوحده (جنب فيسبوك وإنستجرام وواتساب) علشان رجل البيع يحدد القناة والإعلان
 function migrateV13(db) {
@@ -6723,7 +6731,11 @@ function viewFinance(root) {
   drawFinDash(fb);
 }
 function drawFinDash(fb) {
-  const st = finState, ledger = financeLedger(finOrders());
+  const st = finState;
+  // اختيار رجل بيع: الإدارة والحسابات يشوفوا تحصيله ومتبقيه ومتأخراته هو بس
+  const pickRep = can('orders.view_all') || canFinance();
+  const ords = finOrders().filter(o => !pickRep || !st.rep || (o.repId || custById(o.customerId)?.ownerId) === st.rep);
+  const ledger = financeLedger(ords);
   const egp = e => e.amount * e.rate;
   // آخر 12 شهر
   const months = [];
@@ -6735,9 +6747,9 @@ function drawFinDash(fb) {
   const bestEver = allYM.reduce((b, ym) => byMonth(ym) > byMonth(b || ym) ? ym : b, allYM[0] || st.month);
   const mList = ledger.filter(e => e.date.slice(0, 7) === st.month);
   const inMonth = mList.filter(e => e.type !== 'refund'), sumT = tm => inMonth.filter(e => e.timing === tm).reduce((s, e) => s + egp(e), 0);
-  const allOpen = finOrders().filter(o => o.status !== 'cancelled').flatMap(o => (o.installments || []).filter(i => instRemain(i) > 0).map(i => ({ o, i })));
+  const allOpen = ords.filter(o => o.status !== 'cancelled').flatMap(o => (o.installments || []).filter(i => instRemain(i) > 0).map(i => ({ o, i })));
   const outstanding = allOpen.reduce((s, x) => s + instRemain(x.i) * fx(x.o), 0), overdue = allOpen.filter(x => x.i.due < today()).reduce((s, x) => s + instRemain(x.i) * fx(x.o), 0);
-  fb.innerHTML = `<div class="kpis">
+  fb.innerHTML = `${pickRep ? `<div class="filters"><select class="inp" id="fdr" aria-label="${t('رجل البيع')}">${repOptions(st.rep)}</select>${st.rep ? `<span class="muted">${t('بيظهر تحصيل ومديونية {u} بس', { u: esc(userName(st.rep)) })}</span>` : ''}</div>` : ''}<div class="kpis">
       <div class="kpi"><div class="l">${t('تحصيل {m}', { m: ymLabel(st.month) })}</div><div class="v">${money(inMonth.reduce((s, e) => s + egp(e), 0))} <small>${t('ج.م')}</small></div><div class="d">${t('عدد العملاء: {n}', { n: new Set(inMonth.map(e => e.c?.id)).size })}</div></div>
       <div class="kpi"><div class="l">${t('أعلى شهر تحصيل (آخر 12 شهر)')}</div><div class="v">${money(byMonth(best))} <small>${t('ج.م')}</small></div><div class="d">${ymLabel(best)}${bestEver !== best ? ` · ${t('الأعلى على الإطلاق')}: ${ymLabel(bestEver)}` : ''}</div></div>
       <div class="kpi"><div class="l">${t('المتبقي على العملاء')}</div><div class="v">${money(outstanding)} <small>${t('ج.م')}</small></div></div>
@@ -6747,9 +6759,10 @@ function drawFinDash(fb) {
       <div class="fin-sum">${Object.entries(TIMING).map(([k, l]) => `<div><div class="l">${t(l)}</div><div class="v">${money(sumT(k))}</div></div>`).join('')}<div class="${mList.some(e => e.type === 'refund') ? 'bad' : ''}"><div class="l">${t('مرتجع للعملاء')}</div><div class="v">${money(-mList.filter(e => e.type === 'refund').reduce((s, e) => s + egp(e), 0))}</div></div></div>
       ${mList.length ? `<div class="tbl-wrap mt"><table class="tbl"><thead><tr><th>${t('التاريخ')}</th><th>${t('العميل')}</th><th>${t('الطلب')}</th><th>${t('رجل البيع')}</th><th>${t('النوع')}</th><th>${t('المبلغ')}</th><th>${t('التوقيت')}</th><th>${t('عميل منذ')}</th><th>${t('مرات التأجيل')}</th></tr></thead><tbody>${mList.map(e => { const since = monthsBetween(firstOrderDate(e.c?.id) || e.date, e.date); return `<tr class="click" data-cust="${e.c?.id || ''}"><td>${fmtDate(e.date)}</td><td>${esc(e.c?.name || '')}</td><td>${e.o.no}</td><td>${esc(userName(e.o.repId))}</td><td>${t(LEDGER_TYPE[e.type])}${e.kind ? ` <span class="muted">(${t(e.kind === 'full' ? 'كلي' : 'جزئي')})</span>` : ''}</td><td><b>${money(e.amount)}</b> ${curLabel(e.o)}</td><td><span class="pill ${TIMING_PILL[e.timing]}">${t(TIMING[e.timing])}</span></td><td>${since < 3 ? `<span class="pill p-blue sm">${t('عميل جديد')}</span> ` : ''}${sinceText(since)}</td><td>${e.postponeCount ? `${e.postponeCount}${e.postponeCount >= 2 ? ` <span class="pill p-orange sm">${t('كثير التأجيل')}</span>` : ''}` : '—'}</td></tr>`; }).join('')}</tbody></table></div>` : `<div class="empty mt">${t('مفيش تحصيل في الشهر ده')}</div>`}</div>`;
   $('#fm', fb).onchange = e => { st.month = e.target.value || today().slice(0, 7); drawFinDash(fb); };
+  const fdr = $('#fdr', fb); if (fdr) fdr.onchange = e => { st.rep = e.target.value; drawFinDash(fb); };
   $$('[data-cust]', fb).forEach(tr => tr.onclick = () => { const c = custById(tr.dataset.cust); if (c) openStatement(c, () => drawFinDash(fb)); });
   const fmx = $('#fmx', fb);
-  if (fmx) fmx.onclick = () => exportSheet(`${t('تحصيل')} ${st.month}`, [[exportStamp()], ['التاريخ', 'العميل', 'كود العميل', 'الطلب', 'رجل البيع', 'النوع', 'كلي أو جزئي', 'المبلغ', 'العملة', 'التوقيت', 'عميل منذ (شهور)', 'مرات التأجيل'].map(x => t(x)), ...mList.map(e => [fmtDate(e.date), e.c?.name || '', e.c?.code || '', e.o.no, userName(e.o.repId), t(LEDGER_TYPE[e.type]), e.kind ? t(e.kind === 'full' ? 'كلي' : 'جزئي') : '', e.amount, curLabel(e.o), t(TIMING[e.timing]), monthsBetween(firstOrderDate(e.c?.id) || e.date, e.date), e.postponeCount || 0])]);
+  if (fmx) fmx.onclick = () => exportSheet(`${t('تحصيل')} ${st.month}${pickRep && st.rep ? ` ${userName(st.rep)}` : ''}`, [[exportStamp()], ['التاريخ', 'العميل', 'كود العميل', 'الطلب', 'رجل البيع', 'النوع', 'كلي أو جزئي', 'المبلغ', 'العملة', 'التوقيت', 'عميل منذ (شهور)', 'مرات التأجيل'].map(x => t(x)), ...mList.map(e => [fmtDate(e.date), e.c?.name || '', e.c?.code || '', e.o.no, userName(e.o.repId), t(LEDGER_TYPE[e.type]), e.kind ? t(e.kind === 'full' ? 'كلي' : 'جزئي') : '', e.amount, curLabel(e.o), t(TIMING[e.timing]), monthsBetween(firstOrderDate(e.c?.id) || e.date, e.date), e.postponeCount || 0])]);
 }
 function drawFinCustomers(fb) {
   const st = finState;
