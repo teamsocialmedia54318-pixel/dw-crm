@@ -8872,8 +8872,8 @@ async function loadSocial() {
   socialState.at = out.at;
   socialState.loaded = true;
   socialState.error = '';
-  // محادثات من غير اسم (ميتا كانت رافضة وقتها): نطلب من المستقبِل يجيب أسماءها في الخلفية، مرة كل 10 دقايق بالكتير
-  if ([...socialState.convs.values()].some(c => !c.name) && Date.now() - (socialState.namesAt || 0) > 10 * 60 * 1000) {
+  // محادثات من غير اسم (ميتا كانت رافضة وقتها): نطلب من المستقبِل يجيب أسماءها في الخلفية، مرة كل ساعة على الأكثر
+  if ([...socialState.convs.values()].some(c => !c.name) && Date.now() - (socialState.namesAt || 0) > 60 * 60 * 1000) {
     socialState.namesAt = Date.now();
     socialApi('names', { method: 'POST', body: {} }).catch(() => {});
   }
@@ -9057,7 +9057,8 @@ async function refreshSocial(full) {
     const changed = await loadSocial();
     // تنبيه الأرقام الجديدة لمحادثات اليومين الأخيرين فقط، حتى لا تنبّه المحادثات القديمة المستوردة
     if (full) socialPhoneAlerts(changed.filter(c => c.last_at > Date.now() - 2 * 86400000));
-    if (full || Date.now() - (socialState.countsAt || 0) > 2 * 60 * 1000) loadSocialCounts();
+    // الأعداد من السيرفر عند فتح الصفحة وتغيير الفلاتر فقط، وكل 10 دقائق على الأكثر (توفيرًا لحد القراءة في Cloudflare)
+    if (full || Date.now() - (socialState.countsAt || 0) > 10 * 60 * 1000) loadSocialCounts();
     updateSocialBadge();
     drawSocialList();
     if (socialState.statsDay !== today() || full) await loadSocialStats();
