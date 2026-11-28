@@ -2497,7 +2497,7 @@ const NOTICE_KINDS = { follow: 'حوّل إليك العميل {name} للمتا
   ord_new: 'أرسل طلبية جديدة للعميل {name} وهي بانتظار المراجعة', ord_fwd: 'أرسل طلبية العميل {name} لاعتماد الإدارة', ord_ok: 'اعتمد طلبية العميل {name}',
   ord_back: 'أعاد طلبية العميل {name} للحسابات للمراجعة', ord_edit: 'عدّل طلبية العميل {name}', ord_status: 'غيّر حالة طلبية العميل {name}',
   ord_paid: 'سجّل تحصيل قسط من العميل {name}',
-  inst_post: 'طلب تغيير تاريخ قسط العميل {name} وبانتظار اعتماد الإدارة', inst_post_set: 'غيّر تاريخ قسط العميل {name}', inst_post_ok: 'اعتمد تغيير تاريخ قسط العميل {name}', inst_post_no: 'رفض تغيير تاريخ قسط العميل {name}',
+  inst_post: 'طلب تغيير تاريخ قسط العميل {name} وبانتظار اعتماد الإدارة', inst_post_set: 'غيّر تاريخ قسط العميل {name}', inst_plan: 'عدّل جدول أقساط العميل {name}', inst_post_ok: 'اعتمد تغيير تاريخ قسط العميل {name}', inst_post_no: 'رفض تغيير تاريخ قسط العميل {name}',
   inst_note: 'كتب متابعة على قسط العميل {name}',
   inst_soon: 'تذكير: العميل {name} عليه قسط بعد أقل من أسبوع، يرجى المتابعة', inst_today: 'قسط العميل {name} مستحق اليوم', inst_late: 'قسط العميل {name} متأخر عن موعده',
   conv_req: 'طلب تحويل طلبية العميل {name} من نقدي إلى تقسيط', conv_ok: 'وافق على تحويل طلبية العميل {name} إلى تقسيط', conv_no: 'رفض تحويل طلبية العميل {name} إلى تقسيط',
@@ -5954,6 +5954,7 @@ function openOrder(id, onChange) {
   const statusBtns = !(fin || owner) ? '' : o.status === 'cancelled' ? `<button class="btn" id="re">${t('إعادة تفعيل الطلب')}</button>` : `${o.status !== 'delivered' ? `<button class="btn" id="del">✓ ${t('تم التسليم')}</button>` : ''}${o.status === 'postponed' ? `<button class="btn" id="re">${t('تفعيل الطلب')}</button>` : `<button class="btn" id="post">${t('تأجيل')}</button>`}<button class="btn danger" id="can">${t('إلغاء الطلب')}</button>`;
   const footer = `<button class="btn" id="wa">📤 ${t('إرسال على واتساب')}</button><button class="btn" id="pdf">📄 ${t('ملف وورد')}</button>${c ? `<button class="btn" id="cpage">👤 ${t('صفحة العميل')}</button>` : ''}`
     + (canAskConvert ? `<button class="btn" id="conv">${t('طلب تحويل لتقسيط')}</button>` : '')
+    + (canPostponeInst(o) && o.status !== 'cancelled' && o.installments.some(i => !i.stopped && instRemain(i) > 0) ? `<button class="btn" id="planEd">✎ ${t('تعديل جدول الأقساط')}</button>` : '')
     + (fin ? `<button class="btn" id="edit">✎ ${t('تعديل')}</button>` : '')
     + (fin && !['cancelled', 'returned'].includes(o.status) ? `<button class="btn" id="ret">↩ ${t('تسجيل مرتجع')}</button>` : '')
     + (fin && st === 'accounts' ? `<button class="btn primary" id="fwd">${t('إرسال للإدارة للاعتماد')}</button>` : '')
@@ -5977,7 +5978,7 @@ function openOrder(id, onChange) {
     ${o.installments.length ? `<h4 class="mt">${t('جدول السداد')} <small class="muted">${t('اضغط على أي قسط لتفاصيله وسجلاته')}</small></h4><div class="tbl-wrap"><table class="tbl mt"><thead><tr><th>${t('الاستحقاق')}</th><th>${t('المبلغ')}</th><th>${t('المسدد')}</th><th>${t('المتبقي')}</th><th>${t('الحالة')}</th><th>${t('أيام التأخير')}</th></tr></thead><tbody>${o.installments.map(i => { const ld = instLateDays(i); return `<tr class="inst-row click" data-inst="${i.id}"><td>${fmtDate(i.due)}${i.originalDue && i.originalDue !== i.due ? `<div class="muted">${t('الأصلي')}: ${fmtDate(i.originalDue)}</div>` : ''}</td><td>${money(i.amount)}</td><td>${money(instPaid(i))}</td><td><b>${money(instRemain(i))}</b></td><td>${instPill(i)}${(i.notes || []).length ? ` <span class="pill p-gray sm">💬 ${i.notes.length}</span>` : ''}</td><td>${ld.cur ? `<span class="pill p-red sm">${ld.cur}</span>` : ''}${ld.orig > ld.cur ? ` <span class="muted">(${t('من الأصلي')} ${ld.orig})</span>` : ''}</td></tr>`; }).join('')}</tbody></table></div>` : ''}
     ${(() => { const cr = orderCredit(o); return o.installments.length ? `<div class="fin-sum"><div><div class="l">${t('إجمالي البيع الآجل')}</div><div class="v">${money(cr.credit)} ${cur}</div></div><div><div class="l">${t('المحصّل من الأقساط')}</div><div class="v">${money(cr.paid)} ${cur}</div></div><div><div class="l">${t('المتبقي')}</div><div class="v">${money(cr.remain)} ${cur}</div></div><div class="${cr.late ? 'bad' : ''}"><div class="l">${t('المتأخرات')}</div><div class="v">${money(cr.late)} ${cur}</div></div></div>` : ''; })()}
     <div class="muted mt">${t('المحصّل {a} {c} من {b} {c}', { a: money(orderCollected(o)), b: money(o.total), c: cur })}</div>
-    ${returnsHtml(o)}${convCard}${orderHistoryHtml(o)}`,
+    ${planHistoryHtml(o)}${returnsHtml(o)}${convCard}${orderHistoryHtml(o)}`,
     footer,
   });
   const done = () => { saveDB(); m.close(); onChange ? onChange() : route(); };
@@ -5989,6 +5990,7 @@ function openOrder(id, onChange) {
   on('#pdf', () => printOrderPdf(o));
   on('#cpage', () => { m.close(); openCustomer(c.id); });
   on('#conv', () => { m.close(); openConvertRequest(o, () => openOrder(o.id, onChange)); });
+  on('#planEd', () => { m.close(); openPlanEditForm(o, () => openOrder(o.id, onChange)); });
   on('#edit', () => { m.close(); openOrderEdit(o, () => openOrder(o.id, onChange)); });
   on('#ret', () => { m.close(); openReturnForm(o, () => openOrder(o.id, onChange)); });
   const askNote = (title, required, cb) => {
@@ -6044,7 +6046,7 @@ function orderLog(o, action, note = '', extra = {}) {
   o.log = o.log || [];
   o.log.push({ at: nowStamp(), by: ME?.id || '', action, note: String(note || '').slice(0, 500), ...extra });
 }
-const LOG_LABELS = { submitted: 'أرسل الطلبية للمراجعة', forwarded: 'راجعها وأرسلها لاعتماد الإدارة', approved: 'اعتمد الطلبية', returned: 'أعادها للحسابات', edited: 'عدّل الطلبية', status: 'غيّر الحالة', conv_req: 'طلب التحويل لتقسيط', conv_ok: 'وافق على التحويل لتقسيط', conv_no: 'رفض التحويل لتقسيط', paid: 'سجّل تحصيل قسط', post_req: 'طلب تغيير تاريخ قسط', post_ok: 'اعتمد تغيير تاريخ قسط', post_no: 'رفض تغيير تاريخ قسط', post_set: 'غيّر تاريخ قسط', inst_note: 'كتب متابعة على قسط', return: 'سجّل مرتجع' };
+const LOG_LABELS = { submitted: 'أرسل الطلبية للمراجعة', forwarded: 'راجعها وأرسلها لاعتماد الإدارة', approved: 'اعتمد الطلبية', returned: 'أعادها للحسابات', edited: 'عدّل الطلبية', status: 'غيّر الحالة', conv_req: 'طلب التحويل لتقسيط', conv_ok: 'وافق على التحويل لتقسيط', conv_no: 'رفض التحويل لتقسيط', paid: 'سجّل تحصيل قسط', post_req: 'طلب تغيير تاريخ قسط', post_ok: 'اعتمد تغيير تاريخ قسط', post_no: 'رفض تغيير تاريخ قسط', post_set: 'غيّر تاريخ قسط', plan_edit: 'عدّل جدول الأقساط', inst_note: 'كتب متابعة على قسط', return: 'سجّل مرتجع' };
 
 function submitOrderForReview(o) {
   o.review = { state: 'accounts', at: nowStamp() };
@@ -6320,6 +6322,94 @@ function applyPostpone(o, i, to, reason, afterPartial) {
   syncCustomerPayDate(o);
   saveDB();
 }
+// ---- تعديل جدول الأقساط كله (رجل البيع المسؤول أو الإدارة): التواريخ والمبالغ وعدد الأقساط غير المسددة، بسبب مكتوب.
+// المسدد كليًا لا يتغير، والقسط المسدد جزئيًا لا يقل مبلغه عن المسدد منه ولا يُحذف. مجموع غير المسدد يبقى كما هو.
+// كل تغيير تاريخ يُحفظ في سجل القسط (من، إلى، السبب)، وكل تغيير مبلغ في amountChanges، والجدول قبل وبعد في o.planHistory.
+function openPlanEditForm(o, onChange) {
+  const cur = curLabel(o);
+  const editable = i => !i.stopped && instRemain(i) > 0;
+  const rows = o.installments.filter(editable).map(i => ({ id: i.id, due: i.due, amount: +i.amount || 0, min: instPaid(i), orig: i }));
+  const target = r2(rows.reduce((s, r) => s + r.amount, 0));
+  const locked = o.installments.filter(i => !editable(i));
+  const m = openModal({
+    title: t('تعديل جدول الأقساط · {no}', { no: o.no }), wide: true,
+    body: `${locked.length ? `<p class="muted" style="margin-top:0">${t('الأقساط المسددة كليًا لا تتغير')}: ${locked.map(i => `${fmtDate(i.due)} (${money(i.amount)})`).join('، ')}</p>` : ''}
+      <div id="pe"></div>
+      <div class="inst-actions"><button type="button" class="btn sm" id="peAdd">+ ${t('قسط آخر')}</button><button type="button" class="btn sm" id="peFix">${t('ضع الفرق على آخر قسط')}</button></div>
+      <div class="inst-sum" id="peSum"></div>
+      <div class="field mt"><label>${t('سبب التعديل')} <span class="req">*</span></label><textarea class="inp" id="peWhy" rows="2" placeholder="${t('مثال: اتفق العميل على تقسيم المتبقي على أربعة أقساط بدل اثنين')}"></textarea></div>
+      <small class="muted">${t('يُطبَّق التعديل مباشرةً، ويبقى الجدول السابق والتواريخ الأصلية وكل تغيير محفوظًا في سجل الطلبية وسجل كل قسط. تسجيل السداد من اختصاص الحسابات.')}</small>`,
+    footer: `<button class="btn primary" id="peSave">${t('حفظ الجدول الجديد')}</button>`,
+  });
+  const box = $('#pe', m.el);
+  const sum = () => r2(rows.reduce((s, r) => s + (+r.amount || 0), 0));
+  const summary = () => { const d = r2(target - sum()); $('#peSum', m.el).innerHTML = `${t('المتبقي على العميل')}: <b>${money(target)} ${cur}</b> · ${t('مجموع الأقساط')}: <b>${money(sum())}</b> · ${d === 0 ? `<span class="pill p-green">✓ ${t('مطابق')}</span>` : `<span class="pill p-red">${d > 0 ? t('ناقص {n}', { n: money(d) }) : t('زيادة {n}', { n: money(-d) })}</span>`}`; };
+  const draw = () => {
+    box.innerHTML = `<div class="tbl-wrap"><table class="tbl inst-tbl"><thead><tr><th>#</th><th>${t('تاريخ الاستحقاق')}</th><th>${t('المبلغ')}</th><th>${t('المسدد')}</th><th></th></tr></thead><tbody>${rows.map((r, k) => `<tr><td>${k + 1}</td><td><input class="inp" type="date" data-r="${k}" data-k="due" value="${esc(r.due)}">${r.orig && r.orig.due !== r.due ? `<div class="muted">${t('كان')}: ${fmtDate(r.orig.due)}</div>` : ''}</td><td><input class="inp" type="number" min="${r.min}" step="any" data-r="${k}" data-k="amount" value="${esc(r.amount)}"></td><td>${r.min ? money(r.min) : '—'}</td><td>${rows.length > 1 && !r.min ? `<button type="button" class="btn sm x-btn" data-rm="${k}" aria-label="${t('حذف القسط')}">×</button>` : ''}</td></tr>`).join('')}</tbody></table></div>`;
+    $$('[data-r]', box).forEach(el => el.oninput = () => { rows[+el.dataset.r][el.dataset.k] = el.value; summary(); });
+    $$('[data-rm]', box).forEach(b => b.onclick = () => { rows.splice(+b.dataset.rm, 1); draw(); });
+    summary();
+  };
+  $('#peAdd', m.el).onclick = () => { const last = rows[rows.length - 1]; rows.push({ id: '', due: last?.due ? addMonths(last.due, 1) : addMonths(today(), 1), amount: Math.max(0, r2(target - sum())), min: 0 }); draw(); };
+  $('#peFix', m.el).onclick = () => { const last = rows[rows.length - 1]; if (!last) return; last.amount = Math.max(last.min, r2((+last.amount || 0) + target - sum())); draw(); };
+  draw();
+  $('#peSave', m.el).onclick = () => {
+    const why = $('#peWhy', m.el).value.trim();
+    if (!rows.length) { toast(t('أضف قسطًا واحدًا على الأقل'), 'err'); return; }
+    if (rows.some(r => !r.due)) { toast(t('حدد تاريخ كل قسط'), 'err'); return; }
+    if (rows.some(r => !(+r.amount > 0))) { toast(t('يجب أن يكون مبلغ كل قسط أكبر من صفر'), 'err'); return; }
+    const low = rows.find(r => r2(r.amount) < r.min);
+    if (low) { toast(t('لا يمكن أن يقل مبلغ القسط عن المسدد منه ({n})', { n: money(low.min) }), 'err'); return; }
+    if (r2(target - sum()) !== 0) { toast(t('مجموع الأقساط ({s}) لا يساوي المتبقي على العميل ({r})', { s: money(sum()), r: money(target) }), 'err'); return; }
+    if (!why) { toast(t('اكتب سبب التعديل'), 'err'); return; }
+    const before = o.installments.map(i => ({ due: i.due, amount: +i.amount || 0, paid: instPaid(i) }));
+    const at = nowStamp(), keep = new Set(rows.filter(r => r.id).map(r => r.id));
+    let changed = false;
+    rows.forEach(r => {
+      const amount = r2(r.amount);
+      if (r.orig) {
+        const i = r.orig;
+        if (r.due !== i.due) {
+          i.postpones = i.postpones || [];
+          i.postpones.push({ id: uid(), from: i.due, to: r.due, reason: why, by: ME.id, at, status: 'approved', direct: true, decidedBy: ME.id, decidedAt: at, planEdit: true });
+          if (!i.originalDue) i.originalDue = i.due;
+          i.due = r.due; i.rem = {}; changed = true;
+        }
+        if (amount !== r2(i.amount)) {
+          i.amountChanges = i.amountChanges || [];
+          i.amountChanges.push({ from: r2(i.amount), to: amount, reason: why, by: ME.id, at });
+          i.amount = amount; changed = true;
+        }
+      } else {
+        o.installments.push({ id: uid(), due: r.due, amount, paid: false, paidAt: '', originalDue: r.due, addedBy: ME.id, addedAt: at, addReason: why });
+        changed = true;
+      }
+    });
+    // الأقساط غير المسددة التي حذفها من الجدول (الجديدة المضافة الآن مستثناة)
+    const removed = o.installments.filter(i => editable(i) && !keep.has(i.id) && i.addedAt !== at);
+    if (removed.length) { o.installments = o.installments.filter(i => !removed.includes(i)); changed = true; }
+    if (!changed) { toast(t('لم يتغير شيء في الجدول'), 'err'); return; }
+    o.installments.sort((a, b) => a.due.localeCompare(b.due));
+    const after = o.installments.map(i => ({ due: i.due, amount: +i.amount || 0, paid: instPaid(i) }));
+    o.planHistory = o.planHistory || [];
+    o.planHistory.push({ at, by: ME.id, reason: why, before, after, removed: removed.map(i => ({ due: i.due, originalDue: i.originalDue || i.due, amount: +i.amount || 0 })) });
+    const fmt = list => list.map(x => `${fmtDate(x.due)}: ${money(x.amount)}`).join('، ');
+    orderLog(o, 'plan_edit', `${why} · ${fmt(after)}`);
+    audit('update', 'order', o.id, 'تعديل جدول أقساط الطلب {no}', { no: o.no }, [{ field: 'جدول الأقساط', from: fmt(before), to: fmt(after) }]);
+    notifyOrder(o, 'inst_plan', `${why}`, [...orderEveryone(o), ...financeUsers().map(u => u.id)]);
+    syncCustomerPayDate(o);
+    saveDB();
+    m.close(); toast(t('حُفظ جدول الأقساط الجديد'), 'ok');
+    onChange ? onChange() : route();
+  };
+}
+// سجل تعديلات جدول الأقساط داخل نافذة الطلبية: الجدول قبل وبعد، والسبب، ومن عدّله
+function planHistoryHtml(o) {
+  const h = o.planHistory || [];
+  if (!h.length) return '';
+  const fmt = list => list.map(x => `${fmtDate(x.due)}: ${money(x.amount)}`).join('، ');
+  return `<details class="mt"><summary><b>${t('سجل تعديلات جدول الأقساط')}</b> (${h.length})</summary>${h.slice().reverse().map(x => `<div class="card soft mt"><div class="muted">${fmtDT(x.at)} · ${esc(userName(x.by))} · ${t('السبب')}: ${esc(x.reason)}</div><div><b>${t('قبل')}:</b> ${esc(fmt(x.before))}</div><div><b>${t('بعد')}:</b> ${esc(fmt(x.after))}</div>${(x.removed || []).length ? `<div class="muted">${t('أقساط حُذفت')}: ${esc(fmt(x.removed))}</div>` : ''}</div>`).join('')}</details>`;
+}
 // طلبات التأجيل القديمة (قبل التغيير المباشر) تبقى قابلة للاعتماد أو الرفض من الإدارة
 function requestPostpone(o, i, to, reason, afterPartial) {
   i.postpones = i.postpones || [];
@@ -6398,6 +6488,7 @@ function openInstallment(oid, iid, onChange) {
       ${pend ? `<div class="card mt conv-card pending"><b>${t('تغيير تاريخ بانتظار اعتماد الإدارة')}</b><div class="muted">${fmtDate(pend.from)} ← <b>${fmtDate(pend.to)}</b> · ${t('السبب')}: ${esc(pend.reason)} · ${esc(userName(pend.by))} · ${fmtDT(pend.at)}</div>${owner ? `<div class="mt"><button class="btn sm primary" id="ppOk">✓ ${t('اعتماد التاريخ الجديد')}</button> <button class="btn sm" id="ppNo">${t('رفض')}</button></div>` : ''}</div>` : ''}
       <h4 class="mt">${t('سجل التحصيل')}</h4>${pays.length ? `<table class="tbl"><thead><tr><th>${t('التاريخ')}</th><th>${t('النوع')}</th><th>${t('المبلغ')}</th><th>${t('السبب أو الملاحظة')}</th><th>${t('سجّله')}</th></tr></thead><tbody>${pays.map(p => `<tr><td>${fmtDate(p.date)}</td><td>${t(p.kind === 'full' ? 'كلي' : 'جزئي')}</td><td>${money(p.amount)} ${cur}</td><td>${esc(p.reason || '')}</td><td>${p.by ? esc(userName(p.by)) : `<span class="muted">${t('قبل السجل')}</span>`}</td></tr>`).join('')}</tbody></table>` : `<div class="muted">${t('لم يُسجَّل أي تحصيل بعد')}</div>`}
       <h4 class="mt">${t('سجل تغيير تاريخ الاستحقاق')}</h4>${(i.postpones || []).length ? `<table class="tbl"><thead><tr><th>${t('من')}</th><th>${t('إلى')}</th><th>${t('السبب')}</th><th>${t('طلبه')}</th><th>${t('القرار')}</th></tr></thead><tbody>${i.postpones.map(p => `<tr><td>${fmtDate(p.from)}</td><td>${fmtDate(p.to)}</td><td>${esc(p.reason)}</td><td>${esc(userName(p.by))}<div class="muted">${fmtDT(p.at)}</div></td><td>${p.direct ? `<span class="pill p-purple">${t('طُبِّق مباشرة')}</span>` : p.status === 'pending' ? `<span class="pill p-orange">${t('بانتظار الاعتماد')}</span>` : `<span class="pill ${p.status === 'approved' ? 'p-green' : 'p-red'}">${t(p.status === 'approved' ? 'معتمد' : 'مرفوض')}</span><div class="muted">${esc(userName(p.decidedBy))} · ${fmtDT(p.decidedAt)}${p.note ? ` · ${esc(p.note)}` : ''}</div>`}</td></tr>`).join('')}</tbody></table>` : `<div class="muted">${t('لم يتغير تاريخ هذا القسط')}</div>`}
+      ${(i.amountChanges || []).length || i.addedAt ? `<h4 class="mt">${t('سجل تغيير مبلغ القسط')}</h4>${i.addedAt ? `<div class="muted">${t('أُضيف القسط عند تعديل الجدول')} · ${esc(userName(i.addedBy))} · ${fmtDT(i.addedAt)}${i.addReason ? ` · ${esc(i.addReason)}` : ''}</div>` : ''}${(i.amountChanges || []).map(a => `<div class="muted">${money(a.from)} ← <b>${money(a.to)}</b> ${cur} · ${esc(a.reason)} · ${esc(userName(a.by))} · ${fmtDT(a.at)}</div>`).join('')}` : ''}
       <h4 class="mt">${t('سجل متابعة القسط')}</h4>${(i.notes || []).length ? i.notes.slice().reverse().map(n => `<div class="inst-note"><b>${esc(userName(n.by))}</b> <span class="muted">${fmtDT(n.at)}</span><div>${esc(n.text)}</div></div>`).join('') : `<div class="muted">${t('لا توجد متابعات على هذا القسط بعد')}</div>`}
       ${canNoteInst(o) ? `<div class="field mt"><label>${t('إضافة متابعة')}</label><textarea class="inp" id="inNote" rows="2" placeholder="${t('مثال: تم الاتصال بالعميل يوم ... وأفاد بأنه سيسدد يوم ...، أو سبب التأخير')}"></textarea></div>` : ''}`,
     footer: `${canNoteInst(o) ? `<button class="btn" id="inAdd">💬 ${t('حفظ المتابعة')}</button>` : ''}${fin && instRemain(i) > 0 && o.status !== 'cancelled' ? `<button class="btn primary" id="inPay">💰 ${t('تسجيل سداد')}</button>` : ''}${canPostponeInst(o) && !pend && instRemain(i) > 0 && o.status !== 'cancelled' ? `<button class="btn" id="inPost">📅 ${t('تأجيل القسط')}</button>` : ''}<button class="btn" id="inOrder">🧾 ${t('فتح الطلبية')}</button>`,
