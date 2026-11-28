@@ -1869,6 +1869,7 @@ const OUTCOMES = ['تم الرد', 'لم يرد', 'مشغول', 'غير متاح
 const curLabel = o => t(o.currency === 'USD' ? 'دولار' : 'ج.م');
 
 const FIELD_LABELS = {
+  payPlan: 'جدول الأقساط',
   name: 'الاسم', mapLink: 'موقع المزرعة', category: 'تصنيف العميل',buyerClass: 'تصنيف العميل المشتري', viaDistributorId: 'عن طريق الوكيل أو الموزع', phone1: 'رقم الهاتف 1', phone2: 'رقم الهاتف 2', phone3: 'رقم الهاتف 3', phone4: 'رقم الهاتف 4', address: 'العنوان', govCode: 'كود المحافظة', subCode: 'كود المنطقة الفرعية', country: 'الدولة', area: 'المساحة', irrigation: 'نوع الري', crops: 'نوع المحصول', salinity: 'درجة ملوحة المياه', soilSalinity: 'درجة ملوحة التربة', farmState: 'حالة المزرعة', waterSource: 'مصدر المياه', deviceType: 'نوع الجهاز المطلوب', deviceSize: 'مقاس الجهاز المطلوب', source: 'مصدر المعرفة', rating: 'تقييم العميل', contactDate: 'تاريخ الاتصال', followupDate: 'تاريخ المتابعة', ownerId: 'رجل البيع', payType: 'حالة الشراء', deposit: 'قيمة المقدم', payDate: 'تاريخ السداد', domainId: 'المجال', assistantIds: 'الزملاء المساعدون', asNextDate: 'موعد متابعة ما بعد البيع', asLastDate: 'آخر متابعة بعد البيع', purchased: 'عميل مشترٍ', purchaseDate: 'تاريخ الشراء', waters: 'مصادر المياه ودرجة ملوحتها', devices: 'الأجهزة المطلوبة', email1: 'البريد الإلكتروني 1', email2: 'البريد الإلكتروني 2',
 };
 // البريد الإلكتروني للعميل اختياري (بريد واحد أو اثنان)، ويُقبل فقط بصيغة صحيحة
@@ -2620,6 +2621,7 @@ const fieldStr = (f, v) => {
   if (f === 'assistantIds' || f === 'shareIds') return (v || []).map(userName).join('، ');
   if (f === 'waters') return waterText(v || []);
   if (f === 'devices') return devicesText({ devices: v || [] });
+  if (f === 'payPlan') return (v || []).map(p => `${fmtDate(p.due)}: ${money(p.amount)}`).join('، ');
   if (Array.isArray(v)) return v.join('، ');
   if (f === 'ownerId') return userName(v);
   if (f === 'payType') return PAY_TYPES[v] || v || '';
@@ -4650,6 +4652,45 @@ function bindDevice(root, d) {
   };
   bindDel();
 }
+// إجمالي سعر الأجهزة المطلوبة (من قائمة الأسعار الحالية) لحساب المتبقي بعد المقدم في جدول الأقساط
+function devicesTotal(root, d) {
+  const list = productsFor(d.domainId, d.market || 'egypt');
+  return readDevices(root).reduce((s, x) => { const p = list.find(p => p.type === x.type && p.size === x.size); return s + (p ? +p.price || 0 : 0) * Math.max(1, +x.qty || 1); }, 0);
+}
+// جدول أقساط العميل في نموذج التعديل: يظهر عند اختيار "تقسيط"، بعدد الأقساط وتاريخ كل قسط ومبلغه (نفس محرر جدول الطلبية)
+function bindCustPlan(root, c) {
+  const box = $('#custPlan', root), sel = $('[data-f="payType"]', root), dep = $('[data-f="deposit"]', root), dateWrap = $('#payDateWrap', root);
+  let ed = null;
+  const rest = () => Math.max(0, devicesTotal(root, c) - (+(dep?.value) || 0));
+  const saved = (c.payPlan || []).filter(p => p.due);
+  const show = () => {
+    const on = sel.value === 'installment';
+    box.hidden = !on;
+    if (dateWrap) dateWrap.hidden = on;
+    if (on && !ed) {
+      box.innerHTML = `<b>${t('جدول الأقساط')}</b> <small class="muted">${t('يُحسب المتبقي من سعر الأجهزة المطلوبة ناقص المقدم، ويمكن تعديل تاريخ ومبلغ كل قسط')}</small><div class="mt" id="custPlanEd"></div>`;
+      ed = mountPlanEditor($('#custPlanEd', box), rest, saved.length ? { count: saved.length, first: saved[0].due } : {});
+      // الجدول المحفوظ سابقًا يظهر كما هو بتواريخه ومبالغه
+      if (saved.length) {
+        $$('#custPlanEd [data-pi]', box).forEach(el => { const p = saved[+el.dataset.pi]; if (p) { el.value = el.dataset.pk === 'due' ? p.due : p.amount; el.dispatchEvent(new Event('input')); } });
+      }
+    }
+  };
+  sel.addEventListener('change', show);
+  dep?.addEventListener('input', () => ed?.refresh());
+  root.addEventListener('change', e => { if (e.target.closest?.('#drows')) ed?.refresh(); });
+  show();
+  return {
+    read() {
+      if (sel.value !== 'installment' || !ed) return { list: [] };
+      const list = ed.plan().map(p => ({ due: p.due, amount: +p.amount || 0 }));
+      if (!list.length) return { error: t('أضف قسطًا واحدًا على الأقل') };
+      if (list.some(p => !p.due)) return { error: t('حدد تاريخ كل قسط') };
+      if (list.some(p => !(p.amount > 0))) return { error: t('يجب أن يكون مبلغ كل قسط أكبر من صفر') };
+      return { list };
+    },
+  };
+}
 const readDevices = root => $$('#drows .multi-row', root).map(r => {
   const [type = '', size = ''] = ($('[data-dv]', r).value || '').split('||');
   return { type, size, qty: $('[data-dq]', r).value };
@@ -5138,7 +5179,8 @@ function openEditCustomer(id, onDone) {
       <div class="grid3"><div class="field"><label>${t('مصدر المعرفة')}</label><select class="inp" data-f="source">${optsT(DB.lists.source, c.source, t('اختر'))}</select></div><div class="field"><label>${t('التقييم')}</label><select class="inp" data-f="rating">${optsT(RATINGS, c.rating)}</select></div><div class="field"><label>${t('تاريخ المتابعة')}</label><input class="inp" type="date" data-f="followupDate" value="${c.followupDate}"></div></div>
       ${viaField(d)}
       ${adPickField(c)}
-      <div class="grid3"><div class="field"><label>${t('حالة الشراء')}</label><select class="inp" data-f="payType">${optsT(Object.entries(PAY_TYPES).filter(([k]) => c.market !== 'intl' || k === 'cash' || k === c.payType), c.payType, t('لم يشترِ'))}</select></div>${c.market === 'intl' ? '<div></div>' : `<div class="field"><label>${t('قيمة المقدم')}</label><input class="inp" type="number" data-f="deposit" value="${esc(c.deposit)}"></div>`}<div class="field"><label>${t('تاريخ السداد')}</label><input class="inp" type="date" data-f="payDate" value="${c.payDate}"></div></div>
+      <div class="grid3"><div class="field"><label>${t('حالة الشراء')}</label><select class="inp" data-f="payType">${optsT(Object.entries(PAY_TYPES).filter(([k]) => c.market !== 'intl' || k === 'cash' || k === c.payType), c.payType, t('لم يشترِ'))}</select></div>${c.market === 'intl' ? '<div></div>' : `<div class="field"><label>${t('قيمة المقدم')}</label><input class="inp" type="number" data-f="deposit" value="${esc(c.deposit)}"></div>`}<div class="field" id="payDateWrap"><label>${t('تاريخ السداد')}</label><input class="inp" type="date" data-f="payDate" value="${c.payDate}"></div></div>
+      <div class="card soft" id="custPlan" hidden></div>
       ${can('customers.assign') || (can('customers.share') && c.ownerId === ME.id) ? `<div class="field"><label>${t('يتابعه أيضًا (متابعة مشتركة)')}</label><div class="chips" id="asst">${others.map(u => `<button type="button" class="chip ${(c.assistantIds || []).includes(u.id) ? 'on' : ''}" data-u="${u.id}">${esc(u.name)}</button>`).join('')}</div></div>` : ''}
       <div class="grid2">${customFieldInputs('', d)}</div>`,
     footer: `<button class="btn primary" id="sv">${t('حفظ التعديلات')}</button>`,
@@ -5152,6 +5194,7 @@ function openEditCustomer(id, onDone) {
   bindVia(m.el);
   bindAdPick(m.el);
   const stopFarmMic = bindMic(m.el, { mic: '#efarmMic', status: '#efarmSt', input: '#efarmTxt' });
+  const plan = bindCustPlan(m.el, c);
   $$('#asst .chip', m.el).forEach(b => b.onclick = () => b.classList.toggle('on'));
   $('#sv', m.el).onclick = () => {
     stopFarmMic();
@@ -5161,6 +5204,11 @@ function openEditCustomer(id, onDone) {
     if (via.error) { toast(via.error, 'err'); return; }
     if (c.market === 'egypt') { patch.govCode = $('#egov', m.el).value; patch.subCode = $('#esub', m.el).value; }
     Object.assign(patch, watersFields(readWaters(m.el)), devicesFields(readDevices(m.el)));
+    // التقسيط: عدد الأقساط ومواعيدها ومبالغها، وتاريخ السداد يصبح أقرب قسط قادم
+    const pp = plan.read();
+    if (pp.error) { toast(pp.error, 'err'); return; }
+    patch.payPlan = pp.list;
+    if (pp.list.length) patch.payDate = (pp.list.find(x => x.due >= today()) || pp.list[pp.list.length - 1]).due;
     const shareTo = $('#asst', m.el) ? $$('#asst .chip.on', m.el).map(b => b.dataset.u) : null;
     if (!patch.name || !patch.phone1) { toast(t('الاسم ورقم الهاتف 1 مطلوبان'), 'err'); return; }
     if (mapError(patch.mapLink)) { toast(mapError(patch.mapLink), 'err'); return; }
@@ -5784,7 +5832,8 @@ function openOrderForm(customerId) {
     <p class="muted">${t('بعد الإرسال تُحال الطلبية إلى الحسابات للمراجعة ثم لاعتماد الإدارة، ولن يمكنك تعديلها.')}</p>`,
     footer: `<button class="btn primary" id="sv">${t('إرسال الطلبية للمراجعة')}</button>`,
   });
-  let payType = 'cash';
+  // طريقة الدفع تبدأ بما سجّله رجل البيع في بيانات العميل (تقسيط أو مقدم)
+  let payType = preset && preset.market !== 'intl' && ['installment', 'deposit'].includes(preset.payType) ? preset.payType : 'cash';
   const cur = () => $('#cur', m.el).value;
   // الخصم مبلغ أو نسبة من قيمة الأجهزة، ويتطرح تلقائيًا من الإجمالي
   const gross = () => items.reduce((s, i) => s + (+i.qty || 0) * (+i.price || 0), 0);
@@ -5824,9 +5873,15 @@ function openOrderForm(customerId) {
     planEd = null;
     box.innerHTML = payType === 'cash' ? '' : `<div class="grid3"><div class="field"><label>${t('قيمة المقدم')}</label><input class="inp" type="number" min="0" id="dep" value="0"></div>${payType === 'deposit' ? `<div class="field"><label>${t('تاريخ سداد المتبقي')}</label><input class="inp" type="date" id="first" value="${addMonths(today(), 1)}"></div>` : ''}</div><div id="plan"></div>`;
     const dep = $('#dep', box), first = $('#first', box);
+    // جدول الأقساط المحدد في بيانات العميل (العدد والتواريخ والمبالغ) ومقدمه يُستخدمان كبداية، ويمكن تعديلهما
+    const cp = selCust(), saved = payType === 'installment' ? (cp?.payPlan || []).filter(p => p.due) : [];
+    if (dep && cp && +cp.deposit > 0 && payType !== 'cash') dep.value = +cp.deposit;
     if (dep) dep.oninput = upd;
     if (first) first.oninput = drawDepositPlan;
-    if (payType === 'installment') planEd = mountPlanEditor($('#plan', box), rest);
+    if (payType === 'installment') {
+      planEd = mountPlanEditor($('#plan', box), rest, saved.length ? { count: saved.length, first: saved[0].due } : {});
+      if (saved.length) $$('#plan [data-pi]', box).forEach(el => { const p = saved[+el.dataset.pi]; if (p) { el.value = el.dataset.pk === 'due' ? p.due : p.amount; el.dispatchEvent(new Event('input')); } });
+    }
     upd();
   };
   const drawItems = () => {
